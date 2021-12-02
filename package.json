@@ -1,12 +1,15 @@
 {
-  "name": "lighthouse-cli",
+  "name": "lighthouse",
   "version": "1.0.0",
-  "description": "",
+  "description": "NPM package and CLI tool to interact with lighthouse protocol",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node index.js"
   },
-  "keywords": [],
+  "keywords": [
+    "lighthouse",
+    "lighthouse-cli"
+  ],
   "author": "",
   "license": "ISC",
   "dependencies": {
@@ -14,6 +17,7 @@
     "chalk": "^4.1.2",
     "express": "^4.17.1",
     "form-data": "^4.0.0",
+    "read": "^1.0.7",
     "yargs": "^17.2.1"
   }
 }
