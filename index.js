@@ -3,36 +3,57 @@ const chalk = require('chalk');
 const util = require('util');
 const read = require("read");
 const fs = require('fs');
-const { exec } = require('child_process');
+const Conf = require('conf');
 
 const Lighthouse = require('./Lighthouse');
 
 /*
 colour scheme for cli
-    heading - blue
+    heading - cyan
     info - green
     error - red
     warning - yellow
 */
-yargs.version('1.1.0');
+const config = new Conf();
+yargs.version('0.1.0');
+yargs.usage('Usage: lighthouse-web3' + chalk.cyan(' [command] ') + chalk.green('[options]'));
+yargs.alias('h', 'help');
+yargs.alias('v', 'version');
 
 yargs.command({
-    command: 'create_wallet',
+    command: 'create-wallet',
     describe: 'Creates a new wallet',
+    builder: {
+        save: {
+            describe: 'Saves the wallet after creation',
+        },
+    },
     handler: async function (argv) {
         const options = {
-            prompt: 'Set a password for your wallet ',
+            prompt: 'Set a password for your wallet:',
             silent: true,
             default: '',
         }
         
+        let save_wallet = false;
+        if(argv.save) {
+            save_wallet = true;
+        }
+
         read(options, async (err, result)=>{
             const wallet = await Lighthouse.create_wallet(result.trim());
             if(wallet){
-                fs.writeFile('LighthouseWallet.json', JSON.stringify(wallet, null, 4), function(err) {
+                fs.writeFile('wallet.json', JSON.stringify(wallet, null, 4), function(err) {
                     if(err) {
-                        console.log(chalk.red('Issue with path'));
+                        console.log(chalk.red('Creating Wallet Failed!'));
                     }
+
+                    if(save_wallet) {
+                        config.set('Lighthouse_privateKeyEncrypted', wallet['privateKeyEncrypted']);
+                        config.set('Lighthouse_publicKey', wallet['publicKey']);
+                    }
+
+                    console.log(chalk.cyan('Public Key: ' + wallet.publicKey));                    
                     console.log(chalk.green('Wallet Created!'));
                 });
             }else{
@@ -43,7 +64,7 @@ yargs.command({
 })
 
 yargs.command({
-    command: 'import_wallet',
+    command: 'import-wallet',
     describe: 'Import an existing wallet',
     builder: {
         path: {
@@ -54,9 +75,19 @@ yargs.command({
     },
     handler: async function (argv) {
         const wallet = JSON.parse(fs.readFileSync(argv.path, 'utf8'));
-        // console.log(wallet['privateKeyEncrypted']);
-        exec(`export Lighthouse_privateKeyEncrypted=${wallet['privateKeyEncrypted']}`);
+        config.set('Lighthouse_privateKeyEncrypted', wallet['privateKeyEncrypted']);
+        config.set('Lighthouse_publicKey', wallet['publicKey']);
         console.log(chalk.green('Wallet Imported!'));
+    }
+})
+
+yargs.command({
+    command: 'wallet-forget',
+    describe: 'Remove previously saved wallet',
+    handler: async function (argv) {
+        config.delete('Lighthouse_privateKeyEncrypted');
+        config.delete('Lighthouse_publicKey');
+        console.log(chalk.green('Wallet Removed!'));
     }
 })
 
@@ -64,47 +95,117 @@ yargs.command({
     command: 'balance',
     describe: 'Get current balance of your wallet',
     handler: async function (argv) {
-        const balance = await Lighthouse.get_balance(argv.publicKey);
-        if(balance){
-            console.log(chalk.green(balance));
-        }else{
-            console.log(chalk.red('Something Went Wrong!'));
+        const options = {
+            prompt: 'Enter your password ',
+            silent: true,
+            default: '',
         }
+        
+        read(options, async (err, result)=>{
+            const balance = await Lighthouse.get_balance(config.get('Lighthouse_publicKey'));
+            if(balance){
+                console.log(chalk.green('balance ' + balance.data));
+            }else{
+                console.log(chalk.red('Something Went Wrong!'));
+            }
+        })
     }
 })
 
-// yargs.command({
-//     command: 'user_token',
-//     describe: 'Get temporary key for uploading data',
-//     handler: async function () {
-//         const response = await Lighthouse.user_token();
-//         console.log(util.inspect(response, false, null, true));
-//     }
-// })
-
 yargs.command({
-    command: 'upload',
-    describe: 'Upload a directory or file',
+    command: 'deploy',
+    describe: 'Deploy a directory or file',
     builder: {
         path: {
             describe: 'Path of file to be uploaded',
             demandOption: true,
             type: 'string'
         },
-        token: {
-            describe: 'Token for uploading data, you can get it from user_token command',
-            demandOption: true,
-            type: 'string'
-        }
     },
     handler: async function (argv) {
-        const response = await Lighthouse.upload(argv.path, argv.token);
-        console.log(util.inspect(response, false, null, true));
+        const path = argv.path;
+        const response = await Lighthouse.get_quote(argv.path, config.get('Lighthouse_publicKey'));
+        if(response){
+            console.table([{ID: response.ipfs_hash, Size: response.file_size, Fee: response.fee, Type: response.mime_type, Name: response.file_name}], ['ID', 'Size', 'Fee', 'Type', 'Name']);
+        
+            console.log();
+            
+            console.log(chalk.cyan('Summary'));
+            console.log('Total Size: ' + response.file_size);
+            console.log('Fees: ' + response.cost + response.gasFee);
+            console.log('Total Fee: ' + response.fee);
+            
+            console.log();
+            
+            console.log(chalk.cyan('Wallet'));
+            console.log('Address: ' + config.get('Lighthouse_publicKey'));
+            console.log('Current balance: ' + response.current_balance);
+            const balance_after_deploy = (Number(response.current_balance) - response.fee)*(10**(-18))
+            console.log('Balance after deploy: ' + balance_after_deploy);
+            
+            console.log();
+            
+            console.log(chalk.green('Carefully check the above details are correct, then confirm to complete this upload') + 'Y/n');
+
+            const options = {
+                prompt: '',
+                default: 'n',
+            }
+            
+            
+            read(options, async (err, result)=>{
+                if(result.trim() == 'Y' || result.trim() == 'y' || result.trim() == 'yes'){
+
+                    if(balance_after_deploy<0){
+                        console.log(chalk.red('Insufficient balance!'));
+                        process.exit();
+                    } else {
+                        const options = {
+                            prompt: 'Enter your password: ',
+                            silent: true,
+                            default: '',
+                        }
+                        
+                        read(options, async (err, password)=>{
+
+                            const key = await Lighthouse.get_key(config.get('Lighthouse_privateKeyEncrypted'), password.trim());
+                            if(key){
+                                // Upload File
+                                const upload_token = await Lighthouse.user_token('24h');
+                                const deploy = await Lighthouse.deploy(path, upload_token.token);
+                                console.log(chalk.green('File Deployed, visit following url to view content!'));
+                                console.log(chalk.cyan('Visit: ' +'https://dweb.link/ipfs/'+ deploy.cid));
+                                console.log('CID: ' + deploy.cid);
+                                
+                                console.log();
+    
+                                // Push CID to chain
+                                console.log(chalk.green('Pushing CID to chain'));
+                                const transaction = await Lighthouse.push_cid_tochain(key.privateKey, deploy.cid);
+                                console.log('Transaction: '+ 'https://polygonscan.com/tx/' + transaction.hash);
+                                console.log(chalk.green('CID pushed to chain'));
+
+                                process.exit();
+                            }else{
+                                console.log(chalk.red('Something Went Wrong!'));
+                                process.exit();
+                            }
+                        })
+                    }
+                } else{
+                    console.log(chalk.red('Upload Cancelled!'));
+                    process.exit();
+                }
+            })
+        } else{
+            console.log(chalk.red('Something Went Wrong!'));
+            process.exit();
+        }
     }
 })
 
 yargs.command({
-    command: 'metadata_by_cid',
+    command: 'status',
     describe: 'Get metadata around the storage per CID',
     builder: {
         cid: {
@@ -114,13 +215,13 @@ yargs.command({
         }
     },
     handler: async function (argv) {
-        const response = await Lighthouse.metadata_by_cid(argv.cid);
+        const response = await Lighthouse.status(argv.cid);
         console.log(util.inspect(response, false, null, true));
     }
 })
 
 yargs.command({
-    command: 'list_data',
+    command: 'list-data',
     describe: 'List all of the data you have pinned to IPFS',
     builder: {
         offset: {
@@ -141,7 +242,7 @@ yargs.command({
 })
 
 yargs.command({
-    command: 'get_deals',
+    command: 'get-deals',
     describe: 'Get all of the deals being made for a specific Content ID stored',
     builder: {
         content_id: {

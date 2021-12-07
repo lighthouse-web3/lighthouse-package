@@ -1,6 +1,6 @@
 {
-  "name": "lighthouse",
-  "version": "1.0.0",
+  "name": "lighthouse-web3",
+  "version": "0.1.0",
   "description": "NPM package and CLI tool to interact with lighthouse protocol",
   "main": "index.js",
   "scripts": {
@@ -15,8 +15,14 @@
   "dependencies": {
     "axios": "^0.24.0",
     "chalk": "^4.1.2",
+    "conf": "^10.1.1",
+    "crypto-js": "^4.1.1",
+    "eth-crypto": "^2.1.0",
     "express": "^4.17.1",
     "form-data": "^4.0.0",
+    "ipfs": "^0.60.2",
+    "ipfs-core": "^0.12.2",
+    "mime-types": "^2.1.34",
     "read": "^1.0.7",
     "yargs": "^17.2.1"
   }
