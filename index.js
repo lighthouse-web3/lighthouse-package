@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 const yargs = require("yargs");
 const chalk = require("chalk");
 const util = require("util");
@@ -15,7 +17,7 @@ colour scheme for cli
     warning - yellow
 */
 const config = new Conf();
-yargs.version("0.1.0");
+yargs.version("1.0.0");
 yargs.usage(
   "Usage: lighthouse-web3" +
     chalk.cyan(" [command] ") +

@@ -6,7 +6,7 @@ const IPFS = require("ipfs");
 const EthCrypto = require("eth-crypto");
 const CryptoJS = require("crypto-js");
 
-const URL = "http://localhost:8000";
+const URL = "https://lighthouse-web3.herokuapp.com";
 
 exports.create_wallet = async (password) => {
   try {
