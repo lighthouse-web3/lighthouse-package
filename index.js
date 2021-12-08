@@ -112,7 +112,7 @@ yargs.command({
       config.get("Lighthouse_publicKey")
     );
     if (balance) {
-      console.log(chalk.green("balance " + (balance.data*(10**(-18)))));
+      console.log(chalk.green("balance " + balance.data * 10 ** -18));
     } else {
       console.log(chalk.red("Something Went Wrong!"));
     }
@@ -160,7 +160,7 @@ yargs.command({
 
       console.log(chalk.cyan("Wallet"));
       console.log("Address: " + config.get("Lighthouse_publicKey"));
-      console.log("Current balance: " + response.current_balance);
+      console.log("Current balance: " + response.current_balance * 10 ** -18);
       const balance_after_deploy =
         (Number(response.current_balance) - response.fee) * 10 ** -18;
       console.log("Balance after deploy: " + balance_after_deploy);
