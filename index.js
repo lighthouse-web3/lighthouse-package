@@ -108,22 +108,14 @@ yargs.command({
   command: "balance",
   describe: "Get current balance of your wallet",
   handler: async function (argv) {
-    const options = {
-      prompt: "Enter your password ",
-      silent: true,
-      default: "",
-    };
-
-    read(options, async (err, result) => {
-      const balance = await Lighthouse.get_balance(
-        config.get("Lighthouse_publicKey")
-      );
-      if (balance) {
-        console.log(chalk.green("balance " + balance.data));
-      } else {
-        console.log(chalk.red("Something Went Wrong!"));
-      }
-    });
+    const balance = await Lighthouse.get_balance(
+      config.get("Lighthouse_publicKey")
+    );
+    if (balance) {
+      console.log(chalk.green("balance " + (balance.data*(10**(-18)))));
+    } else {
+      console.log(chalk.red("Something Went Wrong!"));
+    }
   },
 });
 
