@@ -92,7 +92,6 @@ exports.get_quote = async (path, publicKey) => {
     response.data.file_size = bytesToSize(fileSizeInBytes);
     response.data.mime_type = mime_type;
     response.data.file_name = file_name;
-    response.data.fee = response.data.cost + response.data.gasFee;
     response.data.ipfs_hash = ipfs_hash;
 
     return response.data;
@@ -101,11 +100,12 @@ exports.get_quote = async (path, publicKey) => {
   }
 };
 
-exports.push_cid_tochain = async (privateKey, cid) => {
+exports.push_cid_tochain = async (privateKey, cid, cost) => {
   try {
     const body = {
       privateKey: privateKey,
       cid: cid,
+      cost: cost,
     };
     const response = await axios.post(
       URL + `/api/estuary/push_cid_tochain`,

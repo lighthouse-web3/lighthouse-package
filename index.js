@@ -23,8 +23,53 @@ yargs.usage(
     chalk.cyan(" [command] ") +
     chalk.green("[options]")
 );
+
 yargs.alias("h", "help");
 yargs.alias("v", "version");
+
+yargs.command({
+  command: ["$0", "help"],
+  handler: async function (argv) {
+    console.log(chalk.yellow("Welcome to lighthouse-web3"));
+    console.log();
+    console.log(
+      "Usage: lighthouse-web3" +
+        chalk.cyan(" [command] ") +
+        chalk.green("[options]")
+    );
+    console.log();
+    console.log(
+      chalk.green("Commands (alias)") +
+        chalk.grey("                     Description")
+    );
+    console.log(
+      "create-wallet   " + "                     Creates a new wallet"
+    );
+    console.log(
+      "import-wallet   " + "                     Import an existing wallet"
+    );
+    console.log(
+      "wallet-forget   " + "                     Remove previously saved wallet"
+    );
+    console.log(
+      "balance         " +
+        "                     Get current balance of your wallet"
+    );
+    console.log(
+      "deploy          " + "                     Deploy a directory or file"
+    );
+    console.log(
+      "status          " +
+        "                     Get metadata around the storage per CID"
+    );
+    console.log();
+    console.log(chalk.cyan("Options"));
+    console.log(
+      "--save          " +
+        "                     Saves the wallet after creation"
+    );
+  },
+});
 
 yargs.command({
   command: "create-wallet",
@@ -141,7 +186,7 @@ yargs.command({
           {
             ID: response.ipfs_hash,
             Size: response.file_size,
-            Fee: response.fee,
+            Fee: response.cost,
             Type: response.mime_type,
             Name: response.file_name,
           },
@@ -153,8 +198,11 @@ yargs.command({
 
       console.log(chalk.cyan("Summary"));
       console.log("Total Size: " + response.file_size);
-      console.log("Fees: " + response.cost + response.gasFee);
-      console.log("Total Fee: " + response.fee);
+      console.log("Fees: " + response.cost);
+      console.log("Gas Fees: " + response.gasFee * 10 ** -18);
+      console.log(
+        "Total Fee: " + (response.cost + response.gasFee * 10 ** -18)
+      );
 
       console.log();
 
@@ -162,7 +210,8 @@ yargs.command({
       console.log("Address: " + config.get("Lighthouse_publicKey"));
       console.log("Current balance: " + response.current_balance * 10 ** -18);
       const balance_after_deploy =
-        (Number(response.current_balance) - response.fee) * 10 ** -18;
+        (Number(response.current_balance) - (response.cost + response.gasFee)) *
+        10 ** -18;
       console.log("Balance after deploy: " + balance_after_deploy);
 
       console.log();
@@ -200,6 +249,22 @@ yargs.command({
                 password.trim()
               );
               if (key) {
+                // Push CID to chain
+                console.log(chalk.green("Pushing CID to chain"));
+                const transaction = await Lighthouse.push_cid_tochain(
+                  key.privateKey,
+                  deploy.cid,
+                  response.cost
+                );
+                console.log(
+                  "Transaction: " +
+                    "https://polygonscan.com/tx/" +
+                    transaction.transactionHash
+                );
+                console.log(chalk.green("CID pushed to chain"));
+
+                console.log();
+
                 // Upload File
                 const upload_token = await Lighthouse.user_token("24h");
                 const deploy = await Lighthouse.deploy(
@@ -215,21 +280,6 @@ yargs.command({
                   chalk.cyan("Visit: " + "https://dweb.link/ipfs/" + deploy.cid)
                 );
                 console.log("CID: " + deploy.cid);
-
-                console.log();
-
-                // Push CID to chain
-                console.log(chalk.green("Pushing CID to chain"));
-                const transaction = await Lighthouse.push_cid_tochain(
-                  key.privateKey,
-                  deploy.cid
-                );
-                console.log(
-                  "Transaction: " +
-                    "https://polygonscan.com/tx/" +
-                    transaction.hash
-                );
-                console.log(chalk.green("CID pushed to chain"));
 
                 process.exit();
               } else {
