@@ -6,7 +6,7 @@ const IPFS = require("ipfs");
 const EthCrypto = require("eth-crypto");
 const CryptoJS = require("crypto-js");
 
-const URL = "https://lighthouse-web3.herokuapp.com";
+const URL = "http://localhost:8000";
 
 exports.create_wallet = async (password) => {
   try {
@@ -14,6 +14,38 @@ exports.create_wallet = async (password) => {
       password: password,
     });
     return response.data;
+  } catch {
+    return null;
+  }
+};
+
+exports.get_key = async (encPrivateKey, password) => {
+  try {
+    const bytes = CryptoJS.AES.decrypt(encPrivateKey, password);
+    const originalText = bytes.toString(CryptoJS.enc.Utf8);
+    const publicKey = EthCrypto.publicKeyByPrivateKey(originalText);
+    const address = EthCrypto.publicKey.toAddress(publicKey);
+
+    return { privateKey: originalText, publicKey: address };
+  } catch {
+    return null;
+  }
+};
+
+exports.restore_keys = async (privateKey, password) => {
+  try {
+    const publicKey = EthCrypto.publicKeyByPrivateKey(privateKey);
+    const address = EthCrypto.publicKey.toAddress(publicKey);
+    const privateKeyEncrypted = CryptoJS.AES.encrypt(
+      privateKey,
+      password
+    ).toString();
+
+    return {
+      publicKey: address,
+      privateKey: privateKey,
+      privateKeyEncrypted: privateKeyEncrypted,
+    };
   } catch {
     return null;
   }
@@ -47,7 +79,7 @@ exports.deploy = async (path, token) => {
 
   const headers = formData.getHeaders();
   const response = await axios.post(
-    "https://shuttle-1.estuary.tech/content/add",
+    "https://shuttle-5.estuary.tech/content/add",
     formData,
     {
       headers: {
@@ -141,36 +173,4 @@ exports.get_deals = async (content_id) => {
     URL + `/api/estuary/get_deals?content_id=${content_id}`
   );
   return response.data;
-};
-
-exports.get_key = async (encPrivateKey, password) => {
-  try {
-    const bytes = CryptoJS.AES.decrypt(encPrivateKey, password);
-    const originalText = bytes.toString(CryptoJS.enc.Utf8);
-    const publicKey = EthCrypto.publicKeyByPrivateKey(originalText);
-    const address = EthCrypto.publicKey.toAddress(publicKey);
-
-    return { privateKey: originalText, publicKey: address };
-  } catch {
-    return null;
-  }
-};
-
-exports.restore_keys = async (privateKey, password) => {
-  try {
-    const publicKey = EthCrypto.publicKeyByPrivateKey(privateKey);
-    const address = EthCrypto.publicKey.toAddress(publicKey);
-    const privateKeyEncrypted = CryptoJS.AES.encrypt(
-      privateKey,
-      password
-    ).toString();
-
-    return {
-      publicKey: address,
-      privateKey: privateKey,
-      privateKeyEncrypted: privateKeyEncrypted,
-    };
-  } catch {
-    return null;
-  }
 };

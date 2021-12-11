@@ -205,6 +205,44 @@ yargs.command({
 });
 
 yargs.command({
+  command: "reset-password <privateKey>",
+  describe: "Change password of your wallet",
+  handler: async function (argv) {
+    const privateKey = argv.privateKey;
+    const options = {
+      prompt: "Set new password for your wallet:",
+      silent: true,
+      default: "",
+    };
+
+    read(options, async (err, result) => {
+      const wallet = await Lighthouse.restore_keys(privateKey, result.trim());
+      if (wallet) {
+        fs.writeFile(
+          "wallet.json",
+          JSON.stringify(wallet, null, 4),
+          function (err) {
+            if (err) {
+              console.log(chalk.red("Creating Wallet Failed!"));
+            }
+
+            config.set(
+              "Lighthouse_privateKeyEncrypted",
+              wallet["privateKeyEncrypted"]
+            );
+            config.set("Lighthouse_publicKey", wallet["publicKey"]);
+
+            console.log(chalk.green("Password Changed!"));
+          }
+        );
+      } else {
+        console.log(chalk.red("Creating Wallet Failed!"));
+      }
+    });
+  },
+});
+
+yargs.command({
   command: "wallet-forget",
   describe: "Remove previously saved wallet",
   handler: async function (argv) {
@@ -230,15 +268,8 @@ yargs.command({
 });
 
 yargs.command({
-  command: "deploy",
+  command: "deploy <path>",
   describe: "Deploy a directory or file",
-  builder: {
-    path: {
-      describe: "Path of file to be uploaded",
-      demandOption: true,
-      type: "string",
-    },
-  },
   handler: async function (argv) {
     const path = argv.path;
     const response = await Lighthouse.get_quote(
@@ -284,12 +315,11 @@ yargs.command({
       console.log(
         chalk.green(
           "Carefully check the above details are correct, then confirm to complete this upload"
-        ) + "Y/n"
+        ) + " Y/n"
       );
 
       const options = {
         prompt: "",
-        default: "n",
       };
 
       read(options, async (err, result) => {
@@ -318,8 +348,8 @@ yargs.command({
                 console.log(chalk.green("Pushing CID to chain"));
                 const transaction = await Lighthouse.push_cid_tochain(
                   key.privateKey,
-                  deploy.cid,
-                  response.cost
+                  response.ipfs_hash,
+                  response.cost.toFixed(4)
                 );
                 console.log(
                   "Transaction: " +
