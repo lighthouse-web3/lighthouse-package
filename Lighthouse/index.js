@@ -6,7 +6,7 @@ const IPFS = require("ipfs");
 const EthCrypto = require("eth-crypto");
 const CryptoJS = require("crypto-js");
 
-const URL = "http://localhost:8000";
+const URL = "http://52.66.209.251:8000";
 
 exports.create_wallet = async (password) => {
   try {

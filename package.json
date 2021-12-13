@@ -2,12 +2,12 @@
   "name": "lighthouse-web3",
   "version": "1.0.0",
   "description": "NPM package and CLI tool to interact with lighthouse protocol",
-  "main": "./bin/index.js",
+  "main": "index.js",
   "scripts": {
     "start": "node index.js"
   },
   "bin": {
-    "lighthouse-web3": "./bin/index.js"
+    "lighthouse-web3": "index.js"
   },
   "keywords": [
     "lighthouse",

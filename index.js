@@ -377,7 +377,6 @@ yargs.command({
                 console.log();
 
                 // Upload File
-                const spinner = new Spinner("");
                 spinner.start();
                 const upload_token = await Lighthouse.user_token("24h");
                 const deploy = await Lighthouse.deploy(
