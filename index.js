@@ -18,7 +18,7 @@ colour scheme for cli
     warning - yellow
 */
 const config = new Conf();
-yargs.version("1.0.0");
+yargs.version("1.1.0");
 yargs.usage(
   "Usage: lighthouse-web3" +
     chalk.cyan(" [command] ") +
