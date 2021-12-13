@@ -6,6 +6,7 @@ const util = require("util");
 const read = require("read");
 const fs = require("fs");
 const Conf = require("conf");
+const Spinner = require("cli-spinner").Spinner;
 
 const Lighthouse = require("./Lighthouse");
 
@@ -256,9 +257,14 @@ yargs.command({
   command: "balance",
   describe: "Get current balance of your wallet",
   handler: async function (argv) {
+    const spinner = new Spinner("");
+    spinner.start();
     const balance = await Lighthouse.get_balance(
       config.get("Lighthouse_publicKey")
     );
+    spinner.stop();
+    process.stdout.clearLine();
+    process.stdout.cursorTo(0);
     if (balance) {
       console.log(chalk.green("balance " + balance.data * 10 ** -18));
     } else {
@@ -272,10 +278,15 @@ yargs.command({
   describe: "Deploy a directory or file",
   handler: async function (argv) {
     const path = argv.path;
+    const spinner = new Spinner("Getting Quote...");
+    spinner.start();
     const response = await Lighthouse.get_quote(
       argv.path,
       config.get("Lighthouse_publicKey")
     );
+    spinner.stop();
+    process.stdout.clearLine();
+    process.stdout.cursorTo(0);
     if (response) {
       console.table(
         [
@@ -346,11 +357,16 @@ yargs.command({
               if (key) {
                 // Push CID to chain
                 console.log(chalk.green("Pushing CID to chain"));
+                const spinner = new Spinner("");
+                spinner.start();
                 const transaction = await Lighthouse.push_cid_tochain(
                   key.privateKey,
                   response.ipfs_hash,
                   response.cost.toFixed(4)
                 );
+                spinner.stop();
+                process.stdout.clearLine();
+                process.stdout.cursorTo(0);
                 console.log(
                   "Transaction: " +
                     "https://polygonscan.com/tx/" +
@@ -361,11 +377,16 @@ yargs.command({
                 console.log();
 
                 // Upload File
+                const spinner = new Spinner("");
+                spinner.start();
                 const upload_token = await Lighthouse.user_token("24h");
                 const deploy = await Lighthouse.deploy(
                   path,
                   upload_token.token
                 );
+                spinner.stop();
+                process.stdout.clearLine();
+                process.stdout.cursorTo(0);
                 console.log(
                   chalk.green(
                     "File Deployed, visit following url to view content!"
