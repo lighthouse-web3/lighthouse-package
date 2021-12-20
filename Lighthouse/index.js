@@ -1,8 +1,9 @@
 const axios = require("axios");
 const FormData = require("form-data");
 const fs = require("fs");
+const fetch = require('node-fetch');
 const mime = require("mime-types");
-const Hash = require('ipfs-only-hash')
+const Hash = require('ipfs-only-hash');
 const EthCrypto = require("eth-crypto");
 const CryptoJS = require("crypto-js");
 
@@ -74,21 +75,28 @@ exports.user_token = async (expiry_time) => {
 };
 
 exports.deploy = async (path, token) => {
-  var formData = new FormData();
-  formData.append("data", fs.createReadStream(path));
+  const fd = new FormData()
+	let data = await fileFromPath(path)
+	
+	fd.set('data', data, path.split("/").pop());
 
-  const headers = formData.getHeaders();
-  const response = await axios.post(
-    "https://shuttle-5.estuary.tech/content/add",
-    formData,
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        ...headers,
-      },
-    }
-  );
-  return response.data;
+	const encoder = new FormDataEncoder(fd);
+
+	const headers = {
+	  Authorization: `Bearer ${token}`,
+	  Accept: 'application/json',
+	  ...encoder.headers
+	}
+
+	const options = {
+	  method: 'POST',
+	  body: Readable.from(encoder),
+	  headers
+	}
+
+  const response = fetch('https://shuttle-4.estuary.tech/content/add', options)
+  console.log(response)
+  return response.json()
 };
 
 function bytesToSize(bytes) {
