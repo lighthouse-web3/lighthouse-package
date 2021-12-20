@@ -1,1 +1,1 @@
-# lighthouse-cli
+# lighthouse-package
