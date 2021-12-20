@@ -2,7 +2,7 @@ const axios = require("axios");
 const FormData = require("form-data");
 const fs = require("fs");
 const mime = require("mime-types");
-const IPFS = require("ipfs");
+const Hash = require('ipfs-only-hash')
 const EthCrypto = require("eth-crypto");
 const CryptoJS = require("crypto-js");
 
@@ -105,14 +105,8 @@ exports.get_quote = async (path, publicKey) => {
     const fileSizeInBytes = stats.size;
     const file_name = path.split("/").pop();
 
-    // disable logs of IPFS.create()
-    const console_log = console.log;
-    console.log = function () {};
-    const node = await IPFS.create();
-    const file = await node.add(path, { onlyHash: true, cidVersion: 1 });
-    const ipfs_hash = file.path;
-    node.stop();
-    console.log = console_log;
+    const readStream = fs.createReadStream(path, { encoding: 'utf-8' });
+    const ipfs_hash = await Hash.of(readStream, {cidVersion:1});
 
     const body = {
       fileSize: fileSizeInBytes,
