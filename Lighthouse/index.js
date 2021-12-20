@@ -105,8 +105,13 @@ exports.get_quote = async (path, publicKey) => {
     const fileSizeInBytes = stats.size;
     const file_name = path.split("/").pop();
 
-    const readStream = fs.createReadStream(path, { encoding: 'utf-8' });
-    const ipfs_hash = await Hash.of(readStream, {cidVersion:1});
+    const readStream = fs.createReadStream(path);
+    const ipfs_hash = await Hash.of(readStream, {
+      cidVersion: 1,
+      rawLeaves: true,
+      chunker: 'rabin',
+      minChunkSize: 1048576
+    });
 
     const body = {
       fileSize: fileSizeInBytes,
