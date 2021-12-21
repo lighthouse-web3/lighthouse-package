@@ -13,6 +13,9 @@
     "lighthouse",
     "lighthouse-cli"
   ],
+  "engines": {
+    "node": ">=16"
+  },
   "author": "",
   "license": "ISC",
   "dependencies": {
@@ -23,9 +26,11 @@
     "crypto-js": "^4.1.1",
     "eth-crypto": "^2.1.0",
     "express": "^4.17.1",
-    "form-data": "^4.0.0",
+    "form-data-encoder": "^1.4.3",
+    "formdata-node": "^4.3.1",
     "ipfs-only-hash": "^4.0.0",
     "mime-types": "^2.1.34",
+    "node-fetch": "^2.6.1",
     "read": "^1.0.7",
     "yargs": "^17.2.1"
   }
