@@ -9,11 +9,15 @@ module.exports = {
     if (argv.help) {
       console.log("lighthouse-web3 wallet");
       console.log();
-      console.log(chalk.green("Description: ")+ "Returns wallet public address");
-    } else{
-      if(config.get("Lighthouse_publicKey")){
-        console.log(chalk.yellow("Public Key: ") + config.get("Lighthouse_publicKey"));
-      } else{
+      console.log(
+        chalk.green("Description: ") + "Returns wallet public address"
+      );
+    } else {
+      if (config.get("Lighthouse_publicKey")) {
+        console.log(
+          chalk.yellow("Public Key: ") + config.get("Lighthouse_publicKey")
+        );
+      } else {
         console.log(chalk.red("Please import wallet first!"));
       }
     }
