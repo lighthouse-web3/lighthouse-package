@@ -14,6 +14,7 @@ module.exports = {
     console.log("status" + Array(31).fill('\xa0').join('') +"Get metadata around the storage per CID\n");
     console.log(chalk.cyan("Options"));
     console.log("--save" + Array(31).fill('\xa0').join('') +"Saves the wallet after creation\n");
+    console.log("--help" + Array(31).fill('\xa0').join('') +"Help for a specific command command\n");
     console.log(chalk.magenta("Example"));
     console.log("Create wallet and save it");
     console.log(Array(5).fill('\xa0').join('') + "lighthouse-web3 create-wallet --save\n");
