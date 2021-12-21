@@ -24,3 +24,5 @@ typings/
 .env.test
 
 package-lock.json
+
+wallet.json()
