@@ -9,24 +9,30 @@ module.exports = {
   command: "balance",
   desc: "Get current balance of your wallet",
   handler: async function (argv) {
-    if(argv.help){
+    if (argv.help) {
       console.log("lighthouse-web3 balance");
       console.log();
-      console.log(chalk.green("Description: ") + "Get current balance of your wallet");
-      console.log();
-    } else{
-      const spinner = new Spinner("");
-      spinner.start();
-      const balance = await Lighthouse.get_balance(
-        config.get("Lighthouse_publicKey")
+      console.log(
+        chalk.green("Description: ") + "Get current balance of your wallet"
       );
-      spinner.stop();
-      process.stdout.clearLine();
-      process.stdout.cursorTo(0);
-      if (balance) {
-        console.log(chalk.green("balance " + balance.data * 10 ** -18));
+      console.log();
+    } else {
+      if (config.get("Lighthouse_publicKey")) {
+        const spinner = new Spinner("");
+        spinner.start();
+        const balance = await Lighthouse.get_balance(
+          config.get("Lighthouse_publicKey")
+        );
+        spinner.stop();
+        process.stdout.clearLine();
+        process.stdout.cursorTo(0);
+        if (balance) {
+          console.log(chalk.green("balance " + balance.data * 10 ** -18));
+        } else {
+          console.log(chalk.red("Something Went Wrong!"));
+        }
       } else {
-        console.log(chalk.red("Something Went Wrong!"));
+        console.log(chalk.red("Please import wallet first!"));
       }
     }
   },
