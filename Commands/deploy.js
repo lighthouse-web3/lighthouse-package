@@ -19,9 +19,11 @@ module.exports = {
       console.log("   --path: Required, path to file");
       console.log();
       console.log(chalk.magenta("Example:"));
-      console.log("   lighthouse-web3 deploy /home/cosmos/Desktop/ILoveAnime.jpg");
+      console.log(
+        "   lighthouse-web3 deploy /home/cosmos/Desktop/ILoveAnime.jpg"
+      );
       console.log();
-    } else{
+    } else {
       const path = argv.path;
       const spinner = new Spinner("Getting Quote...");
       spinner.start();
@@ -62,7 +64,8 @@ module.exports = {
         console.log("Address: " + config.get("Lighthouse_publicKey"));
         console.log("Current balance: " + response.current_balance * 10 ** -18);
         const balance_after_deploy =
-          (Number(response.current_balance) - (response.cost + response.gasFee)) *
+          (Number(response.current_balance) -
+            (response.cost + response.gasFee)) *
           10 ** -18;
         console.log("Balance after deploy: " + balance_after_deploy);
 
@@ -138,7 +141,9 @@ module.exports = {
                     )
                   );
                   console.log(
-                    chalk.cyan("Visit: " + "https://dweb.link/ipfs/" + deploy.cid)
+                    chalk.cyan(
+                      "Visit: " + "https://dweb.link/ipfs/" + deploy.cid
+                    )
                   );
                   console.log("CID: " + deploy.cid);
 

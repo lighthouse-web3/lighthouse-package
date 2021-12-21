@@ -1,14 +1,14 @@
 const axios = require("axios");
 const fs = require("fs");
-const { Readable } = require('stream');
-const fetch = require('node-fetch');
+const { Readable } = require("stream");
+const fetch = require("node-fetch");
 const mime = require("mime-types");
-const Hash = require('ipfs-only-hash');
+const Hash = require("ipfs-only-hash");
 const EthCrypto = require("eth-crypto");
 const CryptoJS = require("crypto-js");
-const { FormData } = require('formdata-node')
-const {fileFromPath} = require("formdata-node/file-from-path");
-const { FormDataEncoder } = require('form-data-encoder');
+const { FormData } = require("formdata-node");
+const { fileFromPath } = require("formdata-node/file-from-path");
+const { FormDataEncoder } = require("form-data-encoder");
 
 const URL = "http://52.66.209.251:8000";
 
@@ -78,27 +78,30 @@ exports.user_token = async (expiry_time) => {
 };
 
 exports.deploy = async (path, token) => {
-  const fd = new FormData()
-	const data = await fileFromPath(path)
-	
-	fd.set('data', data, path.split("/").pop());
+  const fd = new FormData();
+  const data = await fileFromPath(path);
 
-	const encoder = new FormDataEncoder(fd);
+  fd.set("data", data, path.split("/").pop());
 
-	const headers = {
-	  Authorization: `Bearer ${token}`,
-	  Accept: 'application/json',
-	  ...encoder.headers
-	}
+  const encoder = new FormDataEncoder(fd);
 
-	const options = {
-	  method: 'POST',
-	  body: Readable.from(encoder),
-	  headers
-	}
-  
-  const response = await fetch('https://shuttle-4.estuary.tech/content/add', options)
-  return(await response.json())
+  const headers = {
+    Authorization: `Bearer ${token}`,
+    Accept: "application/json",
+    ...encoder.headers,
+  };
+
+  const options = {
+    method: "POST",
+    body: Readable.from(encoder),
+    headers,
+  };
+
+  const response = await fetch(
+    "https://shuttle-4.estuary.tech/content/add",
+    options
+  );
+  return await response.json();
 };
 
 function bytesToSize(bytes) {
@@ -119,8 +122,8 @@ exports.get_quote = async (path, publicKey) => {
     const ipfs_hash = await Hash.of(readStream, {
       cidVersion: 1,
       rawLeaves: true,
-      chunker: 'rabin',
-      minChunkSize: 1048576
+      chunker: "rabin",
+      minChunkSize: 1048576,
     });
 
     const body = {
