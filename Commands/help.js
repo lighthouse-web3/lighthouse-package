@@ -6,6 +6,7 @@ module.exports = {
     console.log(chalk.yellow("Welcome to lighthouse-web3\n"));
     console.log("Usage: lighthouse-web3" +chalk.cyan(" [command] ") +chalk.green("[options]\n"));
     console.log(chalk.green("Commands (alias)") +chalk.grey("                     Description"));
+    console.log("wallet" + Array(31).fill('\xa0').join('') + "Returns wallet public address");
     console.log("create-wallet" + Array(24).fill('\xa0').join('') + "Creates a new wallet");
     console.log("import-wallet" + Array(24).fill('\xa0').join('') + "Import an existing wallet");
     console.log("wallet-forget" + Array(24).fill('\xa0').join('') + "Remove previously saved wallet");
