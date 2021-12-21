@@ -1,7 +1,7 @@
 const chalk = require("chalk");
 const read = require("read");
 const Conf = require("conf");
-
+const Spinner = require("cli-spinner").Spinner;
 const Lighthouse = require("../Lighthouse");
 
 const config = new Conf();
@@ -102,7 +102,7 @@ module.exports = {
                 if (key) {
                   // Push CID to chain
                   console.log(chalk.green("Pushing CID to chain"));
-                  const spinner = new Spinner("");
+                  let spinner = new Spinner("");
                   spinner.start();
                   const transaction = await Lighthouse.push_cid_tochain(
                     key.privateKey,
@@ -122,6 +122,7 @@ module.exports = {
                   console.log();
 
                   // Upload File
+                  spinner = new Spinner("Uploading File");
                   spinner.start();
                   const upload_token = await Lighthouse.user_token("24h");
                   const deploy = await Lighthouse.deploy(

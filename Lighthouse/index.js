@@ -1,11 +1,14 @@
 const axios = require("axios");
-const FormData = require("form-data");
 const fs = require("fs");
+const { Readable } = require('stream');
 const fetch = require('node-fetch');
 const mime = require("mime-types");
 const Hash = require('ipfs-only-hash');
 const EthCrypto = require("eth-crypto");
 const CryptoJS = require("crypto-js");
+const { FormData } = require('formdata-node')
+const {fileFromPath} = require("formdata-node/file-from-path");
+const { FormDataEncoder } = require('form-data-encoder');
 
 const URL = "http://52.66.209.251:8000";
 
@@ -76,7 +79,7 @@ exports.user_token = async (expiry_time) => {
 
 exports.deploy = async (path, token) => {
   const fd = new FormData()
-	let data = await fileFromPath(path)
+	const data = await fileFromPath(path)
 	
 	fd.set('data', data, path.split("/").pop());
 
@@ -93,10 +96,9 @@ exports.deploy = async (path, token) => {
 	  body: Readable.from(encoder),
 	  headers
 	}
-
-  const response = fetch('https://shuttle-4.estuary.tech/content/add', options)
-  console.log(response)
-  return response.json()
+  
+  const response = await fetch('https://shuttle-4.estuary.tech/content/add', options)
+  return(await response.json())
 };
 
 function bytesToSize(bytes) {
