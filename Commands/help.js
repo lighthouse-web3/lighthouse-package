@@ -11,7 +11,7 @@ module.exports = {
     );
     console.log(
       chalk.green("Commands (alias)") +
-        chalk.grey("                     Description")
+        chalk.grey(Array(21).fill("\xa0").join("") + "Description")
     );
     console.log(
       "wallet" +
