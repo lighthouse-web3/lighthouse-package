@@ -7,7 +7,6 @@ const CryptoJS = require("crypto-js");
 const { Readable } = require("stream");
 const EthCrypto = require("eth-crypto");
 const { FormData } = require("formdata-node");
-const { bytesToSize } = require("./byteToSize");
 const { FormDataEncoder } = require("form-data-encoder");
 const { fileFromPath } = require("formdata-node/file-from-path");
 
@@ -127,7 +126,7 @@ exports.get_quote = async (path, publicKey) => {
     };
     const response = await axios.post(URL + `/api/estuary/get_quote`, body);
 
-    response.data.file_size = bytesToSize(fileSizeInBytes);
+    response.data.file_size = fileSizeInBytes;
     response.data.mime_type = mime_type;
     response.data.file_name = file_name;
     response.data.ipfs_hash = ipfs_hash;

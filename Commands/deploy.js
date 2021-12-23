@@ -3,6 +3,7 @@ const read = require("read");
 const Conf = require("conf");
 const Spinner = require("cli-spinner").Spinner;
 const Lighthouse = require("../Lighthouse");
+const { bytesToSize } = require("./byteToSize");
 
 const config = new Conf();
 
@@ -51,7 +52,7 @@ module.exports = {
         console.log();
 
         console.log(chalk.cyan("Summary"));
-        console.log("Total Size: " + response.file_size);
+        console.log("Total Size: " + bytesToSize(response.file_size));
         console.log("Fees: " + response.cost);
         console.log("Gas Fees: " + response.gasFee * 10 ** -18);
         console.log(
