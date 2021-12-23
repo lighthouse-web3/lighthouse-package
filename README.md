@@ -34,10 +34,10 @@ lighthouse-web3 status <cid>
 ```javascript
 const lighthouse = require('lighthouse-web3')
 
-# Create wallet
+// Create wallet
 const balance = await lighthouse.create_wallet("Password for private key encryption")
 
-# Get wallet balance
+// Get wallet balance
 const balance = await lighthouse.get_balance("Public Key")
 ```
 
