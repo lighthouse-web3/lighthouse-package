@@ -88,7 +88,7 @@ exports.deploy = async (path) => {
   const upload_token = await user_token("24h");
 
   const headers = {
-    Authorization: `Bearer ${upload_token}`,
+    Authorization: `Bearer ${upload_token.token}`,
     Accept: "application/json",
     ...encoder.headers,
   };
@@ -103,7 +103,11 @@ exports.deploy = async (path) => {
     "https://shuttle-4.estuary.tech/content/add",
     options
   );
-  return await response.json();
+  const obj = await response.json();
+  return {
+    cid: obj.cid,
+    providers: obj.providers,
+  };
 };
 
 exports.get_quote = async (path, publicKey) => {
