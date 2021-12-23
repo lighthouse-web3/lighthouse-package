@@ -1,10 +1,14 @@
-const axios = require("axios");
-const FormData = require("form-data");
 const fs = require("fs");
+const axios = require("axios");
+const Hash = require("./get_hash");
 const mime = require("mime-types");
-const Hash = require('ipfs-only-hash')
-const EthCrypto = require("eth-crypto");
+const fetch = require("node-fetch");
 const CryptoJS = require("crypto-js");
+const { Readable } = require("stream");
+const EthCrypto = require("eth-crypto");
+const { FormData } = require("formdata-node");
+const { FormDataEncoder } = require("form-data-encoder");
+const { fileFromPath } = require("formdata-node/file-from-path");
 
 const URL = "http://52.66.209.251:8000";
 
@@ -74,21 +78,30 @@ exports.user_token = async (expiry_time) => {
 };
 
 exports.deploy = async (path, token) => {
-  var formData = new FormData();
-  formData.append("data", fs.createReadStream(path));
+  const fd = new FormData();
+  const data = await fileFromPath(path);
 
-  const headers = formData.getHeaders();
-  const response = await axios.post(
-    "https://shuttle-5.estuary.tech/content/add",
-    formData,
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        ...headers,
-      },
-    }
+  fd.set("data", data, path.split("/").pop());
+
+  const encoder = new FormDataEncoder(fd);
+
+  const headers = {
+    Authorization: `Bearer ${token}`,
+    Accept: "application/json",
+    ...encoder.headers,
+  };
+
+  const options = {
+    method: "POST",
+    body: Readable.from(encoder),
+    headers,
+  };
+
+  const response = await fetch(
+    "https://shuttle-4.estuary.tech/content/add",
+    options
   );
-  return response.data;
+  return await response.json();
 };
 
 function bytesToSize(bytes) {
@@ -105,8 +118,13 @@ exports.get_quote = async (path, publicKey) => {
     const fileSizeInBytes = stats.size;
     const file_name = path.split("/").pop();
 
-    const readStream = fs.createReadStream(path, { encoding: 'utf-8' });
-    const ipfs_hash = await Hash.of(readStream, {cidVersion:1});
+    const readStream = fs.createReadStream(path);
+    const ipfs_hash = await Hash.of(readStream, {
+      cidVersion: 1,
+      rawLeaves: true,
+      chunker: "rabin",
+      minChunkSize: 1048576,
+    });
 
     const body = {
       fileSize: fileSizeInBytes,
