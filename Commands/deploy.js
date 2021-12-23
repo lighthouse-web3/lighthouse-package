@@ -128,11 +128,8 @@ module.exports = {
                   // Upload File
                   spinner = new Spinner("Uploading File");
                   spinner.start();
-                  const upload_token = await Lighthouse.user_token("24h");
-                  const deploy = await Lighthouse.deploy(
-                    path,
-                    upload_token.token
-                  );
+
+                  const deploy = await Lighthouse.deploy(path);
                   spinner.stop();
                   process.stdout.clearLine();
                   process.stdout.cursorTo(0);

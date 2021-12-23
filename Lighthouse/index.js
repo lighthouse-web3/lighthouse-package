@@ -66,7 +66,7 @@ exports.get_balance = async (publicKey) => {
   }
 };
 
-exports.user_token = async (expiry_time) => {
+const user_token = async (expiry_time) => {
   try {
     const response = await axios.get(
       URL + "/api/estuary/user_token?expiry_time=" + expiry_time
@@ -77,7 +77,7 @@ exports.user_token = async (expiry_time) => {
   }
 };
 
-exports.deploy = async (path, token) => {
+exports.deploy = async (path) => {
   const fd = new FormData();
   const data = await fileFromPath(path);
 
@@ -85,8 +85,10 @@ exports.deploy = async (path, token) => {
 
   const encoder = new FormDataEncoder(fd);
 
+  const upload_token = await user_token("24h");
+
   const headers = {
-    Authorization: `Bearer ${token}`,
+    Authorization: `Bearer ${upload_token}`,
     Accept: "application/json",
     ...encoder.headers,
   };
