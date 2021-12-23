@@ -1,14 +1,14 @@
-const axios = require("axios");
 const fs = require("fs");
-const { Readable } = require("stream");
-const fetch = require("node-fetch");
+const axios = require("axios");
+const Hash = require("./get_hash");
 const mime = require("mime-types");
-const EthCrypto = require("eth-crypto");
+const fetch = require("node-fetch");
 const CryptoJS = require("crypto-js");
+const { Readable } = require("stream");
+const EthCrypto = require("eth-crypto");
 const { FormData } = require("formdata-node");
-const { fileFromPath } = require("formdata-node/file-from-path");
 const { FormDataEncoder } = require("form-data-encoder");
-const Hash = require('./get_hash');
+const { fileFromPath } = require("formdata-node/file-from-path");
 
 const URL = "http://52.66.209.251:8000";
 

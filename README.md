@@ -9,6 +9,7 @@ npm install -g lighthouse-web3
 ```
 
 ## Cli Usage
+
 ```bash
 # create-wallet
 lighthouse-web3 create-wallet
@@ -28,25 +29,30 @@ lighthouse-web3 deploy <path>
 
 # status
 lighthouse-web3 status <cid>
-``` 
+```
 
 ## NodeJs Example
+
 ```javascript
-const lighthouse = require('lighthouse-web3')
+const lighthouse = require("lighthouse-web3");
 
 // Create wallet
-const balance = await lighthouse.create_wallet("Password for private key encryption")
+const balance = await lighthouse.create_wallet(
+  "Password for private key encryption"
+);
 
 // Get wallet balance
-const balance = await lighthouse.get_balance("Public Key")
+const balance = await lighthouse.get_balance("Public Key");
 ```
 
 Refer [GitBook](https://lighthouse-storage.gitbook.io/lighthouse/)
 
 ## Contributing
+
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
 
 Please make sure to update tests as appropriate.
 
 ## License
+
 [MIT](https://choosealicense.com/licenses/mit/)
