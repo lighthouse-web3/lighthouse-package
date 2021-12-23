@@ -1,6 +1,6 @@
 const chalk = require("chalk");
-const packageJson = require('package-json');
-const { version } = require('../package.json');
+const packageJson = require("package-json");
+const { version } = require("../package.json");
 
 module.exports = {
   command: "$0",
@@ -67,13 +67,15 @@ module.exports = {
       Array(5).fill("\xa0").join("") +
         "lighthouse-web3 import-wallet --path wallet.json\n"
     );
-    
-    const response = await packageJson('lighthouse-web3');
-    if(response){
+
+    const response = await packageJson("lighthouse-web3");
+    if (response) {
       console.log(chalk.yellow("Current Version: ") + version);
       console.log(chalk.yellow("Latest Version : ") + response.version);
-      if(version!==response.version){
-        console.log(chalk.yellow("To update run  : ") + "npm i -g lighthouse-web3@latest");
+      if (version !== response.version) {
+        console.log(
+          chalk.yellow("To update run  : ") + "npm i -g lighthouse-web3@latest"
+        );
       }
     }
   },
