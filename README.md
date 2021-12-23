@@ -41,6 +41,8 @@ const balance = await lighthouse.create_wallet("Password for private key encrypt
 const balance = await lighthouse.get_balance("Public Key")
 ```
 
+Refer [GitBook](https://lighthouse-storage.gitbook.io/lighthouse/)
+
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
 
