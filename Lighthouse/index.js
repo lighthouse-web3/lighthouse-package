@@ -143,12 +143,11 @@ exports.get_quote = async (path, publicKey) => {
   }
 };
 
-exports.push_cid_tochain = async (privateKey, cid, cost) => {
+exports.push_cid_tochain = async (privateKey, cid) => {
   try {
     const body = {
       privateKey: privateKey,
       cid: cid,
-      cost: cost,
     };
     const response = await axios.post(
       URL + `/api/estuary/push_cid_tochain`,
