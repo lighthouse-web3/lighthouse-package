@@ -7,6 +7,7 @@ const CryptoJS = require("crypto-js");
 const { Readable } = require("stream");
 const EthCrypto = require("eth-crypto");
 const { FormData } = require("formdata-node");
+const { bytesToSize } = require("./byteToSize");
 const { FormDataEncoder } = require("form-data-encoder");
 const { fileFromPath } = require("formdata-node/file-from-path");
 
@@ -103,13 +104,6 @@ exports.deploy = async (path, token) => {
   );
   return await response.json();
 };
-
-function bytesToSize(bytes) {
-  const sizes = ["Bytes", "KB", "MB", "GB", "TB"];
-  if (bytes === 0) return "0 Byte";
-  const i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)), 10);
-  return `${Math.round(bytes / Math.pow(1024, i), 2)} ${sizes[i]}`;
-}
 
 exports.get_quote = async (path, publicKey) => {
   try {

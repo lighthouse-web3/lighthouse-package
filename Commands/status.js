@@ -1,6 +1,6 @@
 const chalk = require("chalk");
 const Lighthouse = require("../Lighthouse");
-const { bytesToSize } = require("./byteToSize");
+const { bytesToSize } = require("../Lighthouse/byteToSize");
 
 module.exports = {
   command: "status <cid>",
