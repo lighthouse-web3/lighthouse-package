@@ -11,7 +11,8 @@
   },
   "keywords": [
     "lighthouse",
-    "lighthouse-cli"
+    "lighthouse-cli",
+    "lighthouse npm package"
   ],
   "author": "ravish@lighthouse.storage",
   "license": "MIT",
@@ -28,6 +29,7 @@
     "ipfs-unixfs-importer": "^9.0.6",
     "mime-types": "^2.1.34",
     "node-fetch": "^2.6.1",
+    "package-json": "^7.0.0",
     "read": "^1.0.7",
     "yargs": "^17.2.1"
   }
