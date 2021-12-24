@@ -1,9 +1,10 @@
-const chalk = require("chalk");
+const fs = require("fs");
 const Conf = require("conf");
 const read = require("read");
-const fs = require("fs");
-
+const chalk = require("chalk");
+const { resolve } = require('path');
 const Lighthouse = require("../Lighthouse");
+
 const config = new Conf();
 
 module.exports = {
@@ -68,7 +69,8 @@ module.exports = {
         });
       } else if (argv.path) {
         try {
-          const wallet = JSON.parse(fs.readFileSync(argv.path));
+          const path = resolve(process.cwd(), argv.path);
+          const wallet = JSON.parse(fs.readFileSync(path));
           if (wallet) {
             config.set(
               "Lighthouse_privateKeyEncrypted",
