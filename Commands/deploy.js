@@ -1,7 +1,7 @@
 const chalk = require("chalk");
 const read = require("read");
 const Conf = require("conf");
-const { resolve } = require('path');
+const { resolve } = require("path");
 const Spinner = require("cli-spinner").Spinner;
 const Lighthouse = require("../Lighthouse");
 const { bytesToSize } = require("./byteToSize");
@@ -36,22 +36,38 @@ module.exports = {
       spinner.stop();
       process.stdout.clearLine();
       process.stdout.cursorTo(0);
-      
+
       if (response) {
         console.log(
-          chalk.cyan("CID")  + Array(60).fill("\xa0").join("") +
-          chalk.cyan("Size") + Array(8).fill("\xa0").join("") +
-          chalk.cyan("Fee")  + Array(21).fill("\xa0").join("") +
-          chalk.cyan("Type") + Array(20).fill("\xa0").join("") +
-          chalk.cyan("Name")
+          chalk.cyan("CID") +
+            Array(60).fill("\xa0").join("") +
+            chalk.cyan("Size") +
+            Array(8).fill("\xa0").join("") +
+            chalk.cyan("Fee") +
+            Array(21).fill("\xa0").join("") +
+            chalk.cyan("Type") +
+            Array(20).fill("\xa0").join("") +
+            chalk.cyan("Name")
         );
-        
+
         console.log(
-          response.ipfs_hash  + Array(63 - response.ipfs_hash.length).fill("\xa0").join("") +
-          bytesToSize(response.file_size) + Array(12 - bytesToSize(response.file_size).toString().length).fill("\xa0").join("") +
-          response.cost  + Array(24 - response.cost.toString().length).fill("\xa0").join("") +
-          response.mime_type + Array(24 - response.mime_type.length).fill("\xa0").join("") +
-          response.file_name
+          response.ipfs_hash +
+            Array(63 - response.ipfs_hash.length)
+              .fill("\xa0")
+              .join("") +
+            bytesToSize(response.file_size) +
+            Array(12 - bytesToSize(response.file_size).toString().length)
+              .fill("\xa0")
+              .join("") +
+            response.cost +
+            Array(24 - response.cost.toString().length)
+              .fill("\xa0")
+              .join("") +
+            response.mime_type +
+            Array(24 - response.mime_type.length)
+              .fill("\xa0")
+              .join("") +
+            response.file_name
         );
 
         console.log();
@@ -110,7 +126,12 @@ module.exports = {
                 );
 
                 if (key) {
-                  const deploy = await Lighthouse.deploy(path, key.privateKey, response.ipfs_hash, true);
+                  const deploy = await Lighthouse.deploy(
+                    path,
+                    key.privateKey,
+                    response.ipfs_hash,
+                    true
+                  );
                   console.log(
                     chalk.green(
                       "File Deployed, visit following url to view content!"
@@ -120,6 +141,9 @@ module.exports = {
                     chalk.cyan(
                       "Visit: " + "https://dweb.link/ipfs/" + deploy.cid
                     )
+                  );
+                  console.log(
+                    chalk.cyan("     : " + "https://ipfs.io/ipfs/" + deploy.cid)
                   );
                   console.log("CID: " + deploy.cid);
                   process.exit();
