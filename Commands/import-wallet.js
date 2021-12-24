@@ -2,7 +2,7 @@ const fs = require("fs");
 const Conf = require("conf");
 const read = require("read");
 const chalk = require("chalk");
-const { resolve } = require('path');
+const { resolve } = require("path");
 const Lighthouse = require("../Lighthouse");
 
 const config = new Conf();
@@ -23,15 +23,19 @@ module.exports = {
     if (argv.help) {
       console.log("lighthouse-web3 import-wallet");
       console.log();
-      console.log(chalk.green("Description: ")+ "Import an existing wallet");
+      console.log(chalk.green("Description: ") + "Import an existing wallet");
       console.log();
       console.log(chalk.cyan("Options: "));
       console.log("   --key <privateKey>");
       console.log("   --path <path to wallet>");
       console.log();
-      console.log(chalk.magenta("Example: "))
-      console.log("     lighthouse-web3 import-wallet --key 0xlkjhcf1721e6e1828a15c72c1d2aa80c633e45574cb60f5e821681999f3d1700");
-      console.log("     lighthouse-web3 import-wallet --path /home/user/wallet.json");
+      console.log(chalk.magenta("Example: "));
+      console.log(
+        "     lighthouse-web3 import-wallet --key 0xlkjhcf1721e6e1828a15c72c1d2aa80c633e45574cb60f5e821681999f3d1700"
+      );
+      console.log(
+        "     lighthouse-web3 import-wallet --path /home/user/wallet.json"
+      );
       console.log();
     } else {
       if (argv.key) {
@@ -41,9 +45,12 @@ module.exports = {
           silent: true,
           default: "",
         };
-    
+
         read(options, async (err, result) => {
-          const wallet = await Lighthouse.restore_keys(privateKey, result.trim());
+          const wallet = await Lighthouse.restore_keys(
+            privateKey,
+            result.trim()
+          );
           if (wallet) {
             fs.writeFile(
               "wallet.json",
@@ -52,13 +59,13 @@ module.exports = {
                 if (err) {
                   console.log(chalk.red("Creating Wallet Failed!"));
                 }
-    
+
                 config.set(
                   "Lighthouse_privateKeyEncrypted",
                   wallet["privateKeyEncrypted"]
                 );
                 config.set("Lighthouse_publicKey", wallet["publicKey"]);
-    
+
                 console.log(chalk.cyan("Public Key: " + wallet.publicKey));
                 console.log(chalk.green("Wallet Created!"));
               }

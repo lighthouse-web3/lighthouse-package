@@ -128,25 +128,22 @@ const push_cid_tochain = async (privateKey, cid) => {
   }
 };
 
-exports.deploy = async (path, privateKey, cid, cli=false) => {
-
+exports.deploy = async (path, privateKey, cid, cli = false) => {
   // Push CID to chain
   let spinner = new Spinner();
-  if(cli){
+  if (cli) {
     console.log(chalk.green("Pushing CID to chain"));
     spinner.start();
   }
 
   const txObj = await push_cid_tochain(privateKey, cid);
-  
-  if(cli){
+
+  if (cli) {
     spinner.stop();
     process.stdout.clearLine();
     process.stdout.cursorTo(0);
     console.log(
-      "Transaction: " +
-        "https://polygonscan.com/tx/" +
-        txObj.transactionHash
+      "Transaction: " + "https://polygonscan.com/tx/" + txObj.transactionHash
     );
     console.log(chalk.green("CID pushed to chain"));
 
@@ -154,7 +151,7 @@ exports.deploy = async (path, privateKey, cid, cli=false) => {
   }
 
   // Upload File to IPFS
-  if(cli){
+  if (cli) {
     spinner = new Spinner("Uploading File");
     spinner.start();
   }
@@ -185,8 +182,8 @@ exports.deploy = async (path, privateKey, cid, cli=false) => {
     options
   );
   const obj = await response.json();
-  
-  if(cli){
+
+  if (cli) {
     spinner.stop();
     process.stdout.clearLine();
     process.stdout.cursorTo(0);
