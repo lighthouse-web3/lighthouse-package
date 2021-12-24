@@ -4,13 +4,13 @@ const { bytesToSize } = require("./byteToSize");
 
 module.exports = {
   command: "status <cid>",
-  desc: "Get metadata around the storage per CID",
+  desc: "Get storage status of a CID",
   handler: async function (argv) {
     if (argv.help) {
       console.log("lighthouse-web3 status <cid>");
       console.log();
       console.log(
-        chalk.green("Description: ") + "Get metadata around the storage per CID"
+        chalk.green("Description: ") + "Get storage status of a CID"
       );
     } else {
       const response = await Lighthouse.status(argv.cid);
