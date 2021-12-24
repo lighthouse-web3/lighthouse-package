@@ -66,7 +66,7 @@ exports.get_balance = async (publicKey) => {
   }
 };
 
-exports.user_token = async (expiry_time) => {
+const user_token = async (expiry_time) => {
   try {
     const response = await axios.get(
       URL + "/api/estuary/user_token?expiry_time=" + expiry_time
@@ -77,7 +77,7 @@ exports.user_token = async (expiry_time) => {
   }
 };
 
-exports.deploy = async (path, token) => {
+exports.deploy = async (path) => {
   const fd = new FormData();
   const data = await fileFromPath(path);
 
@@ -85,8 +85,10 @@ exports.deploy = async (path, token) => {
 
   const encoder = new FormDataEncoder(fd);
 
+  const upload_token = await user_token("24h");
+
   const headers = {
-    Authorization: `Bearer ${token}`,
+    Authorization: `Bearer ${upload_token.token}`,
     Accept: "application/json",
     ...encoder.headers,
   };
@@ -101,15 +103,12 @@ exports.deploy = async (path, token) => {
     "https://shuttle-4.estuary.tech/content/add",
     options
   );
-  return await response.json();
+  const obj = await response.json();
+  return {
+    cid: obj.cid,
+    providers: obj.providers,
+  };
 };
-
-function bytesToSize(bytes) {
-  const sizes = ["Bytes", "KB", "MB", "GB", "TB"];
-  if (bytes === 0) return "0 Byte";
-  const i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)), 10);
-  return `${Math.round(bytes / Math.pow(1024, i), 2)} ${sizes[i]}`;
-}
 
 exports.get_quote = async (path, publicKey) => {
   try {
@@ -133,7 +132,7 @@ exports.get_quote = async (path, publicKey) => {
     };
     const response = await axios.post(URL + `/api/estuary/get_quote`, body);
 
-    response.data.file_size = bytesToSize(fileSizeInBytes);
+    response.data.file_size = fileSizeInBytes;
     response.data.mime_type = mime_type;
     response.data.file_name = file_name;
     response.data.ipfs_hash = ipfs_hash;
@@ -144,12 +143,11 @@ exports.get_quote = async (path, publicKey) => {
   }
 };
 
-exports.push_cid_tochain = async (privateKey, cid, cost) => {
+exports.push_cid_tochain = async (privateKey, cid) => {
   try {
     const body = {
       privateKey: privateKey,
       cid: cid,
-      cost: cost,
     };
     const response = await axios.post(
       URL + `/api/estuary/push_cid_tochain`,
