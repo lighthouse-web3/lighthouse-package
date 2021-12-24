@@ -1,5 +1,6 @@
 const fs = require("fs");
 const axios = require("axios");
+const chalk = require("chalk");
 const Hash = require("./get_hash");
 const mime = require("mime-types");
 const fetch = require("node-fetch");
@@ -7,6 +8,7 @@ const CryptoJS = require("crypto-js");
 const { Readable } = require("stream");
 const EthCrypto = require("eth-crypto");
 const { FormData } = require("formdata-node");
+const Spinner = require("cli-spinner").Spinner;
 const { FormDataEncoder } = require("form-data-encoder");
 const { fileFromPath } = require("formdata-node/file-from-path");
 
@@ -77,39 +79,6 @@ const user_token = async (expiry_time) => {
   }
 };
 
-exports.deploy = async (path) => {
-  const fd = new FormData();
-  const data = await fileFromPath(path);
-
-  fd.set("data", data, path.split("/").pop());
-
-  const encoder = new FormDataEncoder(fd);
-
-  const upload_token = await user_token("24h");
-
-  const headers = {
-    Authorization: `Bearer ${upload_token.token}`,
-    Accept: "application/json",
-    ...encoder.headers,
-  };
-
-  const options = {
-    method: "POST",
-    body: Readable.from(encoder),
-    headers,
-  };
-
-  const response = await fetch(
-    "https://shuttle-4.estuary.tech/content/add",
-    options
-  );
-  const obj = await response.json();
-  return {
-    cid: obj.cid,
-    providers: obj.providers,
-  };
-};
-
 exports.get_quote = async (path, publicKey) => {
   try {
     const stats = fs.statSync(path);
@@ -143,7 +112,7 @@ exports.get_quote = async (path, publicKey) => {
   }
 };
 
-exports.push_cid_tochain = async (privateKey, cid) => {
+const push_cid_tochain = async (privateKey, cid) => {
   try {
     const body = {
       privateKey: privateKey,
@@ -157,6 +126,77 @@ exports.push_cid_tochain = async (privateKey, cid) => {
   } catch {
     return null;
   }
+};
+
+exports.deploy = async (path, privateKey, cid, cli=false) => {
+
+  // Push CID to chain
+  let spinner = new Spinner();
+  if(cli){
+    console.log(chalk.green("Pushing CID to chain"));
+    spinner.start();
+  }
+
+  const txObj = await push_cid_tochain(privateKey, cid);
+  
+  if(cli){
+    spinner.stop();
+    process.stdout.clearLine();
+    process.stdout.cursorTo(0);
+    console.log(
+      "Transaction: " +
+        "https://polygonscan.com/tx/" +
+        txObj.transactionHash
+    );
+    console.log(chalk.green("CID pushed to chain"));
+
+    console.log();
+  }
+
+  // Upload File to IPFS
+  if(cli){
+    spinner = new Spinner("Uploading File");
+    spinner.start();
+  }
+
+  const fd = new FormData();
+  const data = await fileFromPath(path);
+
+  fd.set("data", data, path.split("/").pop());
+
+  const encoder = new FormDataEncoder(fd);
+
+  const upload_token = await user_token("24h");
+
+  const headers = {
+    Authorization: `Bearer ${upload_token.token}`,
+    Accept: "application/json",
+    ...encoder.headers,
+  };
+
+  const options = {
+    method: "POST",
+    body: Readable.from(encoder),
+    headers,
+  };
+
+  const response = await fetch(
+    "https://shuttle-4.estuary.tech/content/add",
+    options
+  );
+  const obj = await response.json();
+  
+  if(cli){
+    spinner.stop();
+    process.stdout.clearLine();
+    process.stdout.cursorTo(0);
+  }
+
+  return {
+    cid: obj.cid,
+    providers: obj.providers,
+    tx: txObj,
+  };
 };
 
 exports.status = async (cid) => {
