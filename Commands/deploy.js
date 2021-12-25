@@ -10,12 +10,12 @@ const config = new Conf();
 
 module.exports = {
   command: "deploy <path>",
-  desc: "Deploy a directory or file",
+  desc: "Deploy a file",
   handler: async function (argv) {
     if (argv.help) {
       console.log("lighthouse-web3 deploy <path>");
       console.log();
-      console.log(chalk.green("Description: ") + "Deploy a directory or file");
+      console.log(chalk.green("Description: ") + "Deploy a file");
       console.log();
       console.log(chalk.cyan("Options:"));
       console.log("   --path: Required, path to file");

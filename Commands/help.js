@@ -39,7 +39,7 @@ module.exports = {
         "Get current balance of your wallet"
     );
     console.log(
-      "deploy" + Array(31).fill("\xa0").join("") + "Deploy a directory or file"
+      "deploy" + Array(31).fill("\xa0").join("") + "Deploy a file"
     );
     console.log(
       "status" +
