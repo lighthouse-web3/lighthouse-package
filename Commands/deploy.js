@@ -1,6 +1,7 @@
 const chalk = require("chalk");
 const read = require("read");
 const Conf = require("conf");
+const { resolve } = require("path");
 const Spinner = require("cli-spinner").Spinner;
 const Lighthouse = require("../Lighthouse");
 const { bytesToSize } = require("./byteToSize");
@@ -9,12 +10,12 @@ const config = new Conf();
 
 module.exports = {
   command: "deploy <path>",
-  desc: "Deploy a directory or file",
+  desc: "Deploy a file",
   handler: async function (argv) {
     if (argv.help) {
       console.log("lighthouse-web3 deploy <path>");
       console.log();
-      console.log(chalk.green("Description: ") + "Deploy a directory or file");
+      console.log(chalk.green("Description: ") + "Deploy a file");
       console.log();
       console.log(chalk.cyan("Options:"));
       console.log("   --path: Required, path to file");
@@ -25,7 +26,7 @@ module.exports = {
       );
       console.log();
     } else {
-      const path = argv.path;
+      const path = resolve(process.cwd(), argv.path);
       const spinner = new Spinner("Getting Quote...");
       spinner.start();
       const response = await Lighthouse.get_quote(
@@ -35,18 +36,38 @@ module.exports = {
       spinner.stop();
       process.stdout.clearLine();
       process.stdout.cursorTo(0);
+
       if (response) {
-        console.table(
-          [
-            {
-              ID: response.ipfs_hash,
-              Size: response.file_size,
-              Fee: response.cost,
-              Type: response.mime_type,
-              Name: response.file_name,
-            },
-          ],
-          ["ID", "Size", "Fee", "Type", "Name"]
+        console.log(
+          chalk.cyan("CID") +
+            Array(60).fill("\xa0").join("") +
+            chalk.cyan("Size") +
+            Array(8).fill("\xa0").join("") +
+            chalk.cyan("Fee") +
+            Array(21).fill("\xa0").join("") +
+            chalk.cyan("Type") +
+            Array(20).fill("\xa0").join("") +
+            chalk.cyan("Name")
+        );
+
+        console.log(
+          response.ipfs_hash +
+            Array(63 - response.ipfs_hash.length)
+              .fill("\xa0")
+              .join("") +
+            bytesToSize(response.file_size) +
+            Array(12 - bytesToSize(response.file_size).toString().length)
+              .fill("\xa0")
+              .join("") +
+            response.cost +
+            Array(24 - response.cost.toString().length)
+              .fill("\xa0")
+              .join("") +
+            response.mime_type +
+            Array(24 - response.mime_type.length)
+              .fill("\xa0")
+              .join("") +
+            response.file_name
         );
 
         console.log();
@@ -103,36 +124,14 @@ module.exports = {
                   config.get("Lighthouse_privateKeyEncrypted"),
                   password.trim()
                 );
+
                 if (key) {
-                  // Push CID to chain
-                  console.log(chalk.green("Pushing CID to chain"));
-                  let spinner = new Spinner("");
-                  spinner.start();
-                  const transaction = await Lighthouse.push_cid_tochain(
+                  const deploy = await Lighthouse.deploy(
+                    path,
                     key.privateKey,
                     response.ipfs_hash,
-                    response.cost.toFixed(4)
+                    true
                   );
-                  spinner.stop();
-                  process.stdout.clearLine();
-                  process.stdout.cursorTo(0);
-                  console.log(
-                    "Transaction: " +
-                      "https://polygonscan.com/tx/" +
-                      transaction.transactionHash
-                  );
-                  console.log(chalk.green("CID pushed to chain"));
-
-                  console.log();
-
-                  // Upload File
-                  spinner = new Spinner("Uploading File");
-                  spinner.start();
-
-                  const deploy = await Lighthouse.deploy(path);
-                  spinner.stop();
-                  process.stdout.clearLine();
-                  process.stdout.cursorTo(0);
                   console.log(
                     chalk.green(
                       "File Deployed, visit following url to view content!"
@@ -143,8 +142,10 @@ module.exports = {
                       "Visit: " + "https://dweb.link/ipfs/" + deploy.cid
                     )
                   );
+                  console.log(
+                    chalk.cyan("     : " + "https://ipfs.io/ipfs/" + deploy.cid)
+                  );
                   console.log("CID: " + deploy.cid);
-
                   process.exit();
                 } else {
                   console.log(chalk.red("Something Went Wrong!"));

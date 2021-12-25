@@ -55,7 +55,7 @@ module.exports = {
             );
           }
         } else {
-          console.log("CID push to filecoin network in progress.");
+          console.log("CID push to miners in progress.");
         }
         break;
       }
