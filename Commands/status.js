@@ -9,9 +9,7 @@ module.exports = {
     if (argv.help) {
       console.log("lighthouse-web3 status <cid>");
       console.log();
-      console.log(
-        chalk.green("Description: ") + "Get storage status of a CID"
-      );
+      console.log(chalk.green("Description: ") + "Get storage status of a CID");
     } else {
       const response = await Lighthouse.status(argv.cid);
       console.log();

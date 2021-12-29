@@ -67,7 +67,7 @@ module.exports = {
                 config.set("Lighthouse_publicKey", wallet["publicKey"]);
 
                 console.log(chalk.cyan("Public Key: " + wallet.publicKey));
-                console.log(chalk.green("Wallet Created!"));
+                console.log(chalk.green("Wallet Imported!"));
               }
             );
           } else {
@@ -84,6 +84,7 @@ module.exports = {
               wallet["privateKeyEncrypted"]
             );
             config.set("Lighthouse_publicKey", wallet["publicKey"]);
+            console.log(chalk.cyan("Public Key: " + wallet.publicKey));
             console.log(chalk.green("Wallet Imported!"));
           } else {
             console.log(chalk.red("Importing Wallet Failed!"));
