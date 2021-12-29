@@ -21,7 +21,10 @@ module.exports = {
         const spinner = new Spinner("");
         spinner.start();
         const balance = await Lighthouse.get_balance(
-          config.get("Lighthouse_publicKey")
+          config.get("Lighthouse_publicKey"),
+          config.get("Lighthouse_chain")
+            ? config.get("Lighthouse_chain")
+            : "polygon"
         );
         spinner.stop();
         process.stdout.clearLine();

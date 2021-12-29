@@ -57,10 +57,11 @@ exports.restore_keys = async (privateKey, password) => {
   }
 };
 
-exports.get_balance = async (publicKey) => {
+exports.get_balance = async (publicKey, chain = "polygon") => {
   try {
     const response = await axios.post(URL + "/api/wallet/get_balance", {
       publicKey: publicKey,
+      chain: chain,
     });
     return response.data;
   } catch {
@@ -79,7 +80,7 @@ const user_token = async (expiry_time) => {
   }
 };
 
-exports.get_quote = async (path, publicKey) => {
+exports.get_quote = async (path, publicKey, chain = "polygon") => {
   try {
     const stats = fs.statSync(path);
     const mime_type = mime.lookup(path);
@@ -98,6 +99,7 @@ exports.get_quote = async (path, publicKey) => {
       fileSize: fileSizeInBytes,
       publicKey: publicKey,
       ipfs_hash: ipfs_hash,
+      chain: chain,
     };
     const response = await axios.post(URL + `/api/estuary/get_quote`, body);
 
@@ -112,11 +114,12 @@ exports.get_quote = async (path, publicKey) => {
   }
 };
 
-const push_cid_tochain = async (privateKey, cid) => {
+const push_cid_tochain = async (privateKey, cid, chain = "polygon") => {
   try {
     const body = {
       privateKey: privateKey,
       cid: cid,
+      chain: chain,
     };
     const response = await axios.post(
       URL + `/api/estuary/push_cid_tochain`,
@@ -128,7 +131,13 @@ const push_cid_tochain = async (privateKey, cid) => {
   }
 };
 
-exports.deploy = async (path, privateKey, cid, cli = false) => {
+exports.deploy = async (
+  path,
+  privateKey,
+  cid,
+  cli = false,
+  chain = "polygon"
+) => {
   // Push CID to chain
   let spinner = new Spinner();
   if (cli) {
@@ -136,15 +145,26 @@ exports.deploy = async (path, privateKey, cid, cli = false) => {
     spinner.start();
   }
 
-  const txObj = await push_cid_tochain(privateKey, cid);
+  const txObj = await push_cid_tochain(privateKey, cid, chain);
 
   if (cli) {
     spinner.stop();
     process.stdout.clearLine();
     process.stdout.cursorTo(0);
-    console.log(
-      "Transaction: " + "https://polygonscan.com/tx/" + txObj.transactionHash
-    );
+    if (chain === "binance") {
+      console.log(
+        "Transaction: " + "https://bscscan.com/tx/" + txObj.transactionHash
+      );
+    } else if (chain === "fantom") {
+      console.log(
+        "Transaction: " + "https://ftmscan.com/tx/" + txObj.transactionHash
+      );
+    } else {
+      console.log(
+        "Transaction: " + "https://polygonscan.com/tx/" + txObj.transactionHash
+      );
+    }
+
     console.log(chalk.green("CID pushed to chain"));
 
     console.log();

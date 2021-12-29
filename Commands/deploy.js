@@ -31,7 +31,10 @@ module.exports = {
       spinner.start();
       const response = await Lighthouse.get_quote(
         argv.path,
-        config.get("Lighthouse_publicKey")
+        config.get("Lighthouse_publicKey"),
+        config.get("Lighthouse_chain")
+          ? config.get("Lighthouse_chain")
+          : "polygon"
       );
       spinner.stop();
       process.stdout.clearLine();
@@ -130,7 +133,10 @@ module.exports = {
                     path,
                     key.privateKey,
                     response.ipfs_hash,
-                    true
+                    true,
+                    config.get("Lighthouse_chain")
+                      ? config.get("Lighthouse_chain")
+                      : "polygon"
                   );
                   console.log(
                     chalk.green(
