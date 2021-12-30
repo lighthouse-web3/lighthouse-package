@@ -71,6 +71,11 @@ module.exports = {
       );
       console.log(chalk.cyan("Options"));
       console.log(
+        "--chain" +
+          Array(30).fill("\xa0").join("") +
+          "Change network chain\n"
+      );
+      console.log(
         "--save" +
           Array(31).fill("\xa0").join("") +
           "Saves the wallet after creation\n"
@@ -81,6 +86,19 @@ module.exports = {
           "Help for a specific command command\n"
       );
       console.log(chalk.magenta("Example"));
+      console.log("Change Network");
+      console.log(
+        Array(5).fill("\xa0").join("") +
+          "lighthouse-web3 --chain polygon\n"
+      );
+      console.log(
+        Array(5).fill("\xa0").join("") +
+          "lighthouse-web3 --chain fantom\n"
+      );
+      console.log(
+        Array(5).fill("\xa0").join("") +
+          "lighthouse-web3 --chain binance\n"
+      );
       console.log("Create wallet and save it");
       console.log(
         Array(5).fill("\xa0").join("") +
