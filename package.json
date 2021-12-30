@@ -1,6 +1,6 @@
 {
   "name": "lighthouse-web3",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "NPM package and CLI tool to interact with lighthouse protocol",
   "main": "index.js",
   "scripts": {
