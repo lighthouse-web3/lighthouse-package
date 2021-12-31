@@ -3,7 +3,7 @@ const Conf = require("conf");
 const read = require("read");
 const chalk = require("chalk");
 const { resolve } = require("path");
-const Lighthouse = require("../Lighthouse");
+const { restore_keys } = require("../Lighthouse/restore_keys");
 
 const config = new Conf();
 
@@ -47,7 +47,7 @@ module.exports = {
         };
 
         read(options, async (err, result) => {
-          const wallet = await Lighthouse.restore_keys(
+          const wallet = await restore_keys(
             privateKey,
             result.trim()
           );

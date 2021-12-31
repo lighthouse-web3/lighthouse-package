@@ -3,8 +3,10 @@ const read = require("read");
 const Conf = require("conf");
 const { resolve } = require("path");
 const Spinner = require("cli-spinner").Spinner;
-const Lighthouse = require("../Lighthouse");
 const { bytesToSize } = require("./byteToSize");
+const { deploy } = require("../Lighthouse/deploy");
+const { get_key } = require("../Lighthouse/get_key");
+const { get_quote } = require("../Lighthouse/get_quote");
 
 const config = new Conf();
 
@@ -29,7 +31,7 @@ module.exports = {
       const path = resolve(process.cwd(), argv.path);
       const spinner = new Spinner("Getting Quote...");
       spinner.start();
-      const response = await Lighthouse.get_quote(
+      const response = await get_quote(
         argv.path,
         config.get("Lighthouse_publicKey"),
         config.get("Lighthouse_chain")
@@ -123,13 +125,13 @@ module.exports = {
               };
 
               read(options, async (err, password) => {
-                const key = await Lighthouse.get_key(
+                const key = await get_key(
                   config.get("Lighthouse_privateKeyEncrypted"),
                   password.trim()
                 );
 
                 if (key) {
-                  const deploy = await Lighthouse.deploy(
+                  const deploy_response = await deploy(
                     path,
                     key.privateKey,
                     response.ipfs_hash,
@@ -145,13 +147,13 @@ module.exports = {
                   );
                   console.log(
                     chalk.cyan(
-                      "Visit: " + "https://dweb.link/ipfs/" + deploy.cid
+                      "Visit: " + "https://dweb.link/ipfs/" + deploy_response.cid
                     )
                   );
                   console.log(
-                    chalk.cyan("     : " + "https://ipfs.io/ipfs/" + deploy.cid)
+                    chalk.cyan("     : " + "https://ipfs.io/ipfs/" + deploy_response.cid)
                   );
-                  console.log("CID: " + deploy.cid);
+                  console.log("CID: " + deploy_response.cid);
                   process.exit();
                 } else {
                   console.log(chalk.red("Something Went Wrong!"));

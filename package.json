@@ -4,7 +4,9 @@
   "description": "NPM package and CLI tool to interact with lighthouse protocol",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "lint": "trunk check",
+    "test": "jest"
   },
   "bin": {
     "lighthouse-web3": "cli.js"
@@ -32,5 +34,8 @@
     "package-json": "^7.0.0",
     "read": "^1.0.7",
     "yargs": "^17.2.1"
+  },
+  "devDependencies": {
+    "jest": "^27.4.5"
   }
 }
