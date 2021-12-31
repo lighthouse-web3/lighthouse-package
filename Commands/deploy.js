@@ -147,11 +147,15 @@ module.exports = {
                   );
                   console.log(
                     chalk.cyan(
-                      "Visit: " + "https://dweb.link/ipfs/" + deploy_response.cid
+                      "Visit: " +
+                        "https://dweb.link/ipfs/" +
+                        deploy_response.cid
                     )
                   );
                   console.log(
-                    chalk.cyan("     : " + "https://ipfs.io/ipfs/" + deploy_response.cid)
+                    chalk.cyan(
+                      "     : " + "https://ipfs.io/ipfs/" + deploy_response.cid
+                    )
                   );
                   console.log("CID: " + deploy_response.cid);
                   process.exit();

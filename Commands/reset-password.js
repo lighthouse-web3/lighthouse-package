@@ -13,7 +13,9 @@ module.exports = {
     if (argv.help) {
       console.log("lighthouse-web3 reset-password <privateKey>");
       console.log();
-      console.log(chalk.green("Description: ")+ "Change password of your wallet");
+      console.log(
+        chalk.green("Description: ") + "Change password of your wallet"
+      );
     } else {
       const privateKey = argv.privateKey;
       const options = {
