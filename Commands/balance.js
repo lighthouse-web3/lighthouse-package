@@ -2,7 +2,7 @@ const Conf = require("conf");
 const chalk = require("chalk");
 const Spinner = require("cli-spinner").Spinner;
 
-const Lighthouse = require("../Lighthouse");
+const { get_balance } = require("../Lighthouse/get_balance");
 const config = new Conf();
 
 module.exports = {
@@ -20,7 +20,7 @@ module.exports = {
       if (config.get("Lighthouse_publicKey")) {
         const spinner = new Spinner("");
         spinner.start();
-        const balance = await Lighthouse.get_balance(
+        const balance = await get_balance(
           config.get("Lighthouse_publicKey"),
           config.get("Lighthouse_chain")
             ? config.get("Lighthouse_chain")
