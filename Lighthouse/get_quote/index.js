@@ -25,7 +25,10 @@ exports.get_quote = async (path, publicKey, chain = "polygon") => {
       ipfs_hash: ipfs_hash,
       chain: chain,
     };
-    const response = await axios.post(config.URL + `/api/estuary/get_quote`, body);
+    const response = await axios.post(
+      config.URL + `/api/estuary/get_quote`,
+      body
+    );
 
     response.data.file_size = fileSizeInBytes;
     response.data.mime_type = mime_type;
