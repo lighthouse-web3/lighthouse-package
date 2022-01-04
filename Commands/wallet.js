@@ -15,7 +15,11 @@ module.exports = {
     } else {
       if (config.get("Lighthouse_publicKey")) {
         console.log(
-          chalk.yellow("Public Key: ") + config.get("Lighthouse_publicKey")
+          chalk.yellow("Public Key:    ") + config.get("Lighthouse_publicKey")
+        );
+        const chain = config.get("Lighthouse_chain")? config.get("Lighthouse_chain") : "polygon"
+        console.log(
+          chalk.yellow("Current Chain: ") + chain
         );
       } else {
         console.log(chalk.red("Please import wallet first!"));
