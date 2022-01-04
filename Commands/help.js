@@ -14,13 +14,25 @@ module.exports = {
   },
   handler: async function (argv) {
     if (argv.chain) {
-      if (argv.chain.toString().toLowerCase() === "polygon") {
+      if (
+        argv.chain.toString().toLowerCase() === "polygon" ||
+        argv.chain.toString().toLowerCase() === "matic" ||
+        argv.chain.toString().toLowerCase() === "MATIC"
+      ) {
         config.set("Lighthouse_chain", "polygon");
         console.log(chalk.green("Chain set to polygon"));
-      } else if (argv.chain.toString().toLowerCase() === "fantom") {
+      } else if (
+        argv.chain.toString().toLowerCase() === "fantom" ||
+        argv.chain.toString().toLowerCase() === "ftm" ||
+        argv.chain.toString().toLowerCase() === "FTM"
+      ) {
         config.set("Lighthouse_chain", "fantom");
         console.log(chalk.green("Chain set to fantom"));
-      } else if (argv.chain.toString().toLowerCase() === "binance") {
+      } else if (
+        argv.chain.toString().toLowerCase() === "binance" ||
+        argv.chain.toString().toLowerCase() === "bnb" ||
+        argv.chain.toString().toLowerCase() === "BNB"
+      ) {
         config.set("Lighthouse_chain", "binance");
         console.log(chalk.green("Chain set to binance"));
       } else {
