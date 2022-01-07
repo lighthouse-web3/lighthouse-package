@@ -8,7 +8,7 @@ test("get_balance", async () => {
 
   expect(balance).toHaveProperty("data");
   expect(typeof balance.data).toBe("number");
-});
+}, 20000);
 
 test("get_balance", async () => {
   const balance = await get_balance(
@@ -18,7 +18,7 @@ test("get_balance", async () => {
 
   expect(balance).toHaveProperty("data");
   expect(typeof balance.data).toBe("number");
-});
+}, 20000);
 
 test("get_balance", async () => {
   const balance = await get_balance(
@@ -28,4 +28,4 @@ test("get_balance", async () => {
 
   expect(balance).toHaveProperty("data");
   expect(typeof balance.data).toBe("number");
-});
+}, 20000);
