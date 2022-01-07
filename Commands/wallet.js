@@ -1,6 +1,8 @@
 const chalk = require("chalk");
 const Conf = require("conf");
 const config = new Conf();
+const package_config = require("../config.json");
+const { check_deposit } = require("../Lighthouse/check_deposit");
 
 module.exports = {
   command: "wallet",
@@ -20,6 +22,11 @@ module.exports = {
         const chain = config.get("Lighthouse_chain")? config.get("Lighthouse_chain") : "polygon"
         console.log(
           chalk.yellow("Current Chain: ") + chain
+        );
+
+        const deposit = await check_deposit(config.get("Lighthouse_publicKey"), chain, package_config.network);
+        console.log(
+          chalk.yellow("Total Deposit: ") + deposit
         );
       } else {
         console.log(chalk.red("Please import wallet first!"));
