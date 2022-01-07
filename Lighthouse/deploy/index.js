@@ -5,10 +5,10 @@ const fetch = require("node-fetch");
 const { Readable } = require("stream");
 const { FormData } = require("formdata-node");
 const Spinner = require("cli-spinner").Spinner;
+const package_config = require("../../config.json");
 const { FormDataEncoder } = require("form-data-encoder");
 const { fileFromPath } = require("formdata-node/file-from-path");
-const { lighthouseAbi } = require("./lighthouseAbi.js");
-const package_config = require("../../config.json");
+const { lighthouseAbi } = require("../contract_abi/lighthouseAbi.js");
 
 const user_token = async (signer, chain, expiry_time, network) => {
   try {
