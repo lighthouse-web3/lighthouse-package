@@ -1,47 +1,65 @@
 const axios = require("axios");
 const chalk = require("chalk");
+const ethers = require("ethers");
 const fetch = require("node-fetch");
 const { Readable } = require("stream");
 const { FormData } = require("formdata-node");
 const Spinner = require("cli-spinner").Spinner;
 const { FormDataEncoder } = require("form-data-encoder");
 const { fileFromPath } = require("formdata-node/file-from-path");
-const config = require("../../config.json");
+const { lighthouseAbi } = require("./lighthouseAbi.js");
+const package_config = require("../../config.json");
 
-const user_token = async (expiry_time) => {
+const user_token = async (signer, chain, expiry_time, network) => {
   try {
-    const response = await axios.get(
-      config.URL + "/api/estuary/user_token?expiry_time=" + expiry_time
+    const body = {
+      network: network,
+      signer: signer,
+      expiry_time: expiry_time,
+      chain: chain,
+    };
+    const response = await axios.post(
+      package_config.URL + `/api/lighthouse/user_token`,
+      body
     );
+
     return response.data;
-  } catch {
+  } catch(e) {
     return null;
   }
 };
 
-const push_cid_tochain = async (privateKey, cid, chain = "polygon") => {
+const push_cid_tochain = async (signer, cid, chain, network) => {
   try {
-    const body = {
-      privateKey: privateKey,
-      cid: cid,
-      chain: chain,
-    };
-    const response = await axios.post(
-      config.URL + `/api/estuary/push_cid_tochain`,
-      body
+    const contract = new ethers.Contract(
+      package_config[network][chain][
+        "lighthouse_contract_address"
+      ],
+      lighthouseAbi,
+      signer
     );
-    return response.data;
-  } catch {
-    return null;
+    
+    const txResponse = await contract.store(
+      cid,
+      {} //,
+      // { value: ethers.utils.parseEther(req.body.cost) }
+    );
+    
+    const txReceipt = await txResponse.wait();
+    return(txReceipt);
+  } catch (e) {
+    console.log(e);
+    return(null);
   }
 };
 
 exports.deploy = async (
   path,
-  privateKey,
+  signer,
   cid,
   cli = false,
-  chain = "polygon"
+  chain = "polygon",
+  network = "testnet"
 ) => {
   // Push CID to chain
   let spinner = new Spinner();
@@ -50,7 +68,7 @@ exports.deploy = async (
     spinner.start();
   }
 
-  const txObj = await push_cid_tochain(privateKey, cid, chain);
+  const txObj = await push_cid_tochain(signer, cid, chain, network);
 
   if (cli) {
     spinner.stop();
@@ -88,7 +106,7 @@ exports.deploy = async (
 
   const encoder = new FormDataEncoder(fd);
 
-  const upload_token = await user_token("24h");
+  const upload_token = await user_token(signer, chain, "24h", network);
 
   const headers = {
     Authorization: `Bearer ${upload_token.token}`,
@@ -101,7 +119,7 @@ exports.deploy = async (
     body: Readable.from(encoder),
     headers,
   };
-
+  
   const response = await fetch(
     "https://shuttle-4.estuary.tech/content/add",
     options

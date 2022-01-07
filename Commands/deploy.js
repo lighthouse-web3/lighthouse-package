@@ -1,6 +1,7 @@
 const chalk = require("chalk");
 const read = require("read");
 const Conf = require("conf");
+const ethers = require("ethers");
 const { resolve } = require("path");
 const Spinner = require("cli-spinner").Spinner;
 const { bytesToSize } = require("./byteToSize");
@@ -8,6 +9,7 @@ const { deploy } = require("../Lighthouse/deploy");
 const { get_key } = require("../Lighthouse/get_key");
 const { get_quote } = require("../Lighthouse/get_quote");
 
+const package_chain = require("../config.json");
 const config = new Conf();
 
 module.exports = {
@@ -32,7 +34,7 @@ module.exports = {
       const spinner = new Spinner("Getting Quote...");
       spinner.start();
       const response = await get_quote(
-        argv.path,
+        path,
         config.get("Lighthouse_publicKey"),
         config.get("Lighthouse_chain")
           ? config.get("Lighthouse_chain")
@@ -131,14 +133,18 @@ module.exports = {
                 );
 
                 if (key) {
+                  const chain = config.get("Lighthouse_chain")?config.get("Lighthouse_chain"): "polygon";
+                  const current_network = package_chain.network;
+                  const provider = new ethers.providers.JsonRpcProvider(
+                    package_chain[current_network][chain]["rpc"]
+                  );
+                  const signer = new ethers.Wallet(key.privateKey, provider);
                   const deploy_response = await deploy(
                     path,
-                    key.privateKey,
+                    signer,
                     response.ipfs_hash,
                     true,
-                    config.get("Lighthouse_chain")
-                      ? config.get("Lighthouse_chain")
-                      : "polygon"
+                    chain
                   );
                   console.log(
                     chalk.green(
