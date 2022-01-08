@@ -1,4 +1,4 @@
-const { get_balance } = require("./get_balance");
+const { get_balance } = require("../get_balance");
 
 test("get_balance", async () => {
   const balance = await get_balance(

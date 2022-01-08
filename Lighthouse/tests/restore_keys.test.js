@@ -1,4 +1,4 @@
-const { restore_keys } = require("./restore_keys");
+const { restore_keys } = require("../restore_keys");
 
 test("restore_keys", async () => {
   const response_key = await restore_keys(
