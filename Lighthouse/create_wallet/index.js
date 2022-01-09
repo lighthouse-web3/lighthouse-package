@@ -1,15 +1,18 @@
-const axios = require("axios");
-const config = require("../../config.json");
+const CryptoJS = require("crypto-js");
+const EthCrypto = require("eth-crypto");
 
 exports.create_wallet = async (password) => {
   try {
-    const response = await axios.post(
-      config.URL + "/api/wallet/create_wallet",
-      {
-        password: password,
-      }
-    );
-    return response.data;
+    const identity = EthCrypto.createIdentity();
+    identity["privateKeyEncrypted"] = CryptoJS.AES.encrypt(
+      identity["privateKey"],
+      password
+    ).toString();
+    const publicKey = EthCrypto.publicKeyByPrivateKey(identity["privateKey"]);
+    const address = EthCrypto.publicKey.toAddress(publicKey);
+    identity["publicKey"] = address;
+    delete identity["address"];
+    return identity;
   } catch {
     return null;
   }
