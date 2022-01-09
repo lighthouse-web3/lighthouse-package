@@ -2,8 +2,9 @@ const Conf = require("conf");
 const chalk = require("chalk");
 const Spinner = require("cli-spinner").Spinner;
 
-const { get_balance } = require("../Lighthouse/get_balance");
 const package_config = require("../config.json");
+const { get_balance } = require("../Lighthouse/get_balance");
+
 const config = new Conf();
 
 module.exports = {
@@ -26,7 +27,7 @@ module.exports = {
           config.get("Lighthouse_chain")
             ? config.get("Lighthouse_chain")
             : "polygon",
-            package_config.network
+          package_config.network
         );
         spinner.stop();
         process.stdout.clearLine();
