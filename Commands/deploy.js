@@ -40,7 +40,8 @@ module.exports = {
         config.get("Lighthouse_publicKey"),
         config.get("Lighthouse_chain")
           ? config.get("Lighthouse_chain")
-          : "polygon"
+          : "polygon",
+        package_chain.network
       );
       spinner.stop();
       process.stdout.clearLine();
@@ -148,7 +149,8 @@ module.exports = {
                     signer,
                     response.ipfs_hash,
                     true,
-                    chain
+                    chain,
+                    current_network
                   );
                   console.log(
                     chalk.green(
