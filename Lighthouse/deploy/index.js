@@ -24,7 +24,7 @@ const user_token = async (signer, chain, expiry_time, network) => {
     );
 
     return response.data;
-  } catch(e) {
+  } catch (e) {
     return null;
   }
 };
@@ -32,24 +32,22 @@ const user_token = async (signer, chain, expiry_time, network) => {
 const push_cid_tochain = async (signer, cid, chain, network) => {
   try {
     const contract = new ethers.Contract(
-      package_config[network][chain][
-        "lighthouse_contract_address"
-      ],
+      package_config[network][chain]["lighthouse_contract_address"],
       lighthouseAbi,
       signer
     );
-    
+
     const txResponse = await contract.store(
       cid,
       {} //,
       // { value: ethers.utils.parseEther(req.body.cost) }
     );
-    
+
     const txReceipt = await txResponse.wait();
-    return(txReceipt);
+    return txReceipt;
   } catch (e) {
     console.log(e);
-    return(null);
+    return null;
   }
 };
 
@@ -119,7 +117,7 @@ exports.deploy = async (
     body: Readable.from(encoder),
     headers,
   };
-  
+
   const response = await fetch(
     "https://shuttle-4.estuary.tech/content/add",
     options
