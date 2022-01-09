@@ -1,9 +1,13 @@
-const chalk = require("chalk");
 const read = require("read");
 const Conf = require("conf");
+const chalk = require("chalk");
 const { resolve } = require("path");
 const Spinner = require("cli-spinner").Spinner;
+
+const ethers = require("ethers");
+
 const { bytesToSize } = require("./byteToSize");
+const package_chain = require("../config.json");
 const { deploy } = require("../Lighthouse/deploy");
 const { get_key } = require("../Lighthouse/get_key");
 const { get_quote } = require("../Lighthouse/get_quote");
@@ -32,11 +36,12 @@ module.exports = {
       const spinner = new Spinner("Getting Quote...");
       spinner.start();
       const response = await get_quote(
-        argv.path,
+        path,
         config.get("Lighthouse_publicKey"),
         config.get("Lighthouse_chain")
           ? config.get("Lighthouse_chain")
-          : "polygon"
+          : "polygon",
+        package_chain.network
       );
       spinner.stop();
       process.stdout.clearLine();
@@ -80,7 +85,7 @@ module.exports = {
         console.log(chalk.cyan("Summary"));
         console.log("Total Size: " + bytesToSize(response.file_size));
         console.log("Fees: " + response.cost);
-        console.log("Gas Fees: " + response.gasFee * 10 ** -18);
+        console.log("Gas Fees: " + ethers.utils.formatEther(response.gasFee));
         console.log(
           "Total Fee: " + (response.cost + response.gasFee * 10 ** -18)
         );
@@ -131,14 +136,21 @@ module.exports = {
                 );
 
                 if (key) {
+                  const chain = config.get("Lighthouse_chain")
+                    ? config.get("Lighthouse_chain")
+                    : "polygon";
+                  const current_network = package_chain.network;
+                  const provider = new ethers.providers.JsonRpcProvider(
+                    package_chain[current_network][chain]["rpc"]
+                  );
+                  const signer = new ethers.Wallet(key.privateKey, provider);
                   const deploy_response = await deploy(
                     path,
-                    key.privateKey,
+                    signer,
                     response.ipfs_hash,
                     true,
-                    config.get("Lighthouse_chain")
-                      ? config.get("Lighthouse_chain")
-                      : "polygon"
+                    chain,
+                    current_network
                   );
                   console.log(
                     chalk.green(

@@ -1,10 +1,15 @@
 const fs = require("fs");
 const axios = require("axios");
-const Hash = require("./get_hash");
 const mime = require("mime-types");
-const URL = require("./url");
+const Hash = require("../get_hash");
+const config = require("../../config.json");
 
-exports.get_quote = async (path, publicKey, chain = "polygon") => {
+exports.get_quote = async (
+  path,
+  publicKey,
+  chain = "polygon",
+  network = "testnet"
+) => {
   try {
     const stats = fs.statSync(path);
     const mime_type = mime.lookup(path);
@@ -24,8 +29,12 @@ exports.get_quote = async (path, publicKey, chain = "polygon") => {
       publicKey: publicKey,
       ipfs_hash: ipfs_hash,
       chain: chain,
+      network: network,
     };
-    const response = await axios.post(URL + `/api/estuary/get_quote`, body);
+    const response = await axios.post(
+      config.URL + `/api/lighthouse/get_quote`,
+      body
+    );
 
     response.data.file_size = fileSizeInBytes;
     response.data.mime_type = mime_type;

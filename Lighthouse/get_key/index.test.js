@@ -1,4 +1,4 @@
-const { get_key } = require("./get_key");
+const { get_key } = require(".");
 
 test("get_key", async () => {
   const response_key = await get_key(
