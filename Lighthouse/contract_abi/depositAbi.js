@@ -29,8 +29,26 @@ exports.depositAbi = [
     inputs: [
       {
         internalType: "address",
+        name: "addr",
+        type: "address",
+      },
+    ],
+    name: "addWhitelistAddress",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
         name: "",
         type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
       },
     ],
     name: "deposits",
@@ -47,6 +65,32 @@ exports.depositAbi = [
       },
     ],
     stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "listWhitelistAddresses",
+    outputs: [
+      {
+        internalType: "address[]",
+        name: "",
+        type: "address[]",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "addr",
+        type: "address",
+      },
+    ],
+    name: "removeWhitelistAddress",
+    outputs: [],
+    stateMutability: "nonpayable",
     type: "function",
   },
   {
@@ -73,6 +117,25 @@ exports.depositAbi = [
         internalType: "uint256",
         name: "availableStorage",
         type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    name: "whitelistedAddresses",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
       },
     ],
     stateMutability: "view",
