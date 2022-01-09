@@ -1,14 +1,19 @@
-const axios = require("axios");
+const ethers = require("ethers");
 const package_config = require("../../config.json");
 
-exports.get_balance = async (publicKey, chain = "polygon", network = "testnet") => {
+exports.get_balance = async (
+  publicKey,
+  chain = "polygon",
+  network = "testnet"
+) => {
   try {
-    const response = await axios.post(package_config.URL + "/api/wallet/get_balance", {
-      publicKey: publicKey,
-      chain: chain,
-      network: network,
-    });
-    return response.data;
+    const provider = new ethers.providers.JsonRpcProvider(
+      package_config[network][chain]["rpc"]
+    );
+
+    const balance = await provider.getBalance(publicKey);
+    // balance = ethers.utils.formatEther(balance);
+    return { data: Number(balance) };
   } catch {
     return null;
   }
