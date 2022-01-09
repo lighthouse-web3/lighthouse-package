@@ -50,14 +50,14 @@ const push_cid_tochain = async (signer, cid, chain, network) => {
 
 test("user_token", async () => {
   const provider = new ethers.providers.JsonRpcProvider(
-    package_config["testnet"]["polygon"]["rpc"]
+    package_config["mainnet"]["polygon"]["rpc"]
   );
   const signer = new ethers.Wallet(
     "0xd7f1e7ccf6e3620327d3b29c57018d076305148eec487c57d8121beac0067895",
     provider
   );
 
-  const token = await user_token(signer, "polygon", "1h", "testnet");
+  const token = await user_token(signer, "polygon", "1h", "mainnet");
 
   expect(token).toHaveProperty("token");
   expect(typeof token.token).toBe("string");
