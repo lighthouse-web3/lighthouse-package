@@ -1,15 +1,17 @@
-const chalk = require("chalk");
 const read = require("read");
 const Conf = require("conf");
-const ethers = require("ethers");
+const chalk = require("chalk");
 const { resolve } = require("path");
 const Spinner = require("cli-spinner").Spinner;
+
+const ethers = require("ethers");
+
 const { bytesToSize } = require("./byteToSize");
+const package_chain = require("../config.json");
 const { deploy } = require("../Lighthouse/deploy");
 const { get_key } = require("../Lighthouse/get_key");
 const { get_quote } = require("../Lighthouse/get_quote");
 
-const package_chain = require("../config.json");
 const config = new Conf();
 
 module.exports = {
@@ -133,7 +135,9 @@ module.exports = {
                 );
 
                 if (key) {
-                  const chain = config.get("Lighthouse_chain")?config.get("Lighthouse_chain"): "polygon";
+                  const chain = config.get("Lighthouse_chain")
+                    ? config.get("Lighthouse_chain")
+                    : "polygon";
                   const current_network = package_chain.network;
                   const provider = new ethers.providers.JsonRpcProvider(
                     package_chain[current_network][chain]["rpc"]
