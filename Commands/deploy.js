@@ -84,7 +84,7 @@ module.exports = {
         console.log(chalk.cyan("Summary"));
         console.log("Total Size: " + bytesToSize(response.file_size));
         console.log("Fees: " + response.cost);
-        console.log("Gas Fees: " + response.gasFee * 10 ** -18);
+        console.log("Gas Fees: " + ethers.utils.formatEther(response.gasFee));
         console.log(
           "Total Fee: " + (response.cost + response.gasFee * 10 ** -18)
         );
