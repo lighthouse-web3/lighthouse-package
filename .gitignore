@@ -24,3 +24,6 @@ typings/
 .env.test
 
 wallet.json()
+
+# Exclude coverage from being pushed
+Lighthouse/tests/coverage/*
