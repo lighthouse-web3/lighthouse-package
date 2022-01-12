@@ -1,4 +1,4 @@
-const { status } = require(".");
+const { status } = require("../status");
 
 test("status", async () => {
   const response = await status(

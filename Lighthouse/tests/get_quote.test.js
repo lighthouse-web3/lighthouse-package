@@ -1,4 +1,4 @@
-const { get_quote } = require(".");
+const { get_quote } = require("../get_quote");
 const { resolve } = require("path");
 
 test("Polygon Chain: get_quote", async () => {

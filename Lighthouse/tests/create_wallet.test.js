@@ -1,4 +1,4 @@
-const { create_wallet } = require(".");
+const { create_wallet } = require("../create_wallet");
 
 test("create_wallet", async () => {
   const wallet = await create_wallet("damn");
