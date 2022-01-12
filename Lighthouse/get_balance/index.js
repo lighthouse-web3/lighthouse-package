@@ -1,5 +1,5 @@
 const ethers = require("ethers");
-const package_config = require("../../config.json");
+const package_config = require("../../lighthouse.config");
 
 exports.get_balance = async (
   publicKey,

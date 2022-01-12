@@ -1,5 +1,5 @@
 const ethers = require("ethers");
-const package_config = require("../../config.json");
+const package_config = require("../../lighthouse.config");
 const { depositAbi } = require("../contract_abi/depositAbi.js");
 
 exports.topup = async (

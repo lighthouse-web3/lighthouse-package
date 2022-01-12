@@ -7,7 +7,7 @@ const Spinner = require("cli-spinner").Spinner;
 const ethers = require("ethers");
 
 const { bytesToSize } = require("./byteToSize");
-const package_chain = require("../config.json");
+const package_chain = require("../lighthouse.config");
 const { deploy } = require("../Lighthouse/deploy");
 const { get_key } = require("../Lighthouse/get_key");
 const { get_quote } = require("../Lighthouse/get_quote");

@@ -1,7 +1,7 @@
 const Conf = require("conf");
 const chalk = require("chalk");
 
-// const package_config = require("../config.json");
+// const package_config = require("../lighthouse.config");
 // const { check_deposit } = require("../Lighthouse/check_deposit");
 
 const config = new Conf();
