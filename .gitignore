@@ -23,6 +23,7 @@ typings/
 .env
 .env.test
 
-package-lock.json
-
 wallet.json()
+
+# Exclude coverage from being pushed
+Lighthouse/tests/coverage/*
