@@ -54,8 +54,10 @@ const defaultConfig = {
   },
 };
 
-console.log(
-  chalk.green("Currently using: ") + process.env.DEFAULT_NETWORK_MODE
-);
+if (process.env.DEFAULT_NETWORK_WARNING === "true") {
+  console.log(
+    chalk.green("Currently using: ") + process.env.DEFAULT_NETWORK_MODE
+  );
+}
 
 module.exports = defaultConfig;
