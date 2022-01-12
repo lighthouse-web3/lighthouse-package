@@ -1,6 +1,5 @@
 const deploy = require("./deploy");
 const check_deposit = require("./check_deposit");
-const contract_abi = require("./contract_abi");
 const create_wallet = require("./create_wallet");
 const get_balance = require("./get_balance");
 const get_deals = require("./get_deals");
