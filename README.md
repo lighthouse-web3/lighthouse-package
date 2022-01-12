@@ -8,7 +8,17 @@ Lighthouse is a permanent decentralized file storage protocol that allows the ab
 npm install -g lighthouse-web3
 ```
 
-## Cli Usage
+### Local Usage
+
+If you don't want to install the library as a global depdency, you can use ``npm link`` instead
+
+```bash
+cd directory-of-the-project/ && npm link .
+```
+
+
+
+## CLI Usage
 
 ```bash
 # create-wallet
