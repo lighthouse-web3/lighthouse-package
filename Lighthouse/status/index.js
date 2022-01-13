@@ -1,5 +1,5 @@
 const axios = require("axios");
-const config = require("../../config.json");
+const config = require("../../lighthouse.config");
 
 exports.status = async (cid) => {
   const response = await axios.get(

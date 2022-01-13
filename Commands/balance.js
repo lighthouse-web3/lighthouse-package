@@ -2,7 +2,7 @@ const Conf = require("conf");
 const chalk = require("chalk");
 const Spinner = require("cli-spinner").Spinner;
 
-const package_config = require("../config.json");
+const package_config = require("../lighthouse.config");
 const { get_balance } = require("../Lighthouse/get_balance");
 
 const config = new Conf();

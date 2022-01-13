@@ -2,7 +2,7 @@ const fs = require("fs");
 const axios = require("axios");
 const mime = require("mime-types");
 const Hash = require("../get_hash");
-const config = require("../../config.json");
+const config = require("../../lighthouse.config");
 
 exports.get_quote = async (
   path,
