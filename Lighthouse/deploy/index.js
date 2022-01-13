@@ -5,7 +5,7 @@ const fetch = require("node-fetch");
 const { Readable } = require("stream");
 const { FormData } = require("formdata-node");
 const Spinner = require("cli-spinner").Spinner;
-const package_config = require("../../lighthouse.config");
+const defaultConfig = require("../../lighthouse.config");
 const { FormDataEncoder } = require("form-data-encoder");
 const { fileFromPath } = require("formdata-node/file-from-path");
 const { lighthouseAbi } = require("../contract_abi/lighthouseAbi.js");
@@ -19,7 +19,7 @@ const user_token = async (signer, chain, expiry_time, network) => {
       chain: chain,
     };
     const response = await axios.post(
-      package_config.URL + `/api/lighthouse/user_token`,
+      defaultConfig.URL + `/api/lighthouse/user_token`,
       body
     );
 
@@ -32,7 +32,7 @@ const user_token = async (signer, chain, expiry_time, network) => {
 const push_cid_tochain = async (signer, cid, chain, network) => {
   try {
     const contract = new ethers.Contract(
-      package_config[network][chain]["lighthouse_contract_address"],
+      defaultConfig[network][chain]["lighthouse_contract_address"],
       lighthouseAbi,
       signer
     );
@@ -49,6 +49,16 @@ const push_cid_tochain = async (signer, cid, chain, network) => {
     console.log(e);
     return null;
   }
+};
+
+const transactionLog = (chain, txObj) => {
+  const networkConfig = defaultConfig[process.env.DEFAULT_NETWORK_MODE][chain];
+
+  if (!networkConfig) {
+    console.error(`No network under that chain ${chain}`);
+  }
+
+  console.log("Transaction: " + networkConfig.scan + txObj.transactionHash);
 };
 
 exports.deploy = async (
@@ -72,19 +82,8 @@ exports.deploy = async (
     spinner.stop();
     process.stdout.clearLine();
     process.stdout.cursorTo(0);
-    if (chain === "binance") {
-      console.log(
-        "Transaction: " + "https://bscscan.com/tx/" + txObj.transactionHash
-      );
-    } else if (chain === "fantom") {
-      console.log(
-        "Transaction: " + "https://ftmscan.com/tx/" + txObj.transactionHash
-      );
-    } else {
-      console.log(
-        "Transaction: " + "https://polygonscan.com/tx/" + txObj.transactionHash
-      );
-    }
+
+    transactionLog(chain, txObj);
 
     console.log(chalk.green("CID pushed to chain"));
 
