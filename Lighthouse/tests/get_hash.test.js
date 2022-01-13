@@ -1,5 +1,5 @@
 const fs = require("fs");
-const Hash = require(".");
+const Hash = require("../get_hash");
 const { resolve } = require("path");
 
 test("get_hash", async () => {
