@@ -5,7 +5,7 @@ const ethers = require("ethers");
 const fetch = require("node-fetch");
 const { Readable } = require("stream");
 const { FormData } = require("formdata-node");
-const { create } = require('ipfs-http-client');
+const { create } = require("ipfs-http-client");
 const Spinner = require("cli-spinner").Spinner;
 const { resolve, relative, join } = require("path");
 const defaultConfig = require("../../lighthouse.config");
@@ -65,33 +65,37 @@ const transactionLog = (chain, txObj) => {
 };
 
 function getAllFiles(dirPath, originalPath, arrayOfFiles) {
-  files = fs.readdirSync(dirPath)
+  files = fs.readdirSync(dirPath);
 
-  arrayOfFiles = arrayOfFiles || []
-  originalPath = originalPath || resolve(dirPath, "..")
+  arrayOfFiles = arrayOfFiles || [];
+  originalPath = originalPath || resolve(dirPath, "..");
 
-  folder = relative(originalPath, join(dirPath, "/"))
+  folder = relative(originalPath, join(dirPath, "/"));
 
   arrayOfFiles.push({
-      path: folder.replace(/\\/g, "/"),
-      mtime: fs.statSync(folder).mtime
-  })
+    path: folder.replace(/\\/g, "/"),
+    mtime: fs.statSync(folder).mtime,
+  });
 
   files.forEach(function (file) {
-      if (fs.statSync(dirPath + "/" + file).isDirectory()) {
-          arrayOfFiles = getAllFiles(dirPath + "/" + file, originalPath, arrayOfFiles)
-      } else {
-          file = join(dirPath, "/", file)
+    if (fs.statSync(dirPath + "/" + file).isDirectory()) {
+      arrayOfFiles = getAllFiles(
+        dirPath + "/" + file,
+        originalPath,
+        arrayOfFiles
+      );
+    } else {
+      file = join(dirPath, "/", file);
 
-          arrayOfFiles.push({
-              path: relative(originalPath, file).replace(/\\/g, "/"),
-              content: fs.readFileSync(file),
-              mtime: fs.statSync(file).mtime
-          })
-      }
-  })
+      arrayOfFiles.push({
+        path: relative(originalPath, file).replace(/\\/g, "/"),
+        content: fs.readFileSync(file),
+        mtime: fs.statSync(file).mtime,
+      });
+    }
+  });
 
-  return arrayOfFiles
+  return arrayOfFiles;
 }
 
 exports.deploy = async (
@@ -119,8 +123,6 @@ exports.deploy = async (
     transactionLog(chain, txObj);
 
     console.log(chalk.green("CID pushed to chain"));
-
-    console.log();
   }
 
   // Upload File to IPFS
@@ -129,40 +131,7 @@ exports.deploy = async (
     spinner.start();
   }
 
-  if(fs.lstatSync(path).isDirectory()){
-    const response = await axios.get(defaultConfig.URL + "/api/lighthouse/upload_client");
-
-    const client = await create({
-      host: 'ipfs.infura.io',
-      port: 5001,
-      protocol: 'https',
-      headers: {
-        authorization: response.data
-      }
-    })
-
-    const files = getAllFiles(path);
-    let hash_list = []
-
-    try{
-      for await (const file of client.addAll(files)) {
-        hash_list.push(file.cid)
-      }
-      // console.log(hash_list)
-    } catch(e){
-      // console.log(e)
-    }
-
-    if (cli) {
-      spinner.stop();
-      process.stdout.clearLine();
-      process.stdout.cursorTo(0);
-    }
-    
-    return {
-      cid: hash_list[hash_list.length-1],
-    };
-  } else{
+  async function deployAsFile() {
     const fd = new FormData();
     const data = await fileFromPath(path);
 
@@ -202,4 +171,47 @@ exports.deploy = async (
       tx: txObj,
     };
   }
+
+  async function deployAsDirectory() {
+    const response = await axios.get(
+      defaultConfig.URL + "/api/lighthouse/upload_client"
+    );
+
+    const client = await create({
+      host: "ipfs.infura.io",
+      port: 5001,
+      protocol: "https",
+      headers: {
+        authorization: response.data,
+      },
+    });
+
+    const files = getAllFiles(path);
+    let hash_list = [];
+
+    try {
+      for await (const file of client.addAll(files)) {
+        hash_list.push(file.cid);
+      }
+      // console.log(hash_list)
+    } catch (e) {
+      // console.log(e)
+    }
+
+    if (cli) {
+      spinner.stop();
+      process.stdout.clearLine();
+      process.stdout.cursorTo(0);
+    }
+
+    return {
+      cid: hash_list[hash_list.length - 1],
+    };
+  }
+
+  if (fs.lstatSync(path).isDirectory()) {
+    return await deployAsDirectory();
+  }
+
+  return await deployAsFile();
 };
