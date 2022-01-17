@@ -1,10 +1,13 @@
+const fs = require("fs");
 const axios = require("axios");
 const chalk = require("chalk");
 const ethers = require("ethers");
 const fetch = require("node-fetch");
 const { Readable } = require("stream");
 const { FormData } = require("formdata-node");
+const { create } = require('ipfs-http-client');
 const Spinner = require("cli-spinner").Spinner;
+const { resolve, relative, join } = require("path");
 const defaultConfig = require("../../lighthouse.config");
 const { FormDataEncoder } = require("form-data-encoder");
 const { fileFromPath } = require("formdata-node/file-from-path");
@@ -61,6 +64,36 @@ const transactionLog = (chain, txObj) => {
   console.log("Transaction: " + networkConfig.scan + txObj.transactionHash);
 };
 
+function getAllFiles(dirPath, originalPath, arrayOfFiles) {
+  files = fs.readdirSync(dirPath)
+
+  arrayOfFiles = arrayOfFiles || []
+  originalPath = originalPath || resolve(dirPath, "..")
+
+  folder = relative(originalPath, join(dirPath, "/"))
+
+  arrayOfFiles.push({
+      path: folder.replace(/\\/g, "/"),
+      mtime: fs.statSync(folder).mtime
+  })
+
+  files.forEach(function (file) {
+      if (fs.statSync(dirPath + "/" + file).isDirectory()) {
+          arrayOfFiles = getAllFiles(dirPath + "/" + file, originalPath, arrayOfFiles)
+      } else {
+          file = join(dirPath, "/", file)
+
+          arrayOfFiles.push({
+              path: relative(originalPath, file).replace(/\\/g, "/"),
+              content: fs.readFileSync(file),
+              mtime: fs.statSync(file).mtime
+          })
+      }
+  })
+
+  return arrayOfFiles
+}
+
 exports.deploy = async (
   path,
   signer,
@@ -96,42 +129,77 @@ exports.deploy = async (
     spinner.start();
   }
 
-  const fd = new FormData();
-  const data = await fileFromPath(path);
+  if(fs.lstatSync(path).isDirectory()){
+    const response = await axios.get("http://localhost:8000/api/lighthouse/upload_client");
 
-  fd.set("data", data, path.split("/").pop());
+    const client = await create({
+      host: 'ipfs.infura.io',
+      port: 5001,
+      protocol: 'https',
+      headers: {
+        authorization: response.data
+      }
+    })
 
-  const encoder = new FormDataEncoder(fd);
+    const files = getAllFiles(path);
+    let hash_list = []
 
-  const upload_token = await user_token(signer, chain, "24h", network);
+    try{
+      for await (const file of client.addAll(files)) {
+        hash_list.push(file.cid)
+      }
+      // console.log(hash_list)
+    } catch(e){
+      // console.log(e)
+    }
 
-  const headers = {
-    Authorization: `Bearer ${upload_token.token}`,
-    Accept: "application/json",
-    ...encoder.headers,
-  };
+    if (cli) {
+      spinner.stop();
+      process.stdout.clearLine();
+      process.stdout.cursorTo(0);
+    }
+    
+    return {
+      cid: hash_list[hash_list.length-1],
+    };
+  } else{
+    const fd = new FormData();
+    const data = await fileFromPath(path);
 
-  const options = {
-    method: "POST",
-    body: Readable.from(encoder),
-    headers,
-  };
+    fd.set("data", data, path.split("/").pop());
 
-  const response = await fetch(
-    "https://shuttle-4.estuary.tech/content/add",
-    options
-  );
-  const obj = await response.json();
+    const encoder = new FormDataEncoder(fd);
 
-  if (cli) {
-    spinner.stop();
-    process.stdout.clearLine();
-    process.stdout.cursorTo(0);
+    const upload_token = await user_token(signer, chain, "24h", network);
+
+    const headers = {
+      Authorization: `Bearer ${upload_token.token}`,
+      Accept: "application/json",
+      ...encoder.headers,
+    };
+
+    const options = {
+      method: "POST",
+      body: Readable.from(encoder),
+      headers,
+    };
+
+    const response = await fetch(
+      "https://shuttle-4.estuary.tech/content/add",
+      options
+    );
+    const obj = await response.json();
+
+    if (cli) {
+      spinner.stop();
+      process.stdout.clearLine();
+      process.stdout.cursorTo(0);
+    }
+
+    return {
+      cid: [obj.cid],
+      providers: obj.providers,
+      tx: txObj,
+    };
   }
-
-  return {
-    cid: obj.cid,
-    providers: obj.providers,
-    tx: txObj,
-  };
 };

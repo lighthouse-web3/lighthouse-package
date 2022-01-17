@@ -60,31 +60,33 @@ module.exports = {
             chalk.cyan("Name")
         );
 
-        console.log(
-          response.ipfs_hash +
-            Array(63 - response.ipfs_hash.length)
-              .fill("\xa0")
-              .join("") +
-            bytesToSize(response.file_size) +
-            Array(12 - bytesToSize(response.file_size).toString().length)
-              .fill("\xa0")
-              .join("") +
-            response.cost +
-            Array(24 - response.cost.toString().length)
-              .fill("\xa0")
-              .join("") +
-            response.mime_type +
-            Array(24 - response.mime_type.length)
-              .fill("\xa0")
-              .join("") +
-            response.file_name
-        );
+        for(let i=0; i<response.meta_data.length; i++){
+          console.log(
+            response.meta_data[i].ipfs_hash +
+              Array(63 - response.meta_data[i].ipfs_hash.length)
+                .fill("\xa0")
+                .join("") +
+              bytesToSize(response.meta_data[i].file_size) +
+              Array(12 - bytesToSize(response.meta_data[i].file_size).toString().length)
+                .fill("\xa0")
+                .join("") +
+              response.meta_data[i].cost +
+              Array(24 - response.meta_data[i].cost.toString().length)
+                .fill("\xa0")
+                .join("") +
+              response.meta_data[i].mime_type +
+              Array(24 - response.meta_data[i].mime_type.toString().length)
+                .fill("\xa0")
+                .join("") +
+              response.meta_data[i].file_name
+          );
+        }
 
         console.log();
 
         console.log(chalk.cyan("Summary"));
-        console.log("Total Size: " + bytesToSize(response.file_size));
-        console.log("Fees: " + response.cost);
+        console.log("Total Size: " + bytesToSize(response.total_size));
+        console.log("Fees: " + response.total_cost);
         console.log(
           "Gas Fees: " +
             ethers.utils.parseUnits(
@@ -93,7 +95,7 @@ module.exports = {
             )
         );
         console.log(
-          "Total Fee: " + (response.cost + response.gasFee * 10 ** -18)
+          "Total Fee: " + ((response.total_cost + response.gasFee) * 10 ** -18)
         );
 
         console.log();
@@ -103,7 +105,7 @@ module.exports = {
         console.log("Current balance: " + response.current_balance * 10 ** -18);
         const balance_after_deploy =
           (Number(response.current_balance) -
-            (response.cost + response.gasFee)) *
+            (response.total_cost + response.gasFee)) *
           10 ** -18;
         console.log("Balance after deploy: " + balance_after_deploy);
 
@@ -153,7 +155,7 @@ module.exports = {
                   const deploy_response = await deploy(
                     path,
                     signer,
-                    response.ipfs_hash,
+                    response.hash_list,
                     true,
                     chain,
                     current_network
@@ -163,19 +165,21 @@ module.exports = {
                       "File Deployed, visit following url to view content!"
                     )
                   );
+                  // console.log(
+                  //   chalk.cyan(
+                  //     "Visit: " +
+                  //       "https://dweb.link/ipfs/" +
+                  //       deploy_response.cid
+                  //   )
+                  // );
                   console.log(
                     chalk.cyan(
-                      "Visit: " +
-                        "https://dweb.link/ipfs/" +
-                        deploy_response.cid
+                      "Visit: " + "https://ipfs.io/ipfs/" + deploy_response.cid
                     )
                   );
-                  console.log(
-                    chalk.cyan(
-                      "     : " + "https://ipfs.io/ipfs/" + deploy_response.cid
-                    )
-                  );
+
                   console.log("CID: " + deploy_response.cid);
+                  
                   process.exit();
                 } else {
                   console.log(chalk.red("Something Went Wrong!"));
