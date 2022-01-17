@@ -130,7 +130,7 @@ exports.deploy = async (
   }
 
   if(fs.lstatSync(path).isDirectory()){
-    const response = await axios.get("http://localhost:8000/api/lighthouse/upload_client");
+    const response = await axios.get(defaultConfig.URL + "/api/lighthouse/upload_client");
 
     const client = await create({
       host: 'ipfs.infura.io',
