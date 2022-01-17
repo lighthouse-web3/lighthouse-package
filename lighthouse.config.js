@@ -3,11 +3,9 @@
 
 const chalk = require("chalk");
 
-require("dotenv").config();
-
 const defaultConfig = {
-  URL: process.env.DEFAULT_NETWORK_URL,
-  network: process.env.DEFAULT_NETWORK_MODE,
+  URL: "http://52.66.209.251:8000",
+  network: "mainnet",
   mainnet: {
     fantom: {
       symbol: "FTM",
@@ -60,9 +58,9 @@ const defaultConfig = {
   },
 };
 
-if (process.env.DEFAULT_NETWORK_WARNING === "true") {
+if ("false" === "true") {
   console.log(
-    chalk.green("Currently using: ") + process.env.DEFAULT_NETWORK_MODE
+    chalk.green("Currently using: ") + "mainnet"
   );
 }
 

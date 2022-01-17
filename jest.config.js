@@ -1,6 +1,5 @@
-require("dotenv").config();
 
-const coverageToNumber = +process.env.MAX_COLLECT_COVERAGE; // parse the env variable to string
+const coverageToNumber = 100;//+process.env.MAX_COLLECT_COVERAGE; // parse the env variable to string
 
 // Or async function
 module.exports = async () => {
@@ -17,7 +16,7 @@ module.exports = async () => {
     ], // exclude unnecessary folders
 
     // following lines are about coverage
-    collectCoverage: process.env.COLLECT_COVERAGE === "true",
+    collectCoverage: "true",//process.env.COLLECT_COVERAGE === "true",
     collectCoverageFrom: ["<rootDir>/Lighthouse/**/*.js"],
     coverageDirectory: "<rootDir>/Lighthouse/tests/coverage",
     coverageReporters: ["lcov"],

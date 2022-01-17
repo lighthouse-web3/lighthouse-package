@@ -55,7 +55,7 @@ const push_cid_tochain = async (signer, cid, chain, network) => {
 };
 
 const transactionLog = (chain, txObj) => {
-  const networkConfig = defaultConfig[process.env.DEFAULT_NETWORK_MODE][chain];
+  const networkConfig = defaultConfig[defaultConfig.network][chain];
 
   if (!networkConfig) {
     console.error(`No network under that chain ${chain}`);
