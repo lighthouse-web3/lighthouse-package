@@ -26,11 +26,11 @@ test("Fantom Chain: get_quote", async () => {
     "testnet"
   );
 
-  expect(quote).toHaveProperty("file_size");
-  expect(typeof quote.file_size).toBe("number");
+  expect(quote.meta_data[0]).toHaveProperty("file_size");
+  expect(typeof quote.meta_data[0].file_size).toBe("number");
 
-  expect(quote).toHaveProperty("mime_type");
-  expect(typeof quote.mime_type).toBe("string");
+  expect(quote.meta_data[0]).toHaveProperty("mime_type");
+  expect(typeof quote.meta_data[0].mime_type).toBe("string");
 }, 20000);
 
 test("Binance Chain: get_quote", async () => {
@@ -42,9 +42,9 @@ test("Binance Chain: get_quote", async () => {
     "testnet"
   );
 
-  expect(quote).toHaveProperty("file_name");
-  expect(typeof quote.file_name).toBe("string");
+  expect(quote.meta_data[0]).toHaveProperty("file_name");
+  expect(typeof quote.meta_data[0].file_name).toBe("string");
 
-  expect(quote).toHaveProperty("ipfs_hash");
-  expect(typeof quote.ipfs_hash).toBe("string");
+  expect(quote.meta_data[0]).toHaveProperty("ipfs_hash");
+  expect(typeof quote.meta_data[0].ipfs_hash).toBe("string");
 }, 20000);
