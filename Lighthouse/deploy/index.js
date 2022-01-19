@@ -5,11 +5,11 @@ const ethers = require("ethers");
 const fetch = require("node-fetch");
 const fs = require("fs");
 const { FormData } = require("formdata-node");
+const Spinner = require("cli-spinner").Spinner;
+const { resolve, relative, join } = require("path");
 const { FormDataEncoder } = require("form-data-encoder");
 const { fileFromPath } = require("formdata-node/file-from-path");
 const { Readable } = require("stream");
-const { resolve, relative, join } = require("path");
-const Spinner = require("cli-spinner").Spinner;
 
 const lighthouse_config = require("../../lighthouse.config");
 const { lighthouseAbi } = require("../contract_abi/lighthouseAbi.js");
@@ -124,8 +124,6 @@ exports.deploy = async (
     transactionLog(chain, txObj, network);
 
     console.log(chalk.green("CID pushed to chain"));
-
-    console.log();
   }
 
   // Upload File to IPFS
@@ -134,42 +132,7 @@ exports.deploy = async (
     spinner.start();
   }
 
-  if (fs.lstatSync(path).isDirectory()) {
-    const response = await axios.get(
-      lighthouse_config.URL + "/api/lighthouse/upload_client"
-    );
-
-    const client = await create({
-      host: "ipfs.infura.io",
-      port: 5001,
-      protocol: "https",
-      headers: {
-        authorization: response.data,
-      },
-    });
-
-    const files = getAllFiles(path);
-    let hash_list = [];
-
-    try {
-      for await (const file of client.addAll(files)) {
-        hash_list.push(file.cid);
-      }
-      // console.log(hash_list)
-    } catch (e) {
-      // console.log(e)
-    }
-
-    if (cli) {
-      spinner.stop();
-      process.stdout.clearLine();
-      process.stdout.cursorTo(0);
-    }
-
-    return {
-      cid: hash_list[hash_list.length - 1],
-    };
-  } else {
+  async function deployAsFile() {
     const fd = new FormData();
     const data = await fileFromPath(path);
 
@@ -209,4 +172,48 @@ exports.deploy = async (
       tx: txObj,
     };
   }
+
+  async function deployAsDirectory() {
+    const response = await axios.get(
+      lighthouse_config.URL + "/api/lighthouse/upload_client"
+    );
+
+    const client = await create({
+      host: "ipfs.infura.io",
+      port: 5001,
+      protocol: "https",
+      headers: {
+        authorization: response.data,
+      },
+    });
+
+    const files = getAllFiles(path);
+    let hash_list = [];
+
+    try {
+      for await (const file of client.addAll(files)) {
+        hash_list.push(file.cid);
+      }
+      // console.log(hash_list)
+    } catch (e) {
+      // console.log(e)
+    }
+
+    if (cli) {
+      spinner.stop();
+      process.stdout.clearLine();
+      process.stdout.cursorTo(0);
+    }
+
+    return {
+      cid: hash_list[hash_list.length - 1],
+      tx: txObj,
+    };
+  }
+
+  if (fs.lstatSync(path).isDirectory()) {
+    return await deployAsDirectory();
+  }
+
+  return await deployAsFile();
 };
