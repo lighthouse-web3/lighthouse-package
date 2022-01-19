@@ -1,6 +1,6 @@
 const axios = require("axios");
 const ethers = require("ethers");
-const package_config = require("../../lighthouse.config");
+const lighthouse_config = require("../../lighthouse.config");
 const { lighthouseAbi } = require("../contract_abi/lighthouseAbi");
 
 /*
@@ -15,7 +15,7 @@ const user_token = async (signer, chain, expiry_time, network = "testnet") => {
       chain: chain,
     };
     const response = await axios.post(
-      package_config.URL + `/api/lighthouse/user_token`,
+      lighthouse_config.URL + `/api/lighthouse/user_token`,
       body
     );
 
@@ -29,7 +29,7 @@ const user_token = async (signer, chain, expiry_time, network = "testnet") => {
 const push_cid_tochain = async (signer, cid, chain, network) => {
   try {
     const contract = new ethers.Contract(
-      package_config[network][chain]["lighthouse_contract_address"],
+      lighthouse_config[network][chain]["lighthouse_contract_address"],
       lighthouseAbi,
       signer
     );
@@ -50,7 +50,7 @@ const push_cid_tochain = async (signer, cid, chain, network) => {
 
 test("user_token", async () => {
   const provider = new ethers.providers.JsonRpcProvider(
-    package_config["mainnet"]["polygon"]["rpc"]
+    lighthouse_config["testnet"]["polygon"]["rpc"]
   );
   const signer = new ethers.Wallet(
     "0xd7f1e7ccf6e3620327d3b29c57018d076305148eec487c57d8121beac0067895",
@@ -65,7 +65,7 @@ test("user_token", async () => {
 
 test("push_cid_tochain", async () => {
   const provider = new ethers.providers.JsonRpcProvider(
-    package_config["testnet"]["polygon"]["rpc"]
+    lighthouse_config["testnet"]["polygon"]["rpc"]
   );
   const signer = new ethers.Wallet(
     "0xd7f1e7ccf6e3620327d3b29c57018d076305148eec487c57d8121beac0067895",
