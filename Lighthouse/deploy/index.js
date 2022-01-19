@@ -1,16 +1,17 @@
-const fs = require("fs");
 const axios = require("axios");
 const chalk = require("chalk");
+const { create } = require("ipfs-http-client");
 const ethers = require("ethers");
 const fetch = require("node-fetch");
-const { Readable } = require("stream");
+const fs = require("fs");
 const { FormData } = require("formdata-node");
-const { create } = require('ipfs-http-client');
-const Spinner = require("cli-spinner").Spinner;
-const { resolve, relative, join } = require("path");
-const defaultConfig = require("../../lighthouse.config");
 const { FormDataEncoder } = require("form-data-encoder");
 const { fileFromPath } = require("formdata-node/file-from-path");
+const { Readable } = require("stream");
+const { resolve, relative, join } = require("path");
+const Spinner = require("cli-spinner").Spinner;
+
+const lighthouse_config = require("../../lighthouse.config");
 const { lighthouseAbi } = require("../contract_abi/lighthouseAbi.js");
 
 const user_token = async (signer, chain, expiry_time, network) => {
@@ -22,7 +23,7 @@ const user_token = async (signer, chain, expiry_time, network) => {
       chain: chain,
     };
     const response = await axios.post(
-      defaultConfig.URL + `/api/lighthouse/user_token`,
+      lighthouse_config.URL + `/api/lighthouse/user_token`,
       body
     );
 
@@ -35,7 +36,7 @@ const user_token = async (signer, chain, expiry_time, network) => {
 const push_cid_tochain = async (signer, cid, chain, network) => {
   try {
     const contract = new ethers.Contract(
-      defaultConfig[network][chain]["lighthouse_contract_address"],
+      lighthouse_config[network][chain]["lighthouse_contract_address"],
       lighthouseAbi,
       signer
     );
@@ -54,8 +55,8 @@ const push_cid_tochain = async (signer, cid, chain, network) => {
   }
 };
 
-const transactionLog = (chain, txObj) => {
-  const networkConfig = defaultConfig[defaultConfig.network][chain];
+const transactionLog = (chain, txObj, network) => {
+  const networkConfig = lighthouse_config[network][chain];
 
   if (!networkConfig) {
     console.error(`No network under that chain ${chain}`);
@@ -65,33 +66,37 @@ const transactionLog = (chain, txObj) => {
 };
 
 function getAllFiles(dirPath, originalPath, arrayOfFiles) {
-  files = fs.readdirSync(dirPath)
+  files = fs.readdirSync(dirPath);
 
-  arrayOfFiles = arrayOfFiles || []
-  originalPath = originalPath || resolve(dirPath, "..")
+  arrayOfFiles = arrayOfFiles || [];
+  originalPath = originalPath || resolve(dirPath, "..");
 
-  folder = relative(originalPath, join(dirPath, "/"))
+  folder = relative(originalPath, join(dirPath, "/"));
 
   arrayOfFiles.push({
-      path: folder.replace(/\\/g, "/"),
-      mtime: fs.statSync(folder).mtime
-  })
+    path: folder.replace(/\\/g, "/"),
+    mtime: fs.statSync(folder).mtime,
+  });
 
   files.forEach(function (file) {
-      if (fs.statSync(dirPath + "/" + file).isDirectory()) {
-          arrayOfFiles = getAllFiles(dirPath + "/" + file, originalPath, arrayOfFiles)
-      } else {
-          file = join(dirPath, "/", file)
+    if (fs.statSync(dirPath + "/" + file).isDirectory()) {
+      arrayOfFiles = getAllFiles(
+        dirPath + "/" + file,
+        originalPath,
+        arrayOfFiles
+      );
+    } else {
+      file = join(dirPath, "/", file);
 
-          arrayOfFiles.push({
-              path: relative(originalPath, file).replace(/\\/g, "/"),
-              content: fs.readFileSync(file),
-              mtime: fs.statSync(file).mtime
-          })
-      }
-  })
+      arrayOfFiles.push({
+        path: relative(originalPath, file).replace(/\\/g, "/"),
+        content: fs.readFileSync(file),
+        mtime: fs.statSync(file).mtime,
+      });
+    }
+  });
 
-  return arrayOfFiles
+  return arrayOfFiles;
 }
 
 exports.deploy = async (
@@ -116,7 +121,7 @@ exports.deploy = async (
     process.stdout.clearLine();
     process.stdout.cursorTo(0);
 
-    transactionLog(chain, txObj);
+    transactionLog(chain, txObj, network);
 
     console.log(chalk.green("CID pushed to chain"));
 
@@ -129,27 +134,29 @@ exports.deploy = async (
     spinner.start();
   }
 
-  if(fs.lstatSync(path).isDirectory()){
-    const response = await axios.get(defaultConfig.URL + "/api/lighthouse/upload_client");
+  if (fs.lstatSync(path).isDirectory()) {
+    const response = await axios.get(
+      lighthouse_config.URL + "/api/lighthouse/upload_client"
+    );
 
     const client = await create({
-      host: 'ipfs.infura.io',
+      host: "ipfs.infura.io",
       port: 5001,
-      protocol: 'https',
+      protocol: "https",
       headers: {
-        authorization: response.data
-      }
-    })
+        authorization: response.data,
+      },
+    });
 
     const files = getAllFiles(path);
-    let hash_list = []
+    let hash_list = [];
 
-    try{
+    try {
       for await (const file of client.addAll(files)) {
-        hash_list.push(file.cid)
+        hash_list.push(file.cid);
       }
       // console.log(hash_list)
-    } catch(e){
+    } catch (e) {
       // console.log(e)
     }
 
@@ -158,11 +165,11 @@ exports.deploy = async (
       process.stdout.clearLine();
       process.stdout.cursorTo(0);
     }
-    
+
     return {
-      cid: hash_list[hash_list.length-1],
+      cid: hash_list[hash_list.length - 1],
     };
-  } else{
+  } else {
     const fd = new FormData();
     const data = await fileFromPath(path);
 
