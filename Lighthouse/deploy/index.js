@@ -8,7 +8,6 @@ const { FormData } = require("formdata-node");
 const Spinner = require("cli-spinner").Spinner;
 const { resolve, relative, join } = require("path");
 const { FormDataEncoder } = require("form-data-encoder");
-const { fileFromPath } = require("formdata-node/file-from-path");
 const { Readable } = require("stream");
 
 const lighthouse_config = require("../../lighthouse.config");
@@ -99,7 +98,7 @@ function getAllFiles(dirPath, originalPath, arrayOfFiles) {
   return arrayOfFiles;
 }
 
-exports.deploy = async (
+module.exports = async (
   path,
   signer,
   cid,
@@ -134,7 +133,9 @@ exports.deploy = async (
 
   async function deployAsFile() {
     const fd = new FormData();
-    const data = await fileFromPath(path);
+    const data = await eval("require")(
+      "formdata-node/file-from-path"
+    ).fileFromPath(path);
 
     fd.set("data", data, path.split("/").pop());
 
