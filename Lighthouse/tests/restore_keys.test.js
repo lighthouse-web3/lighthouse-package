@@ -1,7 +1,7 @@
-const { restore_keys } = require("../restore_keys");
+const lighthouse = require("../../Lighthouse");
 
 test("restore_keys", async () => {
-  const response_key = await restore_keys(
+  const response_key = await lighthouse.restore_keys(
     "0xd7f1e7ccf6e3620327d3b29c57018d076305148eec487c57d8121beac0067895",
     "ravish"
   );

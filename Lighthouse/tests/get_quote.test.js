@@ -1,9 +1,9 @@
-const { get_quote } = require("../get_quote");
+const lighthouse = require("../../Lighthouse");
 const { resolve } = require("path");
 
 test("Polygon Chain: get_quote", async () => {
   const path = resolve(process.cwd(), "Lighthouse/test_images/test_image1.png");
-  const quote = await get_quote(
+  const quote = await lighthouse.get_quote(
     path,
     "0x1Ec09D4B3Cb565b7CCe2eEAf71CC90c9b46c5c26",
     "polygon",
@@ -19,7 +19,7 @@ test("Polygon Chain: get_quote", async () => {
 
 test("Fantom Chain: get_quote", async () => {
   const path = resolve(process.cwd(), "Lighthouse/test_images/test_image1.png");
-  const quote = await get_quote(
+  const quote = await lighthouse.get_quote(
     path,
     "0x1Ec09D4B3Cb565b7CCe2eEAf71CC90c9b46c5c26",
     "fantom",
@@ -35,7 +35,7 @@ test("Fantom Chain: get_quote", async () => {
 
 test("Binance Chain: get_quote", async () => {
   const path = resolve(process.cwd(), "Lighthouse/test_images/test_image1.png");
-  const quote = await get_quote(
+  const quote = await lighthouse.get_quote(
     path,
     "0x1Ec09D4B3Cb565b7CCe2eEAf71CC90c9b46c5c26",
     "binance",
