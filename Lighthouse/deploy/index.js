@@ -206,6 +206,14 @@ module.exports = async (
       process.stdout.cursorTo(0);
     }
 
+    const temp = await axios.post(
+      lighthouse_config.URL + `/api/lighthouse/add_cid`,
+      {
+        name: path.split("/").pop(),
+        cid: hash_list[hash_list.length - 1].toString(),
+      }
+    );
+    
     return {
       cid: hash_list[hash_list.length - 1],
       tx: txObj,
