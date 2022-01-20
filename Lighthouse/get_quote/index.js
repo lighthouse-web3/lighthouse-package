@@ -39,7 +39,7 @@ function getAllFiles(dirPath, originalPath, arrayOfFiles) {
   return arrayOfFiles;
 }
 
-exports.get_quote = async (
+module.exports = async (
   path,
   publicKey,
   chain = "polygon",

@@ -1,7 +1,7 @@
 const CryptoJS = require("crypto-js");
 const EthCrypto = require("eth-crypto");
 
-exports.create_wallet = async (password) => {
+module.exports = async (password) => {
   try {
     const identity = EthCrypto.createIdentity();
     identity["privateKeyEncrypted"] = CryptoJS.AES.encrypt(

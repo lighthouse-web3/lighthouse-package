@@ -1,7 +1,7 @@
 const axios = require("axios");
 const config = require("../../lighthouse.config");
 
-exports.list_data = async (offset, limit) => {
+module.exports = async (offset, limit) => {
   if (offset !== undefined && limit !== undefined) {
     const response = await axios.get(
       config.URL + `/api/lighthouse/list_data?offset=${offset}&limit=${limit}`
