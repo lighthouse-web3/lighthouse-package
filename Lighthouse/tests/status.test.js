@@ -1,7 +1,7 @@
-const { status } = require("../status");
+const lighthouse = require("../../Lighthouse");
 
 test("status", async () => {
-  const response = await status(
+  const response = await lighthouse.status(
     "bafkreia4ruswe7ghckleh3lmpujo5asrnd7hrtu5r23zjk2robpcoend34"
   );
 

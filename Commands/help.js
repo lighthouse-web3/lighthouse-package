@@ -1,7 +1,8 @@
+const Conf = require("conf");
 const chalk = require("chalk");
 const packageJson = require("package-json");
 const { version } = require("../package.json");
-const Conf = require("conf");
+
 const config = new Conf();
 
 module.exports = {
@@ -38,6 +39,14 @@ module.exports = {
       } else {
         config.set("Lighthouse_chain", "polygon");
         console.log(chalk.green("Chain set to polygon"));
+      }
+    } else if (argv.network) {
+      if (argv.network.toString().toLowerCase() === "testnet") {
+        config.set("Lighthouse_network", "testnet");
+        console.log(chalk.green("Network set to testnet"));
+      } else {
+        config.set("Lighthouse_network", "mainnet");
+        console.log(chalk.green("Network set to mainnet"));
       }
     } else {
       console.log(chalk.yellow("Welcome to lighthouse-web3\n"));
@@ -83,7 +92,12 @@ module.exports = {
       );
       console.log(chalk.cyan("Options"));
       console.log(
-        "--chain" + Array(30).fill("\xa0").join("") + "Change network chain\n"
+        "--chain" + Array(30).fill("\xa0").join("") + "Change current chain\n"
+      );
+      console.log(
+        "--network" +
+          Array(28).fill("\xa0").join("") +
+          "Change network test/mainnet\n"
       );
       console.log(
         "--save" +
@@ -96,7 +110,7 @@ module.exports = {
           "Help for a specific command command\n"
       );
       console.log(chalk.magenta("Example"));
-      console.log("Change Network");
+      console.log("Change Chain");
       console.log(
         Array(5).fill("\xa0").join("") + "lighthouse-web3 --chain polygon\n"
       );

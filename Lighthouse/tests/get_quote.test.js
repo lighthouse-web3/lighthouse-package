@@ -1,9 +1,9 @@
-const { get_quote } = require("../get_quote");
+const lighthouse = require("../../Lighthouse");
 const { resolve } = require("path");
 
 test("Polygon Chain: get_quote", async () => {
   const path = resolve(process.cwd(), "Lighthouse/test_images/test_image1.png");
-  const quote = await get_quote(
+  const quote = await lighthouse.get_quote(
     path,
     "0x1Ec09D4B3Cb565b7CCe2eEAf71CC90c9b46c5c26",
     "polygon",
@@ -19,32 +19,32 @@ test("Polygon Chain: get_quote", async () => {
 
 test("Fantom Chain: get_quote", async () => {
   const path = resolve(process.cwd(), "Lighthouse/test_images/test_image1.png");
-  const quote = await get_quote(
+  const quote = await lighthouse.get_quote(
     path,
     "0x1Ec09D4B3Cb565b7CCe2eEAf71CC90c9b46c5c26",
     "fantom",
     "testnet"
   );
 
-  expect(quote).toHaveProperty("file_size");
-  expect(typeof quote.file_size).toBe("number");
+  expect(quote.meta_data[0]).toHaveProperty("file_size");
+  expect(typeof quote.meta_data[0].file_size).toBe("number");
 
-  expect(quote).toHaveProperty("mime_type");
-  expect(typeof quote.mime_type).toBe("string");
+  expect(quote.meta_data[0]).toHaveProperty("mime_type");
+  expect(typeof quote.meta_data[0].mime_type).toBe("string");
 }, 20000);
 
 test("Binance Chain: get_quote", async () => {
   const path = resolve(process.cwd(), "Lighthouse/test_images/test_image1.png");
-  const quote = await get_quote(
+  const quote = await lighthouse.get_quote(
     path,
     "0x1Ec09D4B3Cb565b7CCe2eEAf71CC90c9b46c5c26",
     "binance",
     "testnet"
   );
 
-  expect(quote).toHaveProperty("file_name");
-  expect(typeof quote.file_name).toBe("string");
+  expect(quote.meta_data[0]).toHaveProperty("file_name");
+  expect(typeof quote.meta_data[0].file_name).toBe("string");
 
-  expect(quote).toHaveProperty("ipfs_hash");
-  expect(typeof quote.ipfs_hash).toBe("string");
+  expect(quote.meta_data[0]).toHaveProperty("ipfs_hash");
+  expect(typeof quote.meta_data[0].ipfs_hash).toBe("string");
 }, 20000);

@@ -1,7 +1,7 @@
-const { get_key } = require("../get_key");
+const lighthouse = require("../../Lighthouse");
 
 test("get_key", async () => {
-  const response_key = await get_key(
+  const response_key = await lighthouse.get_key(
     "U2FsdGVkX18LETwxINkZdVVfXzyRQ/zacadfyxOESwAIGvX3F+oFagzt43Wf5aFxBB1i/jIY9I6H+8Tj5JJ0JQLdaEOsvNa3Wq6OpIjgNwtxKzjKPmWqDwmib5EjPXuL",
     "ravish"
   );

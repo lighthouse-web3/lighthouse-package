@@ -21,10 +21,16 @@ module.exports = {
         console.log(
           chalk.yellow("Public Key:    ") + config.get("Lighthouse_publicKey")
         );
+
         const chain = config.get("Lighthouse_chain")
           ? config.get("Lighthouse_chain")
           : "polygon";
         console.log(chalk.yellow("Current Chain: ") + chain);
+
+        const current_network = config.get("Lighthouse_network")
+          ? config.get("Lighthouse_network")
+          : "mainnet";
+        console.log(chalk.yellow("Network:       ") + current_network);
 
         // const deposit = await check_deposit();
         // console.log(deposit);

@@ -1,7 +1,7 @@
 const axios = require("axios");
 const config = require("../../lighthouse.config");
 
-exports.status = async (cid) => {
+module.exports = async (cid) => {
   const response = await axios.get(
     config.URL + `/api/lighthouse/status/${cid}`
   );
