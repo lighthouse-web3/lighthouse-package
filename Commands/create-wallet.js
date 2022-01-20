@@ -3,7 +3,7 @@ const Conf = require("conf");
 const read = require("read");
 const fs = require("fs");
 
-const { create_wallet } = require("../Lighthouse/create_wallet");
+const lighthouse = require("../Lighthouse");
 const config = new Conf();
 
 module.exports = {
@@ -26,7 +26,7 @@ module.exports = {
       };
 
       read(options, async (err, result) => {
-        const wallet = await create_wallet(result.trim());
+        const wallet = await lighthouse.create_wallet(result.trim());
         if (wallet) {
           fs.writeFile(
             "wallet.json",

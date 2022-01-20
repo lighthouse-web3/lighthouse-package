@@ -8,9 +8,7 @@ const ethers = require("ethers");
 
 const { bytesToSize } = require("./byteToSize");
 const lighthouse_config = require("../lighthouse.config");
-const { deploy } = require("../Lighthouse/deploy");
-const { get_key } = require("../Lighthouse/get_key");
-const { get_quote } = require("../Lighthouse/get_quote");
+const lighthouse = require("../Lighthouse");
 
 const config = new Conf();
 
@@ -35,7 +33,7 @@ module.exports = {
       const path = resolve(process.cwd(), argv.path);
       const spinner = new Spinner("Getting Quote...");
       spinner.start();
-      const response = await get_quote(
+      const response = await lighthouse.get_quote(
         path,
         config.get("Lighthouse_publicKey"),
         config.get("Lighthouse_chain")
@@ -143,7 +141,7 @@ module.exports = {
               };
 
               read(options, async (err, password) => {
-                const key = await get_key(
+                const key = await lighthouse.get_key(
                   config.get("Lighthouse_privateKeyEncrypted"),
                   password.trim()
                 );
@@ -160,7 +158,7 @@ module.exports = {
                     lighthouse_config[current_network][chain]["rpc"]
                   );
                   const signer = new ethers.Wallet(key.privateKey, provider);
-                  const deploy_response = await deploy(
+                  const deploy_response = await lighthouse.deploy(
                     path,
                     signer,
                     response.hash_list,

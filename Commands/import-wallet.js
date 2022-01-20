@@ -3,7 +3,7 @@ const Conf = require("conf");
 const read = require("read");
 const chalk = require("chalk");
 const { resolve } = require("path");
-const { restore_keys } = require("../Lighthouse/restore_keys");
+const lighthouse = require("../Lighthouse");
 
 const config = new Conf();
 
@@ -47,7 +47,7 @@ module.exports = {
         };
 
         read(options, async (err, result) => {
-          const wallet = await restore_keys(privateKey, result.trim());
+          const wallet = await lighthouse.restore_keys(privateKey, result.trim());
           if (wallet) {
             fs.writeFile(
               "wallet.json",

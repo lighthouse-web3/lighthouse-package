@@ -1,7 +1,7 @@
 const chalk = require("chalk");
 
 const { bytesToSize } = require("./byteToSize");
-const { status } = require("../Lighthouse/status");
+const lighthouse = require("../Lighthouse");
 
 module.exports = {
   command: "status <cid>",
@@ -12,7 +12,7 @@ module.exports = {
       console.log();
       console.log(chalk.green("Description: ") + "Get storage status of a CID");
     } else {
-      const response = await status(argv.cid);
+      const response = await lighthouse.status(argv.cid);
       console.log();
       console.log(
         chalk.yellow("CID:") +
