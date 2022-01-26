@@ -1,17 +1,17 @@
 const CryptoJS = require("crypto-js");
-const EthCrypto = require("eth-crypto");
+const ethers = require("ethers");
 
 module.exports = async (privateKey, password) => {
   try {
-    const publicKey = EthCrypto.publicKeyByPrivateKey(privateKey);
-    const address = EthCrypto.publicKey.toAddress(publicKey);
+    const wallet = new ethers.Wallet(privateKey);
+    const publicKey = wallet.address;
     const privateKeyEncrypted = CryptoJS.AES.encrypt(
       privateKey,
       password
     ).toString();
 
     return {
-      publicKey: address,
+      publicKey: publicKey,
       privateKey: privateKey,
       privateKeyEncrypted: privateKeyEncrypted,
     };
