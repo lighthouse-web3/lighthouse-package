@@ -16,9 +16,6 @@
     "lighthouse-cli",
     "lighthouse npm package"
   ],
-  "contributors": [
-    "Ravish Sharma <ravish@lighthouse.storage>"
-  ],
   "license": "MIT",
   "dependencies": {
     "axios": "^0.24.0",
@@ -26,7 +23,6 @@
     "cli-spinner": "^0.2.10",
     "conf": "^10.1.1",
     "crypto-js": "^4.1.1",
-    "eth-crypto": "^2.1.0",
     "ethers": "^5.5.2",
     "express": "^4.17.1",
     "form-data-encoder": "^1.4.3",
