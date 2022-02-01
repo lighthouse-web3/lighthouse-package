@@ -8,14 +8,27 @@ const list_data = require("./list_data");
 const status = require("./status");
 const restore_keys = require("./restore_keys");
 
-module.exports = {
-  deploy,
-  create_wallet,
-  get_key,
-  get_quote,
-  get_deals,
-  get_balance,
-  list_data,
-  status,
-  restore_keys,
-};
+if (typeof window === 'undefined') {
+  module.exports = {
+    deploy,
+    create_wallet,
+    get_key,
+    get_quote,
+    get_deals,
+    get_balance,
+    list_data,
+    status,
+    restore_keys,
+  };
+} else{
+  module.exports = {
+    create_wallet,
+    get_key,
+    get_deals,
+    get_balance,
+    list_data,
+    status,
+    restore_keys,
+  };
+}
+

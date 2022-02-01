@@ -1,8 +1,8 @@
 const fs = require("fs");
 const Conf = require("conf");
-const read = require("read");
+// const read = require("read");
 const chalk = require("chalk");
-const { resolve } = require("path");
+// const { resolve } = require("path");
 const lighthouse = require("../Lighthouse");
 
 const config = new Conf();
@@ -38,6 +38,9 @@ module.exports = {
       );
       console.log();
     } else {
+      const read = eval("require")("read");
+      const { resolve } = eval("require")("path");
+      
       if (argv.key) {
         const privateKey = argv.key;
         const options = {

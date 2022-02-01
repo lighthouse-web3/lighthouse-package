@@ -1,11 +1,11 @@
-const fs = require("fs");
+// const fs = require("fs"); 
 const axios = require("axios");
-const mime = require("mime-types");
+// const mime = require("mime-types");
 const Hash = require("../get_hash");
-const { resolve, relative, join } = require("path");
+// const { resolve, relative, join } = require("path");
 const config = require("../../lighthouse.config");
 
-function getAllFiles(dirPath, originalPath, arrayOfFiles) {
+const getAllFiles = (resolve, relative, join, fs, dirPath, originalPath, arrayOfFiles) => {
   files = fs.readdirSync(dirPath);
 
   arrayOfFiles = arrayOfFiles || [];
@@ -21,6 +21,10 @@ function getAllFiles(dirPath, originalPath, arrayOfFiles) {
   files.forEach(function (file) {
     if (fs.statSync(dirPath + "/" + file).isDirectory()) {
       arrayOfFiles = getAllFiles(
+        resolve,
+        relative,
+        join,
+        fs,
         dirPath + "/" + file,
         originalPath,
         arrayOfFiles
@@ -46,8 +50,11 @@ module.exports = async (
   network = "testnet"
 ) => {
   try {
+    const { resolve, relative, join } = eval("require")("path");
+    const fs = eval("require")("fs");
+    const mime = eval("require")("mime-types");
     if (fs.lstatSync(path).isDirectory()) {
-      const sources = getAllFiles(path);
+      const sources = getAllFiles(resolve, relative, join, fs, path);
       const meta_data = [];
       const hash_list = [];
       let total_size = 0;

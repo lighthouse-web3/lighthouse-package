@@ -1,8 +1,8 @@
-const read = require("read");
+// const read = require("read");
 const Conf = require("conf");
 const chalk = require("chalk");
-const { resolve } = require("path");
-const Spinner = require("cli-spinner").Spinner;
+// const { resolve } = require("path");
+// const Spinner = require("cli-spinner").Spinner;
 
 const ethers = require("ethers");
 
@@ -30,6 +30,10 @@ module.exports = {
       );
       console.log();
     } else {
+      const read = eval("require")("read");
+      const { resolve } = eval("require")("path");
+      const Spinner = eval("require")("cli-spinner").Spinner
+      
       const path = resolve(process.cwd(), argv.path);
       const spinner = new Spinner("Getting Quote...");
       spinner.start();

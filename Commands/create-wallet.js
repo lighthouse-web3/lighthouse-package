@@ -1,7 +1,7 @@
 const chalk = require("chalk");
 const Conf = require("conf");
-const read = require("read");
-const fs = require("fs");
+// const read = require("read");
+// const fs = require("fs");
 
 const lighthouse = require("../Lighthouse");
 const config = new Conf();
@@ -19,6 +19,7 @@ module.exports = {
       console.log("   lighthouse-web3 create-wallet");
       console.log();
     } else {
+      const read = eval("require")("read");
       const options = {
         prompt: "Set a password for your wallet:",
         silent: true,
@@ -28,6 +29,7 @@ module.exports = {
       read(options, async (err, result) => {
         const wallet = await lighthouse.create_wallet(result.trim());
         if (wallet) {
+          const fs = eval("require")("fs");
           fs.writeFile(
             "wallet.json",
             JSON.stringify(wallet, null, 4),

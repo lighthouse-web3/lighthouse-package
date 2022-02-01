@@ -1,6 +1,6 @@
 const Conf = require("conf");
 const chalk = require("chalk");
-const Spinner = require("cli-spinner").Spinner;
+// const Spinner = require("cli-spinner").Spinner;
 
 const lighthouse = require("../Lighthouse");
 
@@ -18,6 +18,7 @@ module.exports = {
       );
       console.log();
     } else {
+      const Spinner = eval("require")("cli-spinner").Spinner
       if (config.get("Lighthouse_publicKey")) {
         const spinner = new Spinner("");
         spinner.start();

@@ -2,13 +2,13 @@ const axios = require("axios");
 const chalk = require("chalk");
 const { create } = require("ipfs-http-client");
 const ethers = require("ethers");
-const fetch = require("node-fetch");
-const fs = require("fs");
-const { FormData } = require("formdata-node");
-const Spinner = require("cli-spinner").Spinner;
-const { resolve, relative, join } = require("path");
-const { FormDataEncoder } = require("form-data-encoder");
-const { Readable } = require("stream");
+// const fetch = require("node-fetch");
+// const fs = require("fs");
+// const { FormData } = require("formdata-node");
+// const Spinner = require("cli-spinner").Spinner;
+// const { resolve, relative, join } = require("path");
+// const { FormDataEncoder } = require("form-data-encoder");
+// const { Readable } = require("stream");
 
 const lighthouse_config = require("../../lighthouse.config");
 const { lighthouseAbi } = require("../contract_abi/lighthouseAbi.js");
@@ -64,7 +64,7 @@ const transactionLog = (chain, txObj, network) => {
   console.log("Transaction: " + networkConfig.scan + txObj.transactionHash);
 };
 
-function getAllFiles(dirPath, originalPath, arrayOfFiles) {
+const getAllFiles = (resolve, relative, join, fs, dirPath, originalPath, arrayOfFiles) => {
   files = fs.readdirSync(dirPath);
 
   arrayOfFiles = arrayOfFiles || [];
@@ -80,6 +80,10 @@ function getAllFiles(dirPath, originalPath, arrayOfFiles) {
   files.forEach(function (file) {
     if (fs.statSync(dirPath + "/" + file).isDirectory()) {
       arrayOfFiles = getAllFiles(
+        resolve,
+        relative,
+        join,
+        fs,
         dirPath + "/" + file,
         originalPath,
         arrayOfFiles
@@ -107,6 +111,7 @@ module.exports = async (
   network = "testnet"
 ) => {
   // Push CID to chain
+  const Spinner = eval("require")("cli-spinner").Spinner
   let spinner = new Spinner();
   if (cli) {
     console.log(chalk.green("Pushing CID to chain"));
@@ -132,13 +137,15 @@ module.exports = async (
   }
 
   async function deployAsFile() {
+    const { FormData } = eval("require")("formdata-node");
     const fd = new FormData();
-    const data = await eval("require")(
+    const data = eval("require")(
       "formdata-node/file-from-path"
     ).fileFromPath(path);
 
     fd.set("data", data, path.split("/").pop());
 
+    const { FormDataEncoder } = eval("require")("form-data-encoder");
     const encoder = new FormDataEncoder(fd);
 
     const upload_token = await user_token(signer, chain, "24h", network);
@@ -149,12 +156,14 @@ module.exports = async (
       ...encoder.headers,
     };
 
+    const { Readable } = eval("require")("stream");
     const options = {
       method: "POST",
       body: Readable.from(encoder),
       headers,
     };
 
+    const fetch = eval("require")("node-fetch");
     const response = await fetch(
       "https://shuttle-4.estuary.tech/content/add",
       options
@@ -188,7 +197,9 @@ module.exports = async (
       },
     });
 
-    const files = getAllFiles(path);
+    const { resolve, relative, join } = eval("require")("path");
+    const fs = eval("require")("fs");
+    const files = await getAllFiles(resolve, relative, join, fs, path);
     let hash_list = [];
 
     try {
@@ -220,7 +231,7 @@ module.exports = async (
     };
   }
 
-  if (fs.lstatSync(path).isDirectory()) {
+  if (eval("require")("fs").lstatSync(path).isDirectory()) {
     return await deployAsDirectory();
   }
 

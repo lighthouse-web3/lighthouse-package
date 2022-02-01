@@ -1,7 +1,7 @@
 const chalk = require("chalk");
 const Conf = require("conf");
-const read = require("read");
-const fs = require("fs");
+// const read = require("read");
+// const fs = require("fs");
 
 const lighthouse = require("../Lighthouse");
 const config = new Conf();
@@ -17,6 +17,9 @@ module.exports = {
         chalk.green("Description: ") + "Change password of your wallet"
       );
     } else {
+      const read = eval("require")("read");
+      const fs = eval("require")("fs");
+
       const privateKey = argv.privateKey;
       const options = {
         prompt: "Set new password for your wallet:",
