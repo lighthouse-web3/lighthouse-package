@@ -8,7 +8,7 @@ module.exports = async (encPrivateKey, password) => {
     const wallet = new ethers.Wallet(originalText);
 
     return { privateKey: originalText, publicKey: wallet.address };
-  } catch(e) {
+  } catch (e) {
     console.log(e);
     return null;
   }
