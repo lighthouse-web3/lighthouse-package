@@ -64,7 +64,15 @@ const transactionLog = (chain, txObj, network) => {
   console.log("Transaction: " + networkConfig.scan + txObj.transactionHash);
 };
 
-const getAllFiles = (resolve, relative, join, fs, dirPath, originalPath, arrayOfFiles) => {
+const getAllFiles = (
+  resolve,
+  relative,
+  join,
+  fs,
+  dirPath,
+  originalPath,
+  arrayOfFiles
+) => {
   files = fs.readdirSync(dirPath);
 
   arrayOfFiles = arrayOfFiles || [];
@@ -100,7 +108,7 @@ const getAllFiles = (resolve, relative, join, fs, dirPath, originalPath, arrayOf
   });
 
   return arrayOfFiles;
-}
+};
 
 module.exports = async (
   path,
@@ -111,7 +119,7 @@ module.exports = async (
   network = "testnet"
 ) => {
   // Push CID to chain
-  const Spinner = eval("require")("cli-spinner").Spinner
+  const Spinner = eval("require")("cli-spinner").Spinner;
   let spinner = new Spinner();
   if (cli) {
     console.log(chalk.green("Pushing CID to chain"));
@@ -139,9 +147,9 @@ module.exports = async (
   async function deployAsFile() {
     const { FormData } = eval("require")("formdata-node");
     const fd = new FormData();
-    const data = eval("require")(
-      "formdata-node/file-from-path"
-    ).fileFromPath(path);
+    const data = eval("require")("formdata-node/file-from-path").fileFromPath(
+      path
+    );
 
     fd.set("data", data, path.split("/").pop());
 
@@ -224,7 +232,7 @@ module.exports = async (
         cid: hash_list[hash_list.length - 1].toString(),
       }
     );
-    
+
     return {
       cid: hash_list[hash_list.length - 1],
       tx: txObj,
