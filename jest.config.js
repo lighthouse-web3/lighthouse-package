@@ -1,4 +1,4 @@
-const coverageToNumber = 100; // [0..100]
+const coverageToNumber = 5; // [0..100]
 
 // Or async function
 module.exports = async () => {
