@@ -40,7 +40,7 @@ const defaultConfig = {
     },
     polygon: {
       symbol: "MATIC",
-      rpc: "https://rpc-mumbai.maticvigil.com/",
+      rpc: "https://rpc-mumbai.matic.today",
       scan: "https://mumbai.polygonscan.com/",
       chain_id: "80001",
       lighthouse_contract_address: "0xEF5787e17efdC2cc8F6487D1F1aD2A7e04b83F6D",
