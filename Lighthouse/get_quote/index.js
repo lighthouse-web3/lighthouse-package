@@ -1,11 +1,19 @@
-// const fs = require("fs"); 
+// const fs = require("fs");
 const axios = require("axios");
 // const mime = require("mime-types");
 const Hash = require("../get_hash");
 // const { resolve, relative, join } = require("path");
 const config = require("../../lighthouse.config");
 
-const getAllFiles = (resolve, relative, join, fs, dirPath, originalPath, arrayOfFiles) => {
+const getAllFiles = (
+  resolve,
+  relative,
+  join,
+  fs,
+  dirPath,
+  originalPath,
+  arrayOfFiles
+) => {
   files = fs.readdirSync(dirPath);
 
   arrayOfFiles = arrayOfFiles || [];
@@ -41,7 +49,7 @@ const getAllFiles = (resolve, relative, join, fs, dirPath, originalPath, arrayOf
   });
 
   return arrayOfFiles;
-}
+};
 
 module.exports = async (
   path,
