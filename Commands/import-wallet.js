@@ -40,7 +40,7 @@ module.exports = {
     } else {
       const read = eval("require")("read");
       const { resolve } = eval("require")("path");
-      
+
       if (argv.key) {
         const privateKey = argv.key;
         const options = {

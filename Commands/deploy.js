@@ -32,8 +32,8 @@ module.exports = {
     } else {
       const read = eval("require")("read");
       const { resolve } = eval("require")("path");
-      const Spinner = eval("require")("cli-spinner").Spinner
-      
+      const Spinner = eval("require")("cli-spinner").Spinner;
+
       const path = resolve(process.cwd(), argv.path);
       const spinner = new Spinner("Getting Quote...");
       spinner.start();

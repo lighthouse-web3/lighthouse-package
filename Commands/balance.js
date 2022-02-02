@@ -18,7 +18,7 @@ module.exports = {
       );
       console.log();
     } else {
-      const Spinner = eval("require")("cli-spinner").Spinner
+      const Spinner = eval("require")("cli-spinner").Spinner;
       if (config.get("Lighthouse_publicKey")) {
         const spinner = new Spinner("");
         spinner.start();
