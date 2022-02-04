@@ -8,45 +8,58 @@ const config = new Conf();
 module.exports = {
   command: "$0",
   builder: {
-    chain: {
-      describe: "Chain to use, delault: polygon",
+    network: {
+      describe: "Network to use, delault: polygon mainnet",
       type: "String",
     },
   },
   handler: async function (argv) {
-    if (argv.chain) {
+    if (argv.network) {
       if (
-        argv.chain.toString().toLowerCase() === "polygon" ||
-        argv.chain.toString().toLowerCase() === "matic" ||
-        argv.chain.toString().toLowerCase() === "MATIC"
+        argv.network.toString().toLowerCase() === "polygon" ||
+        argv.network.toString().toLowerCase() === "matic"
       ) {
         config.set("Lighthouse_chain", "polygon");
-        console.log(chalk.green("Chain set to polygon"));
+        if (argv._[0] === "testnet") {
+          config.set("Lighthouse_network", "testnet");
+          console.log(chalk.green("Network set to polygon testnet"));
+        } else {
+          config.set("Lighthouse_network", "mainnet");
+          console.log(chalk.green("Network set to polygon mainnet"));
+        }
       } else if (
-        argv.chain.toString().toLowerCase() === "fantom" ||
-        argv.chain.toString().toLowerCase() === "ftm" ||
-        argv.chain.toString().toLowerCase() === "FTM"
+        argv.network.toString().toLowerCase() === "fantom" ||
+        argv.network.toString().toLowerCase() === "ftm"
       ) {
         config.set("Lighthouse_chain", "fantom");
-        console.log(chalk.green("Chain set to fantom"));
+        if (argv._[0] === "testnet") {
+          config.set("Lighthouse_network", "testnet");
+          console.log(chalk.green("Network set to fantom testnet"));
+        } else {
+          config.set("Lighthouse_network", "mainnet");
+          console.log(chalk.green("Network set to fantom mainnet"));
+        }
       } else if (
-        argv.chain.toString().toLowerCase() === "binance" ||
-        argv.chain.toString().toLowerCase() === "bnb" ||
-        argv.chain.toString().toLowerCase() === "BNB"
+        argv.network.toString().toLowerCase() === "binance" ||
+        argv.network.toString().toLowerCase() === "bnb"
       ) {
         config.set("Lighthouse_chain", "binance");
-        console.log(chalk.green("Chain set to binance"));
+        if (argv._[0] === "testnet") {
+          config.set("Lighthouse_network", "testnet");
+          console.log(chalk.green("Network set to binance testnet"));
+        } else {
+          config.set("Lighthouse_network", "mainnet");
+          console.log(chalk.green("Network set to binance mainnet"));
+        }
       } else {
         config.set("Lighthouse_chain", "polygon");
-        console.log(chalk.green("Chain set to polygon"));
-      }
-    } else if (argv.network) {
-      if (argv.network.toString().toLowerCase() === "testnet") {
-        config.set("Lighthouse_network", "testnet");
-        console.log(chalk.green("Network set to testnet"));
-      } else {
-        config.set("Lighthouse_network", "mainnet");
-        console.log(chalk.green("Network set to mainnet"));
+        if (argv._[0] === "testnet") {
+          config.set("Lighthouse_network", "testnet");
+          console.log(chalk.green("Network set to polygon testnet"));
+        } else {
+          config.set("Lighthouse_network", "mainnet");
+          console.log(chalk.green("Network set to polygon mainnet"));
+        }
       }
     } else {
       console.log(chalk.yellow("Welcome to lighthouse-web3\n"));
@@ -92,12 +105,7 @@ module.exports = {
       );
       console.log(chalk.cyan("Options"));
       console.log(
-        "--chain" + Array(30).fill("\xa0").join("") + "Change current chain\n"
-      );
-      console.log(
-        "--network" +
-          Array(28).fill("\xa0").join("") +
-          "Change network test/mainnet\n"
+        "--network" + Array(28).fill("\xa0").join("") + "Set network\n"
       );
       console.log(
         "--save" +
@@ -110,15 +118,17 @@ module.exports = {
           "Help for a specific command command\n"
       );
       console.log(chalk.magenta("Example"));
-      console.log("Change Chain");
+      console.log("Change Network");
       console.log(
-        Array(5).fill("\xa0").join("") + "lighthouse-web3 --chain polygon\n"
+        Array(5).fill("\xa0").join("") + "lighthouse-web3 --network polygon\n"
       );
       console.log(
-        Array(5).fill("\xa0").join("") + "lighthouse-web3 --chain fantom\n"
+        Array(5).fill("\xa0").join("") +
+          "lighthouse-web3 --network fantom testnet\n"
       );
       console.log(
-        Array(5).fill("\xa0").join("") + "lighthouse-web3 --chain binance\n"
+        Array(5).fill("\xa0").join("") +
+          "lighthouse-web3 --network binance mainnet\n"
       );
       console.log("Create wallet and save it");
       console.log(
