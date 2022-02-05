@@ -1,8 +1,5 @@
-// const read = require("read");
 const Conf = require("conf");
 const chalk = require("chalk");
-// const { resolve } = require("path");
-// const Spinner = require("cli-spinner").Spinner;
 
 const ethers = require("ethers");
 
@@ -37,15 +34,19 @@ module.exports = {
       const path = resolve(process.cwd(), argv.path);
       const spinner = new Spinner("Getting Quote...");
       spinner.start();
+
+      const chain = config.get("Lighthouse_chain")
+        ? config.get("Lighthouse_chain")
+        : "polygon";
+      const current_network = config.get("Lighthouse_network")
+        ? config.get("Lighthouse_network")
+        : "mainnet";
+        
       const response = await lighthouse.get_quote(
         path,
         config.get("Lighthouse_publicKey"),
-        config.get("Lighthouse_chain")
-          ? config.get("Lighthouse_chain")
-          : "polygon",
-        config.get("Lighthouse_network")
-          ? config.get("Lighthouse_network")
-          : "mainnet"
+        chain,
+        current_network
       );
       spinner.stop();
       process.stdout.clearLine();
@@ -66,8 +67,8 @@ module.exports = {
 
         for (let i = 0; i < response.meta_data.length; i++) {
           console.log(
-            response.meta_data[i].ipfs_hash +
-              Array(63 - response.meta_data[i].ipfs_hash.length)
+            response.meta_data[i].cid +
+              Array(63 - response.meta_data[i].cid.length)
                 .fill("\xa0")
                 .join("") +
               bytesToSize(response.meta_data[i].file_size) +
@@ -93,28 +94,30 @@ module.exports = {
 
         console.log(chalk.cyan("Summary"));
         console.log("Total Size: " + bytesToSize(response.total_size));
-        console.log("Fees: " + response.total_cost);
+        console.log("Fees: " + response.total_cost.toFixed(18) + " " + lighthouse_config[current_network][chain]["symbol"]);
         console.log(
           "Gas Fees: " +
             ethers.utils.parseUnits(
               ethers.utils.formatEther(response.gasFee),
               "ether"
-            )
+            ) +
+            " ether"
         );
+
         console.log(
-          "Total Fee: " + (response.total_cost + response.gasFee) * 10 ** -18
+          "Total Fee: " + Number(Number(response.total_cost.toFixed(18)) + Number(ethers.utils.formatEther(response.gasFee))) + " " + lighthouse_config[current_network][chain]["symbol"]
         );
 
         console.log();
 
         console.log(chalk.cyan("Wallet"));
         console.log("Address: " + config.get("Lighthouse_publicKey"));
-        console.log("Current balance: " + response.current_balance * 10 ** -18);
+        console.log("Current balance: " + response.current_balance * 10 ** -18 + " " + lighthouse_config[current_network][chain]["symbol"]);
+
         const balance_after_deploy =
-          (Number(response.current_balance) -
-            (response.total_cost + response.gasFee)) *
-          10 ** -18;
-        console.log("Balance after deploy: " + balance_after_deploy);
+          Number(Number(response.current_balance * 10 ** -18) -
+          Number(Number(response.total_cost.toFixed(18)) + Number(ethers.utils.formatEther(response.gasFee))));
+        console.log("Balance after deploy: " + balance_after_deploy + " " + lighthouse_config[current_network][chain]["symbol"]);
 
         console.log();
 
@@ -151,12 +154,6 @@ module.exports = {
                 );
 
                 if (key) {
-                  const chain = config.get("Lighthouse_chain")
-                    ? config.get("Lighthouse_chain")
-                    : "polygon";
-                  const current_network = config.get("Lighthouse_network")
-                    ? config.get("Lighthouse_network")
-                    : "mainnet";
 
                   const provider = new ethers.providers.JsonRpcProvider(
                     lighthouse_config[current_network][chain]["rpc"]
@@ -165,7 +162,6 @@ module.exports = {
                   const deploy_response = await lighthouse.deploy(
                     path,
                     signer,
-                    response.hash_list,
                     true,
                     chain,
                     current_network
@@ -178,7 +174,12 @@ module.exports = {
 
                   console.log(
                     chalk.cyan(
-                      "Visit: " + "https://ipfs.io/ipfs/" + deploy_response.cid
+                      "Visit: " + "https://gateway.lighthouse.storage/ipfs/" + deploy_response.cid
+                    )
+                  );
+                  console.log(
+                    chalk.cyan(
+                      "       " + "https://ipfs.io/ipfs/" + deploy_response.cid
                     )
                   );
 
