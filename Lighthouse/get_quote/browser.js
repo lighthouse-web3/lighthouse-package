@@ -1,50 +1,26 @@
-// const fs = require("fs");
 const axios = require("axios");
-// const mime = require("mime-types");
-// const Hash = require("../get_hash");
-// const { resolve, relative, join } = require("path");
-const config = require("../../lighthouse.config");
+const lighthouse_config = require("../../lighthouse.config");
 
 module.exports = async (
-  e,
-  publicKey,
+  fileSizeInBytes,
   chain = "polygon",
   network = "testnet"
 ) => {
   try {
-    const body = {
-      fileSize: e.target.files[0].size,
-      publicKey: publicKey,
-      ipfs_hash: "",
-      chain: chain,
-      network: network,
-    };
-    const response = await axios.post(
-      config.URL + `/api/lighthouse/get_quote`,
-      body
+    // Get ticker for the given currency
+    const response = await axios.get(
+      lighthouse_config.URL +
+        `/api/lighthouse/get_ticker?symbol=${lighthouse_config[network][chain]["symbol"]}`
     );
+    const token_price_usd = response.data;
 
-    response.data.file_size = e.target.files[0].size;
-    response.data.mime_type = e.target.files[0].type;
-    response.data.file_name = e.target.files[0].name;
-
-    const meta_data = [
-      {
-        file_size: e.target.files[0].size,
-        mime_type: e.target.files[0].type,
-        file_name: e.target.files[0].name,
-        ipfs_hash: "",
-        cost: response.data.cost,
-      },
-    ];
+    // Get cost of file
+    const totalSize = fileSizeInBytes / (1024 * 1024 * 1024);
+    const total_cost_usd = totalSize * 5;
+    const total_cost = total_cost_usd / token_price_usd;
 
     return {
-      meta_data: meta_data,
-      hash_list: "",
-      gasFee: response.data.gasFee,
-      current_balance: response.data.current_balance,
-      total_size: response.data.file_size,
-      total_cost: response.data.cost,
+      total_cost: total_cost,
     };
   } catch (err) {
     console.log(err);
