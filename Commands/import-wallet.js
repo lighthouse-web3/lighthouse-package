@@ -1,8 +1,6 @@
 const fs = require("fs");
 const Conf = require("conf");
-// const read = require("read");
 const chalk = require("chalk");
-// const { resolve } = require("path");
 const lighthouse = require("../Lighthouse");
 
 const config = new Conf();
@@ -38,69 +36,75 @@ module.exports = {
       );
       console.log();
     } else {
-      const read = eval("require")("read");
-      const { resolve } = eval("require")("path");
+      try {
+        const read = require("read");
+        const { resolve } = require("path");
 
-      if (argv.key) {
-        const privateKey = argv.key;
-        const options = {
-          prompt: "Set a password for your wallet:",
-          silent: true,
-          default: "",
-        };
+        if (argv.key) {
+          const privateKey = argv.key;
+          const options = {
+            prompt: "Set a password for your wallet:",
+            silent: true,
+            default: "",
+          };
 
-        read(options, async (err, result) => {
-          const wallet = await lighthouse.restore_keys(
-            privateKey,
-            result.trim()
-          );
-          if (wallet) {
-            fs.writeFile(
-              "wallet.json",
-              JSON.stringify(wallet, null, 4),
-              function (err) {
-                if (err) {
-                  console.log(chalk.red("Creating Wallet Failed!"));
+          read(options, async (err, result) => {
+            const wallet = await lighthouse.restore_keys(
+              privateKey,
+              result.trim()
+            );
+            if (wallet) {
+              fs.writeFile(
+                "wallet.json",
+                JSON.stringify(wallet, null, 4),
+                function (err) {
+                  if (err) {
+                    console.log(chalk.red("Creating Wallet Failed!"));
+                  }
+
+                  config.set(
+                    "Lighthouse_privateKeyEncrypted",
+                    wallet["privateKeyEncrypted"]
+                  );
+                  config.set("Lighthouse_publicKey", wallet["publicKey"]);
+
+                  console.log(chalk.cyan("Public Key: " + wallet.publicKey));
+                  console.log(chalk.green("Wallet Imported!"));
                 }
-
-                config.set(
-                  "Lighthouse_privateKeyEncrypted",
-                  wallet["privateKeyEncrypted"]
-                );
-                config.set("Lighthouse_publicKey", wallet["publicKey"]);
-
-                console.log(chalk.cyan("Public Key: " + wallet.publicKey));
-                console.log(chalk.green("Wallet Imported!"));
-              }
-            );
-          } else {
-            console.log(chalk.red("Creating Wallet Failed!"));
-          }
-        });
-      } else if (argv.path) {
-        try {
-          const path = resolve(process.cwd(), argv.path);
-          const wallet = JSON.parse(fs.readFileSync(path));
-          if (wallet) {
-            config.set(
-              "Lighthouse_privateKeyEncrypted",
-              wallet["privateKeyEncrypted"]
-            );
-            config.set("Lighthouse_publicKey", wallet["publicKey"]);
-            console.log(chalk.cyan("Public Key: " + wallet.publicKey));
-            console.log(chalk.green("Wallet Imported!"));
-          } else {
+              );
+            } else {
+              console.log(chalk.red("Creating Wallet Failed!"));
+            }
+          });
+        } else if (argv.path) {
+          try {
+            const path = resolve(process.cwd(), argv.path);
+            const wallet = JSON.parse(fs.readFileSync(path));
+            if (wallet) {
+              config.set(
+                "Lighthouse_privateKeyEncrypted",
+                wallet["privateKeyEncrypted"]
+              );
+              config.set("Lighthouse_publicKey", wallet["publicKey"]);
+              console.log(chalk.cyan("Public Key: " + wallet.publicKey));
+              console.log(chalk.green("Wallet Imported!"));
+            } else {
+              console.log(chalk.red("Importing Wallet Failed!"));
+            }
+          } catch (err) {
             console.log(chalk.red("Importing Wallet Failed!"));
           }
-        } catch (err) {
-          console.log(chalk.red("Importing Wallet Failed!"));
+        } else {
+          console.log(chalk.red("Invalid arguments!"));
+          console.log(
+            "Usage: lighthouse-web3 import-wallet --key <private key>"
+          );
+          console.log(
+            "     : lighthouse-web3 import-wallet --path <path to wallet file>"
+          );
         }
-      } else {
-        console.log(chalk.red("Invalid arguments!"));
-        console.log("Usage: lighthouse-web3 import-wallet --key <private key>");
-        console.log(
-          "     : lighthouse-web3 import-wallet --path <path to wallet file>"
-        );
+      } catch {
+        console.log(chalk.red("Something went wrong!"));
       }
     }
   },

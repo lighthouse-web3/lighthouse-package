@@ -1,6 +1,5 @@
 const Conf = require("conf");
 const chalk = require("chalk");
-// const Spinner = require("cli-spinner").Spinner;
 
 const lighthouse = require("../Lighthouse");
 
@@ -18,29 +17,33 @@ module.exports = {
       );
       console.log();
     } else {
-      const Spinner = eval("require")("cli-spinner").Spinner;
-      if (config.get("Lighthouse_publicKey")) {
-        const spinner = new Spinner("");
-        spinner.start();
-        const balance = await lighthouse.get_balance(
-          config.get("Lighthouse_publicKey"),
-          config.get("Lighthouse_chain")
-            ? config.get("Lighthouse_chain")
-            : "polygon",
-          config.get("Lighthouse_network")
-            ? config.get("Lighthouse_network")
-            : "mainnet"
-        );
-        spinner.stop();
-        process.stdout.clearLine();
-        process.stdout.cursorTo(0);
-        if (balance) {
-          console.log(chalk.green("balance " + balance.data * 10 ** -18));
+      try {
+        const Spinner = require("cli-spinner").Spinner;
+        if (config.get("Lighthouse_publicKey")) {
+          const spinner = new Spinner("");
+          spinner.start();
+          const balance = await lighthouse.get_balance(
+            config.get("Lighthouse_publicKey"),
+            config.get("Lighthouse_chain")
+              ? config.get("Lighthouse_chain")
+              : "polygon",
+            config.get("Lighthouse_network")
+              ? config.get("Lighthouse_network")
+              : "mainnet"
+          );
+          spinner.stop();
+          process.stdout.clearLine();
+          process.stdout.cursorTo(0);
+          if (balance) {
+            console.log(chalk.green("balance " + balance.data * 10 ** -18));
+          } else {
+            console.log(chalk.red("Something Went Wrong!"));
+          }
         } else {
-          console.log(chalk.red("Something Went Wrong!"));
+          console.log(chalk.red("Please import wallet first!"));
         }
-      } else {
-        console.log(chalk.red("Please import wallet first!"));
+      } catch {
+        console.log(chalk.red("Something went wrong!"));
       }
     }
   },
