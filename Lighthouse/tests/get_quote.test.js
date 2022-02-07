@@ -11,7 +11,7 @@ test("Polygon Chain: get_quote", async () => {
   );
 
   expect(quote).toHaveProperty("current_balance");
-  expect(typeof quote.current_balance).toBe("number");
+  expect(typeof Number(quote.current_balance)).toBe("number");
 
   expect(quote).toHaveProperty("gasFee");
   expect(typeof quote.gasFee).toBe("number");
@@ -45,6 +45,6 @@ test("Binance Chain: get_quote", async () => {
   expect(quote.meta_data[0]).toHaveProperty("file_name");
   expect(typeof quote.meta_data[0].file_name).toBe("string");
 
-  expect(quote.meta_data[0]).toHaveProperty("ipfs_hash");
-  expect(typeof quote.meta_data[0].ipfs_hash).toBe("string");
+  expect(quote.meta_data[0]).toHaveProperty("cid");
+  expect(typeof quote.meta_data[0].cid).toBe("string");
 }, 20000);
