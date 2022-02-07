@@ -20,46 +20,46 @@ module.exports = {
         argv.network.toString().toLowerCase() === "matic"
       ) {
         config.set("Lighthouse_chain", "polygon");
-        if (argv._[0] === "testnet") {
-          config.set("Lighthouse_network", "testnet");
-          console.log(chalk.green("Network set to polygon testnet"));
-        } else {
-          config.set("Lighthouse_network", "mainnet");
-          console.log(chalk.green("Network set to polygon mainnet"));
-        }
+        config.set("Lighthouse_network", "mainnet");
+        console.log(chalk.green("Network set to polygon mainnet"));
       } else if (
         argv.network.toString().toLowerCase() === "fantom" ||
         argv.network.toString().toLowerCase() === "ftm"
       ) {
         config.set("Lighthouse_chain", "fantom");
-        if (argv._[0] === "testnet") {
-          config.set("Lighthouse_network", "testnet");
-          console.log(chalk.green("Network set to fantom testnet"));
-        } else {
-          config.set("Lighthouse_network", "mainnet");
-          console.log(chalk.green("Network set to fantom mainnet"));
-        }
+        config.set("Lighthouse_network", "mainnet");
+        console.log(chalk.green("Network set to fantom mainnet"));
       } else if (
         argv.network.toString().toLowerCase() === "binance" ||
         argv.network.toString().toLowerCase() === "bnb"
       ) {
         config.set("Lighthouse_chain", "binance");
-        if (argv._[0] === "testnet") {
-          config.set("Lighthouse_network", "testnet");
-          console.log(chalk.green("Network set to binance testnet"));
-        } else {
-          config.set("Lighthouse_network", "mainnet");
-          console.log(chalk.green("Network set to binance mainnet"));
-        }
+        config.set("Lighthouse_network", "mainnet");
+        console.log(chalk.green("Network set to binance mainnet"));
+      } else if (
+        argv.network.toString().toLowerCase() === "matic-testnet" ||
+        argv.network.toString().toLowerCase() === "polygon-testnet"
+      ) {
+        config.set("Lighthouse_chain", "polygon");
+        config.set("Lighthouse_network", "testnet");
+        console.log(chalk.green("Network set to polygon testnet"));
+      } else if (
+        argv.network.toString().toLowerCase() === "bsc-testnet" ||
+        argv.network.toString().toLowerCase() === "binance-testnet"
+      ) {
+        config.set("Lighthouse_chain", "binance");
+        config.set("Lighthouse_network", "testnet");
+        console.log(chalk.green("Network set to binance testnet"));
+      } else if (
+        argv.network.toString().toLowerCase() === "ftm-testnet" ||
+        argv.network.toString().toLowerCase() === "fantom-testnet"
+      ) {
+        config.set("Lighthouse_chain", "fantom");
+        config.set("Lighthouse_network", "testnet");
+        console.log(chalk.green("Network set to fantom testnet"));
       } else {
         config.set("Lighthouse_chain", "polygon");
-        if (argv._[0] === "testnet") {
-          config.set("Lighthouse_network", "testnet");
-          console.log(chalk.green("Network set to polygon testnet"));
-        } else {
-          config.set("Lighthouse_network", "mainnet");
-          console.log(chalk.green("Network set to polygon mainnet"));
-        }
+        config.set("Lighthouse_network", "mainnet");
       }
     } else {
       console.log(chalk.yellow("Welcome to lighthouse-web3\n"));
@@ -103,6 +103,12 @@ module.exports = {
           Array(31).fill("\xa0").join("") +
           "Get metadata around the storage per CID\n"
       );
+      console.log(
+        "get-uploads" +
+          Array(26).fill("\xa0").join("") +
+          "Get details of file uploaded\n"
+      );
+
       console.log(chalk.cyan("Options"));
       console.log(
         "--network" + Array(28).fill("\xa0").join("") + "Set network\n"
