@@ -1,16 +1,11 @@
 const axios = require("axios");
-// const { create } = require("ipfs-http-client");
-const ethers = require("ethers");
 
 const lighthouse_config = require("../../lighthouse.config");
-const { lighthouseAbi } = require("../contract_abi/lighthouseAbi.js");
 
-const user_token = async (chain, expiry_time, network) => {
+const user_token = async (expiry_time) => {
   try {
     const body = {
-      network: network,
       expiry_time: expiry_time,
-      chain: chain,
     };
     const response = await axios.post(
       lighthouse_config.URL + `/api/lighthouse/user_token`,
@@ -23,23 +18,12 @@ const user_token = async (chain, expiry_time, network) => {
   }
 };
 
-module.exports = async (
-  e,
-  cid,
-  cli = false,
-  chain = "polygon",
-  network = "testnet"
-) => {
-  // Push CID to chain
-
-  async function deployAsFile() {
+module.exports = async (e) => {
+  const upload_token = await user_token("24h");
+  return new Promise(function (resolve, reject) {
     e.persist();
-    console.log(e.target.files);
-
     const formData = new FormData();
-    formData.append("data", e.target.files[0]);
-
-    const upload_token = await user_token(chain, "24h", network);
+    formData.append("data", e.target.files[0], e.target.files[0].name);
 
     const xhr = new XMLHttpRequest();
 
@@ -48,16 +32,21 @@ module.exports = async (
 
     xhr.send(formData);
 
-    xhr.addEventListener("load", () => {
-      // update the state of the component with the result here
-      return {
-        cid: xhr.responseText.cid,
-        providers: xhr.responseText.providers,
-      };
-    });
-
-    return null;
-  }
-
-  return await deployAsFile();
+    xhr.onload = function () {
+      if (xhr.status >= 200 && xhr.status < 300) {
+        resolve(JSON.parse(xhr.response));
+      } else {
+        reject({
+            status: xhr.status,
+            statusText: xhr.statusText
+        });
+      }
+    };
+    xhr.onerror = function () {
+      reject({
+          status: xhr.status,
+          statusText: xhr.statusText
+      });
+    };
+  });
 };
