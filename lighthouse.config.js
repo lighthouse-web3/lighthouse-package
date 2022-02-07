@@ -1,8 +1,6 @@
 // Configuration Object
 /** @type {import("./Lighthouse/types").DefaultConfig} */
 
-// const chalk = require("chalk");
-
 const defaultConfig = {
   URL: "http://52.66.209.251:8000",
   mainnet: {
@@ -56,9 +54,5 @@ const defaultConfig = {
     },
   },
 };
-
-// if (process.env.DEFAULT_NETWORK_WARNING === "true") {
-//   console.log(chalk.green("Currently using: ") + "mainnet");
-// }
 
 module.exports = defaultConfig;
