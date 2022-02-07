@@ -37,15 +37,15 @@ module.exports = async (e) => {
         resolve(JSON.parse(xhr.response));
       } else {
         reject({
-            status: xhr.status,
-            statusText: xhr.statusText
+          status: xhr.status,
+          statusText: xhr.statusText,
         });
       }
     };
     xhr.onerror = function () {
       reject({
-          status: xhr.status,
-          statusText: xhr.statusText
+        status: xhr.status,
+        statusText: xhr.statusText,
       });
     };
   });

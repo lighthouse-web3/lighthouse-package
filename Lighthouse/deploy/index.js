@@ -101,13 +101,12 @@ const getAllFiles = (
   return arrayOfFiles;
 };
 
-const get_cid = async(path, chain, network) =>{
+const get_cid = async (path, chain, network) => {
   const { resolve, relative, join } = eval("require")("path");
   const fs = eval("require")("fs");
   const mime = eval("require")("mime-types");
 
   if (fs.lstatSync(path).isDirectory()) {
-
     // Get metadata and cid for all files
     const sources = getAllFiles(resolve, relative, join, fs, path);
     const meta_data = [];
@@ -144,9 +143,10 @@ const get_cid = async(path, chain, network) =>{
       }
     }
 
-    // Get ticker for the given currency 
+    // Get ticker for the given currency
     const response = await axios.get(
-      lighthouse_config.URL + `/api/lighthouse/get_ticker?symbol=${lighthouse_config["mainnet"][chain]["symbol"]}`
+      lighthouse_config.URL +
+        `/api/lighthouse/get_ticker?symbol=${lighthouse_config["mainnet"][chain]["symbol"]}`
     );
     const token_price_usd = response.data;
 
@@ -182,9 +182,10 @@ const get_cid = async(path, chain, network) =>{
       minChunkSize: 1048576,
     });
 
-    // Get ticker for the given currency     
+    // Get ticker for the given currency
     const response = await axios.get(
-      lighthouse_config.URL + `/api/lighthouse/get_ticker?symbol=${lighthouse_config["mainnet"][chain]["symbol"]}`
+      lighthouse_config.URL +
+        `/api/lighthouse/get_ticker?symbol=${lighthouse_config["mainnet"][chain]["symbol"]}`
     );
     const token_price_usd = response.data;
 
@@ -209,14 +210,14 @@ const get_cid = async(path, chain, network) =>{
       total_cost: total_cost,
     };
   }
-}
+};
 
 async function deployAsFile(path) {
   const { FormData } = eval("require")("formdata-node");
   const fd = new FormData();
-  const data = await eval("require")("formdata-node/file-from-path").fileFromPath(
-    path
-  );
+  const data = await eval("require")(
+    "formdata-node/file-from-path"
+  ).fileFromPath(path);
 
   fd.set("data", data, path.split("/").pop());
 
@@ -246,7 +247,7 @@ async function deployAsFile(path) {
   const obj = await response.json();
 
   return {
-    cid: [obj.cid]
+    cid: [obj.cid],
   };
 }
 
@@ -274,7 +275,7 @@ async function deployAsDirectory(path) {
       hash_list.push(file.cid);
     }
   } catch (e) {
-    console.log(e)
+    console.log(e);
   }
 
   const temp = await axios.post(
@@ -286,7 +287,7 @@ async function deployAsDirectory(path) {
   );
 
   return {
-    cid: hash_list[hash_list.length - 1]
+    cid: hash_list[hash_list.length - 1],
   };
 }
 
@@ -306,7 +307,13 @@ module.exports = async (
   }
 
   const cid_and_cost = await get_cid(path, chain, network);
-  const txObj = await push_cid_tochain(signer, cid_and_cost.cid, cid_and_cost.total_cost.toFixed(18).toString(), chain, network);
+  const txObj = await push_cid_tochain(
+    signer,
+    cid_and_cost.cid,
+    cid_and_cost.total_cost.toFixed(18).toString(),
+    chain,
+    network
+  );
 
   if (cli) {
     spinner.stop();
@@ -326,8 +333,8 @@ module.exports = async (
 
   let deployResponse = "";
   if (eval("require")("fs").lstatSync(path).isDirectory()) {
-    deployResponse =  await deployAsDirectory(path);
-  } else{
+    deployResponse = await deployAsDirectory(path);
+  } else {
     deployResponse = await deployAsFile(path);
   }
 
@@ -337,6 +344,6 @@ module.exports = async (
     process.stdout.cursorTo(0);
   }
 
-  deployResponse['txObj'] = txObj;
-  return(deployResponse);
+  deployResponse["txObj"] = txObj;
+  return deployResponse;
 };

@@ -51,13 +51,12 @@ const getAllFiles = (
   return arrayOfFiles;
 };
 
-const get_cid = async(path, publicKey, chain, network) =>{
+const get_cid = async (path, publicKey, chain, network) => {
   const { resolve, relative, join } = eval("require")("path");
   const fs = eval("require")("fs");
   const mime = eval("require")("mime-types");
 
   if (fs.lstatSync(path).isDirectory()) {
-
     // Get metadata and cid for all files
     const sources = getAllFiles(resolve, relative, join, fs, path);
     const meta_data = [];
@@ -94,9 +93,10 @@ const get_cid = async(path, publicKey, chain, network) =>{
       }
     }
 
-    // Get ticker for the given currency 
+    // Get ticker for the given currency
     const response = await axios.get(
-      lighthouse_config.URL + `/api/lighthouse/get_ticker?symbol=${lighthouse_config["mainnet"][chain]["symbol"]}`
+      lighthouse_config.URL +
+        `/api/lighthouse/get_ticker?symbol=${lighthouse_config["mainnet"][chain]["symbol"]}`
     );
     const token_price_usd = response.data;
 
@@ -150,9 +150,10 @@ const get_cid = async(path, publicKey, chain, network) =>{
       minChunkSize: 1048576,
     });
 
-    // Get ticker for the given currency 
+    // Get ticker for the given currency
     const response = await axios.get(
-      lighthouse_config.URL + `/api/lighthouse/get_ticker?symbol=${lighthouse_config["mainnet"][chain]["symbol"]}`
+      lighthouse_config.URL +
+        `/api/lighthouse/get_ticker?symbol=${lighthouse_config["mainnet"][chain]["symbol"]}`
     );
     const token_price_usd = response.data;
 
@@ -173,9 +174,7 @@ const get_cid = async(path, publicKey, chain, network) =>{
       lighthouseAbi,
       provider
     );
-    const gasFee = (
-      await contract.estimateGas.store(cid, {})
-    ).toNumber();
+    const gasFee = (await contract.estimateGas.store(cid, {})).toNumber();
 
     // return response data
     const meta_data = [
@@ -195,7 +194,7 @@ const get_cid = async(path, publicKey, chain, network) =>{
       total_cost: total_cost,
     };
   }
-}
+};
 
 module.exports = async (
   path,
@@ -204,7 +203,7 @@ module.exports = async (
   network = "testnet"
 ) => {
   try {
-    return (await get_cid(path, publicKey, chain, network));    
+    return await get_cid(path, publicKey, chain, network);
   } catch (err) {
     return null;
   }
