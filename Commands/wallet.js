@@ -25,18 +25,12 @@ module.exports = {
         const chain = config.get("Lighthouse_chain")
           ? config.get("Lighthouse_chain")
           : "polygon";
-        console.log(chalk.yellow("Current Chain: ") + chain);
 
         const current_network = config.get("Lighthouse_network")
           ? config.get("Lighthouse_network")
           : "mainnet";
-        console.log(chalk.yellow("Network:       ") + current_network);
-
-        // const deposit = await check_deposit();
-        // console.log(deposit);
-        // console.log(
-        //   chalk.yellow("Total Deposit: ") + deposit
-        // );
+        
+        console.log(chalk.yellow("Network:       ") + chain + current_network);
       } else {
         console.log(chalk.red("Please import wallet first!"));
       }
