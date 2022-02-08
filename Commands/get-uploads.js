@@ -15,7 +15,7 @@ module.exports = {
         chalk.green("Description: ") + "Get details of file uploaded"
       );
     } else {
-      try{
+      try {
         if (config.get("Lighthouse_publicKey")) {
           const chain = config.get("Lighthouse_chain")
             ? config.get("Lighthouse_chain")
@@ -23,7 +23,7 @@ module.exports = {
           const current_network = config.get("Lighthouse_network")
             ? config.get("Lighthouse_network")
             : "mainnet";
-  
+
           const response = await lighthouse.get_uploads(
             config.get("Lighthouse_publicKey"),
             chain,
@@ -36,7 +36,7 @@ module.exports = {
         } else {
           console.log(chalk.red("Please import wallet first!"));
         }
-      } catch{
+      } catch {
         console.log(chalk.red("Something went wrong!"));
       }
     }

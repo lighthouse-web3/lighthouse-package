@@ -29,8 +29,10 @@ module.exports = {
         const current_network = config.get("Lighthouse_network")
           ? config.get("Lighthouse_network")
           : "mainnet";
-        
-        console.log(chalk.yellow("Network:       ") + chain + " " + current_network);
+
+        console.log(
+          chalk.yellow("Network:       ") + chain + " " + current_network
+        );
       } else {
         console.log(chalk.red("Please import wallet first!"));
       }
