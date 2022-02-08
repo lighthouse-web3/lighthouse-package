@@ -101,7 +101,7 @@ module.exports = {
       console.log(
         "status" +
           Array(31).fill("\xa0").join("") +
-          "Get metadata around the storage per CID\n"
+          "Get metadata around the storage per CID"
       );
       console.log(
         "get-uploads" +
