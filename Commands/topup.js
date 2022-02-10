@@ -13,8 +13,7 @@ module.exports = {
   desc: "send tokens to lighthouse endownment pool",
   handler: async function (argv) {
     if (argv.help) {
-      console.log("lighthouse-web3 topup <amount>");
-      console.log();
+      console.log("lighthouse-web3 topup <amount>\n");
       console.log(
         chalk.green("Description: ") +
           "send tokens to lighthouse endownment pool"

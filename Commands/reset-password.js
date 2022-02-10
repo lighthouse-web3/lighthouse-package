@@ -9,8 +9,7 @@ module.exports = {
   desc: "Change password of your wallet",
   handler: async function (argv) {
     if (argv.help) {
-      console.log("lighthouse-web3 reset-password <privateKey>");
-      console.log();
+      console.log("lighthouse-web3 reset-password <privateKey>\n");
       console.log(
         chalk.green("Description: ") + "Change password of your wallet"
       );

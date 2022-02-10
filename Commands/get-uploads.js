@@ -9,8 +9,7 @@ module.exports = {
   desc: "Get details of file uploaded",
   handler: async function (argv) {
     if (argv.help) {
-      console.log("lighthouse-web3 get-uploads");
-      console.log();
+      console.log("lighthouse-web3 get-uploads\n");
       console.log(
         chalk.green("Description: ") + "Get details of file uploaded"
       );

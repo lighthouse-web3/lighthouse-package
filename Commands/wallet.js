@@ -11,8 +11,7 @@ module.exports = {
   desc: "Returns wallet public address",
   handler: async function (argv) {
     if (argv.help) {
-      console.log("lighthouse-web3 wallet");
-      console.log();
+      console.log("lighthouse-web3 wallet\n");
       console.log(
         chalk.green("Description: ") + "Returns wallet public address"
       );

@@ -14,18 +14,14 @@ module.exports = {
   desc: "Deploy a file",
   handler: async function (argv) {
     if (argv.help) {
-      console.log("lighthouse-web3 deploy <path>");
-      console.log();
-      console.log(chalk.green("Description: ") + "Deploy a file");
-      console.log();
+      console.log("lighthouse-web3 deploy <path>\n");
+      console.log(chalk.green("Description: ") + "Deploy a file\n");
       console.log(chalk.cyan("Options:"));
-      console.log("   --path: Required, path to file");
-      console.log();
+      console.log("   --path: Required, path to file\n");
       console.log(chalk.magenta("Example:"));
       console.log(
-        "   lighthouse-web3 deploy /home/cosmos/Desktop/ILoveAnime.jpg"
+        "   lighthouse-web3 deploy /home/cosmos/Desktop/ILoveAnime.jpg\n"
       );
-      console.log();
     } else {
       try {
         const read = require("read");
@@ -92,9 +88,7 @@ module.exports = {
             );
           }
 
-          console.log();
-
-          console.log(chalk.cyan("Summary"));
+          console.log("\n" + chalk.cyan("Summary"));
           console.log("Total Size: " + bytesToSize(response.total_size));
           console.log(
             "Fees: " +
@@ -118,10 +112,9 @@ module.exports = {
                   Number(ethers.utils.formatEther(response.gasFee))
               ) +
               " " +
-              lighthouse_config[current_network][chain]["symbol"]
+              lighthouse_config[current_network][chain]["symbol"] +
+              "\n"
           );
-
-          console.log();
 
           console.log(chalk.cyan("Wallet"));
           console.log("Address: " + config.get("Lighthouse_publicKey"));
@@ -143,10 +136,9 @@ module.exports = {
             "Balance after deploy: " +
               balance_after_deploy +
               " " +
-              lighthouse_config[current_network][chain]["symbol"]
+              lighthouse_config[current_network][chain]["symbol"] +
+              "\n"
           );
-
-          console.log();
 
           console.log(
             chalk.green(

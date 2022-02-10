@@ -10,12 +10,10 @@ module.exports = {
   desc: "Get current balance of your wallet",
   handler: async function (argv) {
     if (argv.help) {
-      console.log("lighthouse-web3 balance");
-      console.log();
+      console.log("lighthouse-web3 balance\n");
       console.log(
-        chalk.green("Description: ") + "Get current balance of your wallet"
+        chalk.green("Description: ") + "Get current balance of your wallet\n"
       );
-      console.log();
     } else {
       try {
         const Spinner = require("cli-spinner").Spinner;
