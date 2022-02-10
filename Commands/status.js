@@ -8,14 +8,13 @@ module.exports = {
   desc: "Get storage status of a CID",
   handler: async function (argv) {
     if (argv.help) {
-      console.log("lighthouse-web3 status <cid>");
-      console.log();
+      console.log("lighthouse-web3 status <cid>\n");
       console.log(chalk.green("Description: ") + "Get storage status of a CID");
     } else {
       const response = await lighthouse.status(argv.cid);
-      console.log();
       console.log(
-        chalk.yellow("CID:") +
+        "\n" +
+          chalk.yellow("CID:") +
           Array(9).fill("\xa0").join("") +
           response[0]["content"]["cid"]
       );
@@ -32,9 +31,9 @@ module.exports = {
       console.log(
         chalk.yellow("Replication:") +
           Array(1).fill("\xa0").join("") +
-          response[0]["content"]["replication"]
+          response[0]["content"]["replication"] +
+          "\n"
       );
-      console.log();
 
       for (let i = 0; i < response.length; i++) {
         if (response[i]["deals"].length > 0) {

@@ -1,8 +1,6 @@
 // Configuration Object
 /** @type {import("./Lighthouse/types").DefaultConfig} */
 
-// const chalk = require("chalk");
-
 const defaultConfig = {
   URL: "http://52.66.209.251:8000",
   mainnet: {
@@ -40,7 +38,7 @@ const defaultConfig = {
     },
     polygon: {
       symbol: "MATIC",
-      rpc: "https://rpc-mumbai.maticvigil.com/",
+      rpc: "https://rpc-mumbai.matic.today",
       scan: "https://mumbai.polygonscan.com/",
       chain_id: "80001",
       lighthouse_contract_address: "0xEF5787e17efdC2cc8F6487D1F1aD2A7e04b83F6D",
@@ -56,9 +54,5 @@ const defaultConfig = {
     },
   },
 };
-
-// if (process.env.DEFAULT_NETWORK_WARNING === "true") {
-//   console.log(chalk.green("Currently using: ") + "mainnet");
-// }
 
 module.exports = defaultConfig;

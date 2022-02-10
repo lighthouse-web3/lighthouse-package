@@ -11,32 +11,33 @@ module.exports = {
   desc: "Returns wallet public address",
   handler: async function (argv) {
     if (argv.help) {
-      console.log("lighthouse-web3 wallet");
-      console.log();
+      console.log("lighthouse-web3 wallet\n");
       console.log(
         chalk.green("Description: ") + "Returns wallet public address"
       );
     } else {
       if (config.get("Lighthouse_publicKey")) {
         console.log(
-          chalk.yellow("Public Key:    ") + config.get("Lighthouse_publicKey")
+          chalk.yellow("Public Key:") +
+            Array(4).fill("\xa0").join("") +
+            config.get("Lighthouse_publicKey")
         );
 
         const chain = config.get("Lighthouse_chain")
           ? config.get("Lighthouse_chain")
           : "polygon";
-        console.log(chalk.yellow("Current Chain: ") + chain);
 
         const current_network = config.get("Lighthouse_network")
           ? config.get("Lighthouse_network")
           : "mainnet";
-        console.log(chalk.yellow("Network:       ") + current_network);
 
-        // const deposit = await check_deposit();
-        // console.log(deposit);
-        // console.log(
-        //   chalk.yellow("Total Deposit: ") + deposit
-        // );
+        console.log(
+          chalk.yellow("Network:") +
+            Array(7).fill("\xa0").join("") +
+            chain +
+            " " +
+            current_network
+        );
       } else {
         console.log(chalk.red("Please import wallet first!"));
       }

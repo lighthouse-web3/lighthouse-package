@@ -3,11 +3,11 @@ const ethers = require("ethers");
 
 module.exports = async (password) => {
   try {
-    const wallet = ethers.Wallet.createRandom()
+    const wallet = ethers.Wallet.createRandom();
     const identity = {
       publicKey: wallet.address,
       privateKey: wallet.privateKey,
-      privateKeyEncrypted: ""
+      privateKeyEncrypted: "",
     };
     identity["privateKeyEncrypted"] = CryptoJS.AES.encrypt(
       identity["privateKey"],

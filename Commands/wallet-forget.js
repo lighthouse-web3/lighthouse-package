@@ -7,10 +7,11 @@ module.exports = {
   desc: "Remove previously saved wallet",
   handler: async function (argv) {
     if (argv.help) {
-      console.log("lighthouse-web3 wallet-forget");
-      console.log();
-      console.log(chalk.green("Description: ")+ "Removes previously saved wallet");
-    } else{
+      console.log("lighthouse-web3 wallet-forget\n");
+      console.log(
+        chalk.green("Description: ") + "Removes previously saved wallet"
+      );
+    } else {
       config.delete("Lighthouse_privateKeyEncrypted");
       config.delete("Lighthouse_publicKey");
       console.log(chalk.green("Wallet Removed!"));
