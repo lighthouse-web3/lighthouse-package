@@ -17,10 +17,13 @@ module.exports = {
       console.log("lighthouse-web3 deploy <path>\n");
       console.log(chalk.green("Description: ") + "Deploy a file\n");
       console.log(chalk.cyan("Options:"));
-      console.log("   --path: Required, path to file\n");
+      console.log(
+        Array(3).fill("\xa0").join("") + "--path: Required, path to file\n"
+      );
       console.log(chalk.magenta("Example:"));
       console.log(
-        "   lighthouse-web3 deploy /home/cosmos/Desktop/ILoveAnime.jpg\n"
+        Array(3).fill("\xa0").join("") +
+          "lighthouse-web3 deploy /home/cosmos/Desktop/ILoveAnime.jpg\n"
       );
     } else {
       try {

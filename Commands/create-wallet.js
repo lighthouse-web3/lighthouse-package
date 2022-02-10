@@ -13,7 +13,9 @@ module.exports = {
         console.log("lighthouse-web3 create-wallet\n");
         console.log(chalk.green("Description: ") + "Creates a new wallet\n");
         console.log(chalk.magenta("Example:"));
-        console.log("   lighthouse-web3 create-wallet\n");
+        console.log(
+          Array(3).fill("\xa0").join("") + "lighthouse-web3 create-wallet\n"
+        );
       } else {
         const read = require("read");
         const options = {

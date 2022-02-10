@@ -18,7 +18,9 @@ module.exports = {
     } else {
       if (config.get("Lighthouse_publicKey")) {
         console.log(
-          chalk.yellow("Public Key:    ") + config.get("Lighthouse_publicKey")
+          chalk.yellow("Public Key:") +
+            Array(4).fill("\xa0").join("") +
+            config.get("Lighthouse_publicKey")
         );
 
         const chain = config.get("Lighthouse_chain")
@@ -30,7 +32,11 @@ module.exports = {
           : "mainnet";
 
         console.log(
-          chalk.yellow("Network:       ") + chain + " " + current_network
+          chalk.yellow("Network:") +
+            Array(7).fill("\xa0").join("") +
+            chain +
+            " " +
+            current_network
         );
       } else {
         console.log(chalk.red("Please import wallet first!"));

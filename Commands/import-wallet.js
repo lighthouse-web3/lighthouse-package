@@ -22,14 +22,16 @@ module.exports = {
       console.log("lighthouse-web3 import-wallet\n");
       console.log(chalk.green("Description: ") + "Import an existing wallet\n");
       console.log(chalk.cyan("Options: "));
-      console.log("   --key <privateKey>");
-      console.log("   --path <path to wallet>\n");
+      console.log(Array(3).fill("\xa0").join("") + "--key <privateKey>");
+      console.log(Array(3).fill("\xa0").join("") + "--path <path to wallet>\n");
       console.log(chalk.magenta("Example: "));
       console.log(
-        "     lighthouse-web3 import-wallet --key 0xlkjhcf1721e6e1828a15c72c1d2aa80c633e45574cb60f5e821681999f3d1700"
+        Array(5).fill("\xa0").join("") +
+          "lighthouse-web3 import-wallet --key 0xlkjhcf1721e6e1828a15c72c1d2aa80c633e45574cb60f5e821681999f3d1700"
       );
       console.log(
-        "     lighthouse-web3 import-wallet --path /home/user/wallet.json"
+        Array(5).fill("\xa0").join("") +
+          "lighthouse-web3 import-wallet --path /home/user/wallet.json"
       );
       console.log();
     } else {
