@@ -108,7 +108,7 @@ module.exports = {
                 ethers.utils.formatEther(response.gasFee),
                 "ether"
               ) +
-              " ether"
+              " wei"
           );
 
           console.log(
