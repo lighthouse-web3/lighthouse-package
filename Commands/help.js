@@ -130,11 +130,11 @@ module.exports = {
       );
       console.log(
         Array(5).fill("\xa0").join("") +
-          "lighthouse-web3 --network fantom testnet\n"
+          "lighthouse-web3 --network fantom-testnet\n"
       );
       console.log(
         Array(5).fill("\xa0").join("") +
-          "lighthouse-web3 --network binance mainnet\n"
+          "lighthouse-web3 --network binance-mainnet\n"
       );
       console.log("Create wallet and save it");
       console.log(
