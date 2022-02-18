@@ -16,17 +16,13 @@ module.exports = {
     } else {
       try {
         if (config.get("Lighthouse_publicKey")) {
-          const chain = config.get("Lighthouse_chain")
-            ? config.get("Lighthouse_chain")
-            : "polygon";
-          const current_network = config.get("Lighthouse_network")
+          const network = config.get("Lighthouse_network")
             ? config.get("Lighthouse_network")
-            : "mainnet";
+            : "polygon";
 
           const response = await lighthouse.get_uploads(
             config.get("Lighthouse_publicKey"),
-            chain,
-            current_network
+            network
           );
           console.log(chalk.yellow("CID: "));
           for (let i = 0; i < response.length; i++) {
