@@ -51,7 +51,7 @@ const getAllFiles = (
   return arrayOfFiles;
 };
 
-const get_cid = async (path, publicKey, chain, network) => {
+const get_cid = async (path, publicKey, network) => {
   const { resolve, relative, join } = eval("require")("path");
   const fs = eval("require")("fs");
   const mime = eval("require")("mime-types");
@@ -59,6 +59,7 @@ const get_cid = async (path, publicKey, chain, network) => {
   if (fs.lstatSync(path).isDirectory()) {
     // Get metadata and cid for all files
     const sources = getAllFiles(resolve, relative, join, fs, path);
+    const dir_name = path.split("/").pop();
     const meta_data = [];
     const hash_list = [];
     let total_size = 0;
@@ -96,7 +97,7 @@ const get_cid = async (path, publicKey, chain, network) => {
     // Get ticker for the given currency
     const response = await axios.get(
       lighthouse_config.URL +
-        `/api/lighthouse/get_ticker?symbol=${lighthouse_config["mainnet"][chain]["symbol"]}`
+        `/api/lighthouse/get_ticker?symbol=${lighthouse_config[network]["symbol"]}`
     );
     const token_price_usd = response.data;
 
@@ -114,18 +115,23 @@ const get_cid = async (path, publicKey, chain, network) => {
 
     // Get current balance
     const provider = new ethers.providers.JsonRpcProvider(
-      lighthouse_config[network][chain]["rpc"]
+      lighthouse_config[network]["rpc"]
     );
     const current_balance = await provider.getBalance(publicKey);
 
     // Estimate gas fee
     const contract = new ethers.Contract(
-      lighthouse_config[network][chain]["lighthouse_contract_address"],
+      lighthouse_config[network]["lighthouse_contract_address"],
       lighthouseAbi,
       provider
     );
     const gasFee = (
-      await contract.estimateGas.store(hash_list[hash_list.length - 1], {})
+      await contract.estimateGas.store(
+        hash_list[hash_list.length - 1],
+        {},
+        dir_name,
+        total_size
+      )
     ).toNumber();
 
     // Return data
@@ -153,7 +159,7 @@ const get_cid = async (path, publicKey, chain, network) => {
     // Get ticker for the given currency
     const response = await axios.get(
       lighthouse_config.URL +
-        `/api/lighthouse/get_ticker?symbol=${lighthouse_config["mainnet"][chain]["symbol"]}`
+        `/api/lighthouse/get_ticker?symbol=${lighthouse_config[network]["symbol"]}`
     );
     const token_price_usd = response.data;
 
@@ -164,17 +170,19 @@ const get_cid = async (path, publicKey, chain, network) => {
 
     // Get current balance
     const provider = new ethers.providers.JsonRpcProvider(
-      lighthouse_config[network][chain]["rpc"]
+      lighthouse_config[network]["rpc"]
     );
     const current_balance = await provider.getBalance(publicKey);
 
     // Estimate gas fee
     const contract = new ethers.Contract(
-      lighthouse_config[network][chain]["lighthouse_contract_address"],
+      lighthouse_config[network]["lighthouse_contract_address"],
       lighthouseAbi,
       provider
     );
-    const gasFee = (await contract.estimateGas.store(cid, {})).toNumber();
+    const gasFee = (
+      await contract.estimateGas.store(cid, {}, file_name, fileSizeInBytes)
+    ).toNumber();
 
     // return response data
     const meta_data = [
@@ -196,15 +204,11 @@ const get_cid = async (path, publicKey, chain, network) => {
   }
 };
 
-module.exports = async (
-  path,
-  publicKey,
-  chain = "polygon",
-  network = "testnet"
-) => {
+module.exports = async (path, publicKey, network = "fantom-testnet") => {
   try {
-    return await get_cid(path, publicKey, chain, network);
+    return await get_cid(path, publicKey, network);
   } catch (err) {
+    console.log(err);
     return null;
   }
 };
