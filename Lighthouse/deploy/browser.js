@@ -1,25 +1,4 @@
-const axios = require("axios");
-
-const lighthouse_config = require("../../lighthouse.config");
-
-const user_token = async (expiry_time) => {
-  try {
-    const body = {
-      expiry_time: expiry_time,
-    };
-    const response = await axios.post(
-      lighthouse_config.URL + `/api/lighthouse/user_token`,
-      body
-    );
-
-    return response.data;
-  } catch (e) {
-    return null;
-  }
-};
-
-module.exports = async (e) => {
-  const upload_token = await user_token("24h");
+module.exports = async (e, publicKey, signed_message) => {
   return new Promise(function (resolve, reject) {
     e.persist();
     const formData = new FormData();
@@ -27,8 +6,10 @@ module.exports = async (e) => {
 
     const xhr = new XMLHttpRequest();
 
-    xhr.open("POST", "https://shuttle-4.estuary.tech/content/add");
-    xhr.setRequestHeader("Authorization", `Bearer ${upload_token.token}`);
+    xhr.open("POST", "https://node.lighthouse.storage/api/v0/add");
+
+    const token = "Bearer " + publicKey + " " + signed_message;
+    xhr.setRequestHeader("Authorization", token);
 
     xhr.send(formData);
 
