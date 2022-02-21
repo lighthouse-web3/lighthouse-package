@@ -1,16 +1,12 @@
 const axios = require("axios");
 const lighthouse_config = require("../../lighthouse.config");
 
-module.exports = async (
-  fileSizeInBytes,
-  chain = "polygon",
-  network = "testnet"
-) => {
+module.exports = async (fileSizeInBytes, network = "testnet") => {
   try {
     // Get ticker for the given currency
     const response = await axios.get(
       lighthouse_config.URL +
-        `/api/lighthouse/get_ticker?symbol=${lighthouse_config[network][chain]["symbol"]}`
+        `/api/lighthouse/get_ticker?symbol=${lighthouse_config[network]["symbol"]}`
     );
     const token_price_usd = response.data;
 
