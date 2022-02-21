@@ -15,7 +15,7 @@ module.exports = {
   },
   handler: async function (argv) {
     if (argv.network) {
-      switch(argv.network.toString().toLowerCase()) {
+      switch (argv.network.toString().toLowerCase()) {
         case "polygon":
         case "polygon-mainnet":
           config.set("Lighthouse_network", "polygon");
