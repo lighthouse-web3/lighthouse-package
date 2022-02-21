@@ -2,12 +2,11 @@ const lighthouse = require("../../Lighthouse");
 const { resolve } = require("path");
 
 test("Polygon Chain: get_quote", async () => {
-  const path = resolve(process.cwd(), "Lighthouse/test_images/test_image1.png");
+  const path = resolve(process.cwd(), "Lighthouse/test_images/test_image1.svg");
   const quote = await lighthouse.get_quote(
     path,
     "0x1Ec09D4B3Cb565b7CCe2eEAf71CC90c9b46c5c26",
-    "polygon",
-    "testnet"
+    "polygon-testnet"
   );
 
   expect(quote).toHaveProperty("current_balance");
@@ -18,12 +17,11 @@ test("Polygon Chain: get_quote", async () => {
 }, 20000);
 
 test("Fantom Chain: get_quote", async () => {
-  const path = resolve(process.cwd(), "Lighthouse/test_images/test_image1.png");
+  const path = resolve(process.cwd(), "Lighthouse/test_images/test_image1.svg");
   const quote = await lighthouse.get_quote(
     path,
     "0x1Ec09D4B3Cb565b7CCe2eEAf71CC90c9b46c5c26",
-    "fantom",
-    "testnet"
+    "fantom-testnet"
   );
 
   expect(quote.meta_data[0]).toHaveProperty("file_size");
@@ -34,12 +32,11 @@ test("Fantom Chain: get_quote", async () => {
 }, 20000);
 
 test("Binance Chain: get_quote", async () => {
-  const path = resolve(process.cwd(), "Lighthouse/test_images/test_image1.png");
+  const path = resolve(process.cwd(), "Lighthouse/test_images/test_image1.svg");
   const quote = await lighthouse.get_quote(
     path,
     "0x1Ec09D4B3Cb565b7CCe2eEAf71CC90c9b46c5c26",
-    "binance",
-    "testnet"
+    "binance-testnet"
   );
 
   expect(quote.meta_data[0]).toHaveProperty("file_name");
