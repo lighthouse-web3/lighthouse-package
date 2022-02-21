@@ -26,7 +26,7 @@ module.exports = {
 
         console.log(
           chalk.yellow("Network:") +
-            Array(7).fill("\xa0").join("") +
+            Array(6).fill("\xa0").join("") +
             " " +
             network
         );
