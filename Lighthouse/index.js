@@ -6,6 +6,7 @@ const get_key = require("./get_key");
 const get_uploads = require("./get_uploads");
 const list_data = require("./list_data");
 const restore_keys = require("./restore_keys");
+const get_contract_address = require("./get_contract_address");
 const status = require("./status");
 
 if (typeof window === "undefined") {
@@ -24,6 +25,7 @@ if (typeof window === "undefined") {
     list_data,
     status,
     restore_keys,
+    get_contract_address,
   };
 } else {
   const deploy = require("./deploy/browser");
@@ -41,5 +43,6 @@ if (typeof window === "undefined") {
     list_data,
     status,
     restore_keys,
+    get_contract_address,
   };
 }

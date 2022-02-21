@@ -1,9 +1,6 @@
 const Conf = require("conf");
 const chalk = require("chalk");
 
-// const package_config = require("../lighthouse.config");
-// const { check_deposit } = require("../Lighthouse/check_deposit");
-
 const config = new Conf();
 
 module.exports = {
@@ -23,20 +20,14 @@ module.exports = {
             config.get("Lighthouse_publicKey")
         );
 
-        const chain = config.get("Lighthouse_chain")
-          ? config.get("Lighthouse_chain")
-          : "polygon";
-
-        const current_network = config.get("Lighthouse_network")
+        const network = config.get("Lighthouse_network")
           ? config.get("Lighthouse_network")
-          : "mainnet";
+          : "polygon";
 
         console.log(
           chalk.yellow("Network:") +
             Array(7).fill("\xa0").join("") +
-            chain +
-            " " +
-            current_network
+            network
         );
       } else {
         console.log(chalk.red("Please import wallet first!"));

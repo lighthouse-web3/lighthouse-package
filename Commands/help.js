@@ -15,51 +15,30 @@ module.exports = {
   },
   handler: async function (argv) {
     if (argv.network) {
-      if (
-        argv.network.toString().toLowerCase() === "polygon" ||
-        argv.network.toString().toLowerCase() === "matic"
-      ) {
-        config.set("Lighthouse_chain", "polygon");
-        config.set("Lighthouse_network", "mainnet");
-        console.log(chalk.green("Network set to polygon mainnet"));
-      } else if (
-        argv.network.toString().toLowerCase() === "fantom" ||
-        argv.network.toString().toLowerCase() === "ftm"
-      ) {
-        config.set("Lighthouse_chain", "fantom");
-        config.set("Lighthouse_network", "mainnet");
-        console.log(chalk.green("Network set to fantom mainnet"));
-      } else if (
-        argv.network.toString().toLowerCase() === "binance" ||
-        argv.network.toString().toLowerCase() === "bnb"
-      ) {
-        config.set("Lighthouse_chain", "binance");
-        config.set("Lighthouse_network", "mainnet");
-        console.log(chalk.green("Network set to binance mainnet"));
-      } else if (
-        argv.network.toString().toLowerCase() === "matic-testnet" ||
-        argv.network.toString().toLowerCase() === "polygon-testnet"
-      ) {
-        config.set("Lighthouse_chain", "polygon");
-        config.set("Lighthouse_network", "testnet");
-        console.log(chalk.green("Network set to polygon testnet"));
-      } else if (
-        argv.network.toString().toLowerCase() === "bsc-testnet" ||
-        argv.network.toString().toLowerCase() === "binance-testnet"
-      ) {
-        config.set("Lighthouse_chain", "binance");
-        config.set("Lighthouse_network", "testnet");
-        console.log(chalk.green("Network set to binance testnet"));
-      } else if (
-        argv.network.toString().toLowerCase() === "ftm-testnet" ||
-        argv.network.toString().toLowerCase() === "fantom-testnet"
-      ) {
-        config.set("Lighthouse_chain", "fantom");
-        config.set("Lighthouse_network", "testnet");
-        console.log(chalk.green("Network set to fantom testnet"));
-      } else {
-        config.set("Lighthouse_chain", "polygon");
-        config.set("Lighthouse_network", "mainnet");
+      switch (argv.network.toString().toLowerCase()) {
+        case "polygon":
+        case "polygon-mainnet":
+          config.set("Lighthouse_network", "polygon");
+          break;
+        case "fantom":
+        case "fantom-mainnet":
+          config.set("Lighthouse_network", "fantom");
+          break;
+        case "binance":
+        case "binance-mainnet":
+          config.set("Lighthouse_network", "binance");
+          break;
+        case "polygon-testnet":
+          config.set("Lighthouse_network", "polygon-testnet");
+          break;
+        case "fantom-testnet":
+          config.set("Lighthouse_network", "fantom-testnet");
+          break;
+        case "binance-testnet":
+          config.set("Lighthouse_network", "binance-testnet");
+          break;
+        default:
+          config.set("Lighthouse_network", "polygon");
       }
     } else {
       console.log(chalk.yellow("Welcome to lighthouse-web3\n"));

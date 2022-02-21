@@ -1,10 +1,10 @@
 const ethers = require("ethers");
 const package_config = require("../../lighthouse.config");
 
-module.exports = async (publicKey, chain = "polygon", network = "testnet") => {
+module.exports = async (publicKey, network = "fantom-testnet") => {
   try {
     const provider = new ethers.providers.JsonRpcProvider(
-      package_config[network][chain]["rpc"]
+      package_config[network]["rpc"]
     );
 
     const balance = await provider.getBalance(publicKey);
