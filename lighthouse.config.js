@@ -2,7 +2,7 @@
 /** @type {import("./Lighthouse/types").DefaultConfig} */
 
 const defaultConfig = {
-  URL: "http://52.66.209.251:8000",
+  URL: "https://api.lighthouse.storage",
   fantom: {
     symbol: "FTM",
     rpc: "https://rpc.ftm.tools/",
