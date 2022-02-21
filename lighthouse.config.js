@@ -3,21 +3,21 @@
 
 const defaultConfig = {
   URL: "http://52.66.209.251:8000",
-  "fantom": {
+  fantom: {
     symbol: "FTM",
     rpc: "https://rpc.ftm.tools/",
     scan: "https://ftmscan.com/tx/",
     chain_id: "250",
-    lighthouse_contract_address: "0x61E296FDc8c498Ed183a2D19FD5927736E46E3B6",
+    lighthouse_contract_address: "0xf468602B34C482f34ca498D9a0DE7957539961d3",
   },
-  "polygon": {
+  polygon: {
     symbol: "MATIC",
     rpc: "https://polygon-rpc.com/",
     scan: "https://polygonscan.com/tx/",
     chain_id: "137",
     lighthouse_contract_address: "0xaD13C488b01DbcE976B67e552Bd352e824E53E1D",
   },
-  "binance": {
+  binance: {
     symbol: "BNB",
     rpc: "https://bsc-dataseed.binance.org/",
     scan: "https://bscscan.com/tx/",
@@ -29,14 +29,14 @@ const defaultConfig = {
     rpc: "https://rpc.testnet.fantom.network/",
     scan: "https://testnet.ftmscan.com/",
     chain_id: "0xfa2",
-    lighthouse_contract_address: "0x93a347e0fe192a31A0C81E23B4238489043A97f8",
+    lighthouse_contract_address: "0x61E296FDc8c498Ed183a2D19FD5927736E46E3B6",
   },
   "polygon-testnet": {
     symbol: "MATIC",
-    rpc: "https://matic-mumbai.chainstacklabs.com",
+    rpc: "https://rpc-mumbai.maticvigil.com/",
     scan: "https://mumbai.polygonscan.com/",
     chain_id: "80001",
-    lighthouse_contract_address: "0x44819e2ef74257543f38d9386182a0042f268fd31907bdc144f5772b641459be",
+    lighthouse_contract_address: "0xEe24a604d86fC158798031c70C4Cf9EB291aDdad",
   },
   "binance-testnet": {
     symbol: "BNB",
