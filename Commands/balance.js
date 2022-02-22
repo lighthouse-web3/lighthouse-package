@@ -3,7 +3,7 @@ const chalk = require("chalk");
 const Spinner = require("cli-spinner").Spinner;
 
 const lighthouse = require("../Lighthouse");
-const lighthouse_config = require("../lighthouse.config");
+const lighthouseConfig = require("../lighthouse.config");
 
 const config = new Conf();
 
@@ -14,7 +14,7 @@ module.exports = {
     if (argv.help) {
       console.log(
         "\nlighthouse-web3 balance\n" +
-          chalk.green("\nDescription: ") +
+          chalk.green("Description: ") +
           "Get current balance of your wallet\n"
       );
     } else {
@@ -26,7 +26,7 @@ module.exports = {
           config.get("LIGHTHOUSE_GLOBAL_PUBLICKEY"),
           config.get("LIGHTHOUSE_GLOBAL_NETWORK")
             ? config.get("LIGHTHOUSE_GLOBAL_NETWORK")
-            : lighthouse_config.network
+            : lighthouseConfig.network
         );
 
         spinner.stop();
