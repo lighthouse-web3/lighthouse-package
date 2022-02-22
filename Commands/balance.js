@@ -1,7 +1,9 @@
 const Conf = require("conf");
 const chalk = require("chalk");
+const Spinner = require("cli-spinner").Spinner;
 
 const lighthouse = require("../Lighthouse");
+const lighthouse_config = require("../lighthouse.config");
 
 const config = new Conf();
 
@@ -15,33 +17,26 @@ module.exports = {
         chalk.green("Description: ") + "Get current balance of your wallet\n"
       );
     } else {
-      try {
-        const Spinner = require("cli-spinner").Spinner;
-        if (config.get("Lighthouse_publicKey")) {
-          const spinner = new Spinner("");
-          spinner.start();
-          const balance = await lighthouse.get_balance(
-            config.get("Lighthouse_publicKey"),
-            config.get("Lighthouse_chain")
-              ? config.get("Lighthouse_chain")
-              : "polygon",
-            config.get("Lighthouse_network")
-              ? config.get("Lighthouse_network")
-              : "mainnet"
-          );
-          spinner.stop();
-          process.stdout.clearLine();
-          process.stdout.cursorTo(0);
-          if (balance) {
-            console.log(chalk.green("balance " + balance.data * 10 ** -18));
-          } else {
-            console.log(chalk.red("Something Went Wrong!"));
-          }
-        } else {
-          console.log(chalk.red("Please import wallet first!"));
-        }
-      } catch {
-        console.log(chalk.red("Something went wrong!"));
+      if (config.get("LIGHTHOUSE_GLOBAL_PUBLICKEY")) {
+        const spinner = new Spinner("");
+        spinner.start();
+
+        const balance = await lighthouse.get_balance(
+          config.get("LIGHTHOUSE_GLOBAL_PUBLICKEY"),
+          config.get("LIGHTHOUSE_GLOBAL_NETWORK")
+            ? config.get("LIGHTHOUSE_GLOBAL_NETWORK")
+            : lighthouse_config.network
+        );
+
+        spinner.stop();
+        process.stdout.clearLine();
+        process.stdout.cursorTo(0);
+        
+        balance
+          ? console.log(chalk.green("balance " + balance))
+          : console.log(chalk.red("Error fetching balance!"));
+      } else {
+        console.log(chalk.red("Please import wallet first!"));
       }
     }
   },
