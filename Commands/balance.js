@@ -31,7 +31,7 @@ module.exports = {
         spinner.stop();
         process.stdout.clearLine();
         process.stdout.cursorTo(0);
-        
+
         balance
           ? console.log(chalk.green("balance " + balance))
           : console.log(chalk.red("Error fetching balance!"));
