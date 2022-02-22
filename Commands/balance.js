@@ -12,9 +12,10 @@ module.exports = {
   desc: "Get current balance of your wallet",
   handler: async function (argv) {
     if (argv.help) {
-      console.log("lighthouse-web3 balance\n");
       console.log(
-        chalk.green("Description: ") + "Get current balance of your wallet\n"
+        "\nlighthouse-web3 balance\n" +
+          chalk.green("\nDescription: ") +
+          "Get current balance of your wallet\n"
       );
     } else {
       if (config.get("LIGHTHOUSE_GLOBAL_PUBLICKEY")) {
