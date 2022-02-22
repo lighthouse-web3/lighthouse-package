@@ -6,10 +6,8 @@ module.exports = async (publicKey, network = "fantom-testnet") => {
     const provider = new ethers.providers.JsonRpcProvider(
       package_config[network]["rpc"]
     );
-
     const balance = await provider.getBalance(publicKey);
-    // balance = ethers.utils.formatEther(balance);
-    return { data: Number(balance) };
+    return ethers.utils.formatEther(balance);
   } catch {
     return null;
   }
