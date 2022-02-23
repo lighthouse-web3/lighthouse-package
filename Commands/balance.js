@@ -3,7 +3,7 @@ const chalk = require("chalk");
 const Spinner = require("cli-spinner").Spinner;
 
 const lighthouse = require("../Lighthouse");
-const lighthouseConfig = require("../lighthouse.config");
+const getNetwork = require("./Utils/getNetwork");
 
 const config = new Conf();
 
@@ -22,11 +22,11 @@ module.exports = {
         const spinner = new Spinner("");
         spinner.start();
 
+        const network = getNetwork();
+
         const balance = await lighthouse.get_balance(
           config.get("LIGHTHOUSE_GLOBAL_PUBLICKEY"),
-          config.get("LIGHTHOUSE_GLOBAL_NETWORK")
-            ? config.get("LIGHTHOUSE_GLOBAL_NETWORK")
-            : lighthouseConfig.network
+          network
         );
 
         spinner.stop();
