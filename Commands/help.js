@@ -101,8 +101,13 @@ module.exports = {
 
       const response = await packageJson("lighthouse-web3");
       if (response) {
-        console.log(chalk.yellow("Current Version: ") + version);
-        console.log(chalk.yellow("Latest Version : ") + response.version);
+        console.log(
+          chalk.yellow("Current Version: ") +
+            version +
+            "\n" +
+            chalk.yellow("Latest Version : ") +
+            response.version
+        );
         if (version !== response.version) {
           console.log(
             chalk.yellow("To update run  : ") +
