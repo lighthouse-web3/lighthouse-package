@@ -19,22 +19,27 @@ module.exports = {
     } else {
       const network = getNetwork();
 
-      network && config.get("LIGHTHOUSE_GLOBAL_PUBLICKEY")?
-      (async () => {
-        try{
-          const response = await lighthouse.get_uploads(
-            config.get("LIGHTHOUSE_GLOBAL_PUBLICKEY"),
-            network
+      network && config.get("LIGHTHOUSE_GLOBAL_PUBLICKEY")
+        ? (async () => {
+            try {
+              const response = await lighthouse.get_uploads(
+                config.get("LIGHTHOUSE_GLOBAL_PUBLICKEY"),
+                network
+              );
+
+              console.log(chalk.yellow("CID: "));
+              for (let i = 0; i < response.length; i++) {
+                console.log(
+                  Array(5).fill("\xa0").join("") + response[i]["cid"]
+                );
+              }
+            } catch {
+              console.log(chalk.red("Error fetching uploads!"));
+            }
+          })()
+        : console.log(
+            chalk.red("You have not imported wallet or selected the network!")
           );
-  
-          console.log(chalk.yellow("CID: "));
-          for (let i = 0; i < response.length; i++) {
-            console.log(Array(5).fill("\xa0").join("") + response[i]["cid"]);
-          }
-        } catch{
-          console.log(chalk.red("Error fetching uploads!"));
-        }
-      })() : console.log(chalk.red("You have not imported wallet or selected the network!"));
     }
-  }
+  },
 };

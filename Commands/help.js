@@ -6,57 +6,44 @@ const { version } = require("../package.json");
 const config = new Conf();
 
 const showHelp = () => {
-  return(
+  return (
     chalk.yellow("Welcome to lighthouse-web3\n\n") +
-
     "Usage: lighthouse-web3" +
     chalk.cyan(" [command] ") +
     chalk.green("[options]\n\n") +
-
     chalk.green("Commands (alias)") +
     chalk.grey(Array(21).fill("\xa0").join("") + "Description") +
-    
     "\nwallet" +
     Array(31).fill("\xa0").join("") +
     "Returns wallet public address" +
-    
     "\ncreate-wallet" +
     Array(24).fill("\xa0").join("") +
     "Creates a new wallet" +
-    
     "\nimport-wallet" +
     Array(24).fill("\xa0").join("") +
     "Import an existing wallet" +
-    
     "\nwallet-forget" +
     Array(24).fill("\xa0").join("") +
     "Remove previously saved wallet" +
-    
     "\nbalance" +
     Array(30).fill("\xa0").join("") +
     "Get current balance of your wallet" +
-    
     "\ndeploy" +
     Array(31).fill("\xa0").join("") +
     "Deploy a file" +
-    
     "\nstatus" +
     Array(31).fill("\xa0").join("") +
     "Get metadata around the storage per CID" +
-    
     "\nget-uploads" +
     Array(26).fill("\xa0").join("") +
     "Get details of file uploaded\n" +
-    
     chalk.cyan("\nOptions") +
     "\n--network" +
     Array(28).fill("\xa0").join("") +
     "Set network\n" +
-    
     "--help" +
     Array(31).fill("\xa0").join("") +
     "Help for a specific command command\n" +
-    
     chalk.magenta("\nExample") +
     "\nChange Network" +
     Array(4).fill("\xa0").join("") +
