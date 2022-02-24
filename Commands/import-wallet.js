@@ -23,7 +23,7 @@ module.exports = {
   handler: async function (argv) {
     if (argv.help) {
       console.log(
-        "lighthouse-web3 import-wallet\n" +
+        "\nlighthouse-web3 import-wallet\n" +
           chalk.green("Description: ") +
           "Import an existing wallet\n" +
           chalk.green("Options: \n") +
@@ -35,7 +35,7 @@ module.exports = {
           Array(5).fill("\xa0").join("") +
           "lighthouse-web3 import-wallet --key 0xlkjhcf1721e6e1828a15c72c1d2aa80c633e45574cb60f5e821681999f3d1700\n" +
           Array(5).fill("\xa0").join("") +
-          "lighthouse-web3 import-wallet --path /home/user/wallet.json"
+          "lighthouse-web3 import-wallet --path /home/user/wallet.json\n"
       );
     } else {
       if (argv.key) {
