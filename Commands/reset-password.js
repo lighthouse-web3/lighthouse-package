@@ -26,7 +26,7 @@ module.exports = {
       };
 
       const password = await readInput(options);
-      const wallet = await lighthouse.restore_keys(privateKey, password);
+      const wallet = await lighthouse.restoreKeys(privateKey, password);
       if (wallet) {
         fs.writeFile("wallet.json", JSON.stringify(wallet, null, 4), (err) => {
           if (err) {
