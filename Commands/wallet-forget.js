@@ -14,8 +14,8 @@ module.exports = {
           "Removes previously saved wallet\n"
       );
     } else {
-      config.delete("Lighthouse_privateKeyEncrypted");
-      config.delete("Lighthouse_publicKey");
+      config.delete("LIGHTHOUSE_GLOBAL_PRIVATEKEYENCRYPTED");
+      config.delete("LIGHTHOUSE_GLOBAL_PUBLICKEY");
       console.log(chalk.green("Wallet Removed!"));
     }
   },
