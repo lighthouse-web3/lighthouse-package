@@ -13,7 +13,7 @@ module.exports = {
   handler: async function (argv) {
     if (argv.help) {
       console.log(
-        "\nlighthouse-web3 balance\n" +
+        "lighthouse-web3 balance\n" +
           chalk.green("Description: ") +
           "Get current balance of your wallet\n"
       );
@@ -24,7 +24,7 @@ module.exports = {
 
         const network = getNetwork();
 
-        const balance = await lighthouse.get_balance(
+        const balance = await lighthouse.getBalance(
           config.get("LIGHTHOUSE_GLOBAL_PUBLICKEY"),
           network
         );
