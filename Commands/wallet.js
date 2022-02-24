@@ -16,11 +16,11 @@ module.exports = {
           "Returns wallet public address and current network\n"
       );
     } else {
-      if (config.get("Lighthouse_publicKey")) {
+      if (config.get("LIGHTHOUSE_GLOBAL_PUBLICKEY")) {
         console.log(
           chalk.yellow("Public Key:") +
             Array(4).fill("\xa0").join("") +
-            config.get("Lighthouse_publicKey")
+            config.get("LIGHTHOUSE_GLOBAL_PUBLICKEY")
         );
 
         console.log(
