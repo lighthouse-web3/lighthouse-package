@@ -27,7 +27,7 @@ module.exports = {
       };
 
       const password = await readInput(options);
-      const wallet = await lighthouse.create_wallet(password.trim());
+      const wallet = await lighthouse.createWallet(password.trim());
 
       wallet
         ? fs.writeFile(
