@@ -1,25 +1,29 @@
 const axios = require("axios");
 const lighthouseConfig = require("../../lighthouse.config");
 
-module.exports = async (fileSizeInBytes, network = "testnet") => {
+module.exports = async (fileSizeInBytes, network) => {
   try {
     // Get ticker for the given currency
     const response = await axios.get(
       lighthouseConfig.URL +
         `/api/lighthouse/get_ticker?symbol=${lighthouseConfig[network]["symbol"]}`
     );
-    const token_price_usd = response.data;
+    const tokenPriceUsd = response.data;
 
+    const gbInBytes = 1073741824; // 1 GB in bytes
+    const costPerGB = gbInBytes;
     // Get cost of file
-    const totalSize = fileSizeInBytes / (1024 * 1024 * 1024);
-    const total_cost_usd = totalSize * 5;
-    const total_cost = total_cost_usd / token_price_usd;
+    const totalSizeInGB = fileSizeInBytes / gbInBytes;
+    const totalCostUsd = totalSizeInGB * costPerGB;
+    const totalCost = totalCostUsd / tokenPriceUsd;
 
     return {
-      total_cost: total_cost,
+      totalCost: totalCost,
     };
   } catch (err) {
     console.log(err);
-    return null;
+    return {
+      totalCost: null,
+    };
   }
 };
