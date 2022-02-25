@@ -35,8 +35,10 @@ module.exports = {
 
         balance
           ? console.log(
-            chalk.yellow("\nbalance " ) + balance +
-            chalk.yellow("\nNetwork ") + network
+              chalk.yellow("\nbalance ") +
+                balance +
+                chalk.yellow("\nNetwork ") +
+                network
             )
           : console.log(chalk.red("Error fetching balance!"));
       } else {
