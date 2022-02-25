@@ -1,7 +1,7 @@
 const axios = require("axios");
 const lighthouseConfig = require("../../lighthouse.config");
 
-module.exports = async (publicKey, network = "polygon-testnet") => {
+module.exports = async (publicKey, network) => {
   try {
     const uploads = (
       await axios.get(
