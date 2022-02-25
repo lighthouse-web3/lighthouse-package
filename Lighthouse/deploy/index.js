@@ -2,13 +2,13 @@ const axios = require("axios");
 const chalk = require("chalk");
 const ethers = require("ethers");
 
-const lighthouse_config = require("../../lighthouse.config");
-const { lighthouseAbi } = require("../contract_abi/lighthouseAbi.js");
+const lighthouseConfig = require("../../lighthouse.config");
+const { lighthouseAbi } = require("../contractAbi/lighthouseAbi.js");
 
-const push_cid_tochain = async (signer, cid, name, size, cost, network) => {
+const pushCidToChain = async (signer, cid, name, size, cost, network) => {
   try {
     const contract = new ethers.Contract(
-      lighthouse_config[network]["lighthouse_contract_address"],
+      lighthouseConfig[network]["lighthouse_contract_address"],
       lighthouseAbi,
       signer
     );
@@ -26,39 +26,44 @@ const push_cid_tochain = async (signer, cid, name, size, cost, network) => {
 };
 
 const transactionLog = (txObj, network) => {
-  const networkConfig = lighthouse_config[network];
+  const networkConfig = lighthouseConfig[network];
 
   if (!networkConfig) {
     console.error(`No network found for ${network}`);
   }
 
-  console.log("Transaction: " + networkConfig.scan + txObj.transactionHash);
+  if (txObj) {
+    console.log("Transaction: " + networkConfig.scan + txObj.transactionHash);
+  } else {
+    console.log("Transaction failed");
+  }
 };
 
-const get_cost = async (fileSize, network) => {
+const getCost = async (fileSize, network) => {
   // Get ticker for the given currency
-  const response = await axios.get(
-    lighthouse_config.URL +
-      `/api/lighthouse/get_ticker?symbol=${lighthouse_config[network]["symbol"]}`
-  );
-  const token_price_usd = response.data;
+  const tokenPriceUsd = (
+    await axios.get(
+      lighthouseConfig.URL +
+        `/api/lighthouse/get_ticker?symbol=${lighthouseConfig[network]["symbol"]}`
+    )
+  ).data;
 
   // Get cost of file
-  const totalSize = fileSize / (1024 * 1024 * 1024);
-  const total_cost_usd = totalSize * 5;
-  const total_cost = total_cost_usd / token_price_usd;
+  const gbInBytes = 1073741824; // 1 GB in bytes
+  const costPerGB = 5; // 5 USD per GB
+  const totalSize = fileSize / gbInBytes;
+  const totalCostUsd = totalSize * costPerGB;
+  const totalCost = (totalCostUsd / tokenPriceUsd).toFixed(18);
 
-  return {
-    total_cost: total_cost,
-  };
+  return totalCost;
 };
 
-function deployFile(sourcePath, publicKey, signed_message) {
+function deployFile(sourcePath, publicKey, signedMessage) {
   const fs = eval("require")("fs");
   const NodeFormData = eval("require")("form-data");
   const recursive = eval("require")("recursive-fs");
   const basePathConverter = eval("require")("base-path-converter");
-  const token = "Bearer " + publicKey + " " + signed_message;
+  const token = "Bearer " + publicKey + " " + signedMessage;
 
   return new Promise((resolve, reject) => {
     const endpoint = `https://node.lighthouse.storage/api/v0/add`;
@@ -94,7 +99,7 @@ function deployFile(sourcePath, publicKey, signed_message) {
             resolve(result.data);
           })
           .catch(function (error) {
-            const formattedError = handleError(error);
+            console.log(error);
             reject(formattedError);
           });
       } else {
@@ -148,9 +153,9 @@ module.exports = async (
   path,
   signer,
   cli = false,
-  signed_message,
+  signedMessage,
   publicKey,
-  network = "fantom-testnet"
+  network
 ) => {
   // Upload File to IPFS
   const Spinner = eval("require")("cli-spinner").Spinner;
@@ -159,7 +164,7 @@ module.exports = async (
     spinner.start();
   }
 
-  let deployResponse = await deployFile(path, publicKey, signed_message);
+  let deployResponse = await deployFile(path, publicKey, signedMessage);
 
   if (cli) {
     spinner.stop();
@@ -175,13 +180,13 @@ module.exports = async (
       spinner.start();
     }
 
-    const cost = await get_cost(deployResponse.Size, network);
-    const txObj = await push_cid_tochain(
+    const cost = await getCost(deployResponse.Size, network);
+    const txObj = await pushCidToChain(
       signer,
       deployResponse.Hash,
       deployResponse.Name,
       deployResponse.Size,
-      cost.total_cost.toFixed(18).toString(),
+      cost.toString(),
       network
     );
 
@@ -196,7 +201,7 @@ module.exports = async (
     }
 
     const temp = await axios.post(
-      lighthouse_config.URL + `/api/lighthouse/add_cid`,
+      lighthouseConfig.URL + `/api/lighthouse/add_cid`,
       {
         name: deployResponse.Name,
         cid: deployResponse.Hash,
