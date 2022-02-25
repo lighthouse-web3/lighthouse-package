@@ -128,7 +128,7 @@ const getCid = async (path, publicKey, network) => {
       lighthouseAbi,
       provider
     );
-    
+
     const gasFee = (
       await contract.estimateGas.store(
         hashList[hashList.length - 1],
