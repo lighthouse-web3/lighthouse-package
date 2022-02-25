@@ -34,7 +34,10 @@ module.exports = {
         process.stdout.cursorTo(0);
 
         balance
-          ? console.log(chalk.green("balance " + balance))
+          ? console.log(
+            chalk.yellow("\nbalance " ) + balance +
+            chalk.yellow("\nNetwork ") + network
+            )
           : console.log(chalk.red("Error fetching balance!"));
       } else {
         console.log(chalk.red("Please import wallet first!"));
