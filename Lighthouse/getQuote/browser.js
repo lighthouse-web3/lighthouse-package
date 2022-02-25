@@ -11,7 +11,7 @@ module.exports = async (fileSizeInBytes, network) => {
     const tokenPriceUsd = response.data;
 
     const gbInBytes = 1073741824; // 1 GB in bytes
-    const costPerGB = gbInBytes;
+    const costPerGB = 5; // 5 USD per GB
     // Get cost of file
     const totalSizeInGB = fileSizeInBytes / gbInBytes;
     const totalCostUsd = totalSizeInGB * costPerGB;
