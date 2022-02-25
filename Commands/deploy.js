@@ -105,7 +105,7 @@ const getQuote = async (path, publicKey, network, Spinner) => {
 
     console.log(
       "Balance after deploy: " +
-      balanceAfterDeploy +
+        balanceAfterDeploy +
         " " +
         lighthouseConfig[network]["symbol"] +
         "\n"
@@ -125,13 +125,7 @@ const getQuote = async (path, publicKey, network, Spinner) => {
   }
 };
 
-const deploy = async (
-  path,
-  signer,
-  signedMessage,
-  publicKey,
-  network
-) => {
+const deploy = async (path, signer, signedMessage, publicKey, network) => {
   const deployResponse = await lighthouse.deploy(
     path,
     signer,
@@ -205,51 +199,44 @@ module.exports = {
         selected.trim() == "y" ||
         selected.trim() == "yes"
       ) {
-          quoteResponse.balanceAfterDeploy < 0?
-          (()=>{
-            console.log(chalk.red("Insufficient balance!"));
-            process.exit()
-          })()
-          :
-          (async()=>{
-            const options = {
-              prompt: "Enter your password: ",
-              silent: true,
-              default: "",
-            };
-            const password = await readInput(options);
-            const key = await lighthouse.getKey(
-              config.get("Lighthouse_privateKeyEncrypted"),
-              password.trim()
-            );
-            if (key) {
-              const provider = new ethers.providers.JsonRpcProvider(
-                lighthouseConfig[network]["rpc"]
-              );
-              const signer = new ethers.Wallet(key.privateKey, provider);
-              const publicKey = await signer.getAddress();
-              const messageResponse = await axios.get(
-                `https://api.lighthouse.storage/api/lighthouse/get_message?publicKey=${publicKey}`
-              );
-              const message = messageResponse.data;
-              const signedMessage = await signer.signMessage(message);
-
-              await deploy(
-                path,
-                signer,
-                signedMessage,
-                publicKey,
-                network
-              );
-            } else {
-              console.log(chalk.red("Something Went Wrong!"));
+        quoteResponse.balanceAfterDeploy < 0
+          ? (() => {
+              console.log(chalk.red("Insufficient balance!"));
               process.exit();
-            }
-          })()
-        } else {
-          console.log(chalk.red("Cancelled"));
-          process.exit();
-        }
+            })()
+          : (async () => {
+              const options = {
+                prompt: "Enter your password: ",
+                silent: true,
+                default: "",
+              };
+              const password = await readInput(options);
+              const key = await lighthouse.getKey(
+                config.get("Lighthouse_privateKeyEncrypted"),
+                password.trim()
+              );
+              if (key) {
+                const provider = new ethers.providers.JsonRpcProvider(
+                  lighthouseConfig[network]["rpc"]
+                );
+                const signer = new ethers.Wallet(key.privateKey, provider);
+                const publicKey = await signer.getAddress();
+                const messageResponse = await axios.get(
+                  `https://api.lighthouse.storage/api/lighthouse/get_message?publicKey=${publicKey}`
+                );
+                const message = messageResponse.data;
+                const signedMessage = await signer.signMessage(message);
+
+                await deploy(path, signer, signedMessage, publicKey, network);
+              } else {
+                console.log(chalk.red("Something Went Wrong!"));
+                process.exit();
+              }
+            })();
+      } else {
+        console.log(chalk.red("Cancelled"));
+        process.exit();
       }
     }
-  }
+  },
+};
