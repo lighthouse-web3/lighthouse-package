@@ -9,3 +9,11 @@ test("status", async () => {
   expect(typeof response[0]["content"]["name"]).toBe("string");
   expect(typeof response[0]["content"]["size"]).toBe("number");
 }, 20000);
+
+test("status null case", async () => {
+  const response = await lighthouse.status(
+    null
+  );
+
+  expect(response).toBe(null);
+}, 20000);
