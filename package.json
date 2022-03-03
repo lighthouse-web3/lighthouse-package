@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node index.js",
     "lint": "trunk check",
-    "test": "jest"
+    "test": "jest",
+    "test-coverage": "jest --coverage --coverageDirectory=Lighthouse/tests/coverage"
   },
   "bin": {
     "lighthouse-web3": "cli.js"
