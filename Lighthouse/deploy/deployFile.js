@@ -1,5 +1,5 @@
 const axios = require("axios");
-
+const lighthouseConfig = require("../../lighthouse.config");
 /*
   This function is used to deploy a file to the Lighthouse server.
   It takes the following parameters:
@@ -16,7 +16,7 @@ module.exports = (sourcePath, publicKey, signedMessage) => {
   const token = "Bearer " + publicKey + " " + signedMessage;
 
   return new Promise((resolve, reject) => {
-    const endpoint = `https://node.lighthouse.storage/api/v0/add`;
+    const endpoint = lighthouseConfig.node; 
 
     fs.stat(sourcePath, (err, stats) => {
       if (err) {
