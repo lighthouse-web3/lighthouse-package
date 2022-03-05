@@ -3,6 +3,7 @@
 
 const defaultConfig = {
   URL: "https://api.lighthouse.storage",
+  node: "https://node.lighthouse.storage/api/v0/add",
   network: "polygon",
   gbInBytes: 1073741824,
   costPerGB: 5,
