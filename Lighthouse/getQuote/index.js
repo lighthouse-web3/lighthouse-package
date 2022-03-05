@@ -5,6 +5,7 @@ const Hash = require("../getHash");
 const lighthouseConfig = require("../../lighthouse.config");
 const { lighthouseAbi } = require("../contractAbi/lighthouseAbi.js");
 
+// Function to create a directory tree for all files in folder
 const getAllFiles = (
   resolve,
   relative,
@@ -51,7 +52,8 @@ const getAllFiles = (
   return arrayOfFiles;
 };
 
-const getCid = async (path, publicKey, network) => {
+// Function return cost and file metadata
+const getCosting = async (path, publicKey, network) => {
   const { resolve, relative, join } = eval("require")("path");
   const fs = eval("require")("fs");
   const mime = eval("require")("mime-types");
@@ -101,8 +103,8 @@ const getCid = async (path, publicKey, network) => {
     );
     const tokenPriceUsd = response.data;
 
-    const gbInBytes = 1073741824; // 1 GB in bytes
-    const costPerGB = 5; // 5 USD per GB
+    const gbInBytes = lighthouseConfig.gbInBytes; // 1 GB in bytes
+    const costPerGB = lighthouseConfig.costPerGB; // 5 USD per GB
 
     // Get cost of each file and total cost
     for (let i = 0; i < metaData.length; i++) {
@@ -167,8 +169,8 @@ const getCid = async (path, publicKey, network) => {
     const tokenPriceUsd = response.data;
 
     // Get cost of file
-    const gbInBytes = 1073741824; // 1 GB in bytes
-    const costPerGB = 5; // 5 USD per GB
+    const gbInBytes = lighthouseConfig.gbInBytes; // 1 GB in bytes
+    const costPerGB = lighthouseConfig.costPerGB; // 5 USD per GB
     const totalSize = fileSizeInBytes / gbInBytes;
     const totalCostUsd = totalSize * costPerGB;
     const totalCost = totalCostUsd / tokenPriceUsd;
@@ -211,7 +213,7 @@ const getCid = async (path, publicKey, network) => {
 
 module.exports = async (path, publicKey, network) => {
   try {
-    return await getCid(path, publicKey, network);
+    return await getCosting(path, publicKey, network);
   } catch (err) {
     console.log(err);
     return null;
