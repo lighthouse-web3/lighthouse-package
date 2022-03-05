@@ -4,6 +4,8 @@
 const defaultConfig = {
   URL: "https://api.lighthouse.storage",
   network: "polygon",
+  gbInBytes: 1073741824,
+  costPerGB: 5,
   fantom: {
     symbol: "FTM",
     rpc: "https://speedy-nodes-nyc.moralis.io/8fcbf40af9af2844774d0ea2/fantom/mainnet",
