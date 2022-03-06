@@ -72,13 +72,6 @@ module.exports = async (
     }
 
     const temp = await addCid(deployResponse.Name, deployResponse.Hash);
-    // const temp = await axios.post(
-    //   lighthouseConfig.URL + `/api/lighthouse/add_cid`,
-    //   {
-    //     name: deployResponse.Name,
-    //     cid: deployResponse.Hash,
-    //   }
-    // );
 
     deployResponse["txObj"] = txObj;
     return deployResponse;
