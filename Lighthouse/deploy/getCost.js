@@ -5,8 +5,9 @@ const lighthouseConfig = require("../../lighthouse.config");
 /*
   This function is used to deploy a file to the Lighthouse server.
   It takes the following parameters:
-  @param {string} fileSize - The size of file/folder.
-  @param {string} network - Network on which transaction to execute.
+  @param string fileSize - The size of file/folder.
+  @param string network - Network on which transaction to execute.
+  @return number containing quote details.
 */
 
 module.exports = async (fileSize, network) => {
