@@ -28,26 +28,40 @@ const defaultConfig = {
     chain_id: "56",
     lighthouse_contract_address: "0xf81f7df9e0b2953e2666b208645a8cd5d2d9e845",
   },
+  optimism: {
+    symbol: "ETH",
+    rpc: "https://mainnet.optimism.io",
+    scan: "https://bscscan.com/tx/",
+    chain_id: "10",
+    lighthouse_contract_address: "0x61e296fdc8c498ed183a2d19fd5927736e46e3b6",
+  },
   "fantom-testnet": {
     symbol: "FTM",
     rpc: "https://rpc.testnet.fantom.network/",
-    scan: "https://testnet.ftmscan.com/",
+    scan: "https://testnet.ftmscan.com/tx/",
     chain_id: "0xfa2",
     lighthouse_contract_address: "0x61E296FDc8c498Ed183a2D19FD5927736E46E3B6",
   },
   "polygon-testnet": {
     symbol: "MATIC",
     rpc: "https://speedy-nodes-nyc.moralis.io/8fcbf40af9af2844774d0ea2/polygon/mumbai",
-    scan: "https://mumbai.polygonscan.com/",
+    scan: "https://mumbai.polygonscan.com/tx/",
     chain_id: "80001",
     lighthouse_contract_address: "0xEe24a604d86fC158798031c70C4Cf9EB291aDdad",
   },
   "binance-testnet": {
     symbol: "BNB",
     rpc: "https://speedy-nodes-nyc.moralis.io/8fcbf40af9af2844774d0ea2/bsc/testnet",
-    scan: "https://testnet.bscscan.com/",
+    scan: "https://testnet.bscscan.com/tx/",
     chain_id: "97",
     lighthouse_contract_address: "0xbCEe1a1f22F316569951e8F833f61a6ffCeee535",
+  },
+  "optimism-testnet": {
+    symbol: "ETH",
+    rpc: "https://kovan.optimism.io/",
+    scan: "https://kovan-optimistic.etherscan.io/tx/",
+    chain_id: "69",
+    lighthouse_contract_address: "0x61e296fdc8c498ed183a2d19fd5927736e46e3b6",
   },
 };
 
