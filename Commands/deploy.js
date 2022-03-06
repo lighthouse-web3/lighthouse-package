@@ -139,8 +139,9 @@ const deploy = async (path, signer, signedMessage, publicKey, network) => {
     chalk.green("File Deployed, visit following url to view content!\n") +
       chalk.cyan(
         "Visit: " +
-          "https://gateway.lighthouse.storage/ipfs/\n" +
-          deployResponse.Hash
+          "https://gateway.lighthouse.storage/ipfs/" +
+          deployResponse.Hash +
+          "\n"
       ) +
       chalk.cyan(
         Array(7).fill("\xa0").join("") +
