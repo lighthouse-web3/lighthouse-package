@@ -11,9 +11,7 @@ test("status", async () => {
 }, 20000);
 
 test("status null case", async () => {
-  const response = await lighthouse.status(
-    null
-  );
+  const response = await lighthouse.status(null);
 
   expect(response).toBe(null);
 }, 20000);

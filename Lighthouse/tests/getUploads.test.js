@@ -10,10 +10,7 @@ test("getUploads", async () => {
 }, 20000);
 
 test("getUploads null case", async () => {
-  const response = await lighthouse.getUploads(
-    null,
-    null
-  );
+  const response = await lighthouse.getUploads(null, null);
 
   expect(response).toBe(null);
 }, 20000);

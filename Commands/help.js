@@ -85,9 +85,9 @@ module.exports = {
           config.set("LIGHTHOUSE_GLOBAL_NETWORK", "binance");
           break;
         case "optimism":
-          case "optimism-mainnet":
-            config.set("LIGHTHOUSE_GLOBAL_NETWORK", "optimism");
-            break;
+        case "optimism-mainnet":
+          config.set("LIGHTHOUSE_GLOBAL_NETWORK", "optimism");
+          break;
         case "polygon-testnet":
           config.set("LIGHTHOUSE_GLOBAL_NETWORK", "polygon-testnet");
           break;

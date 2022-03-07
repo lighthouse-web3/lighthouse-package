@@ -16,7 +16,7 @@ module.exports = (sourcePath, publicKey, signedMessage) => {
   const token = "Bearer " + publicKey + " " + signedMessage;
 
   return new Promise((resolve, reject) => {
-    const endpoint = lighthouseConfig.node; 
+    const endpoint = lighthouseConfig.node;
 
     fs.stat(sourcePath, (err, stats) => {
       if (err) {
@@ -97,4 +97,4 @@ module.exports = (sourcePath, publicKey, signedMessage) => {
       }
     });
   });
-}
+};

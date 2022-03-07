@@ -5,7 +5,7 @@ test("getBalance polygon-testnet", async () => {
     "0x1Ec09D4B3Cb565b7CCe2eEAf71CC90c9b46c5c26",
     "polygon-testnet"
   );
-  
+
   expect(typeof balance).toBe("string");
 }, 20000);
 
