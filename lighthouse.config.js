@@ -31,7 +31,7 @@ const defaultConfig = {
   optimism: {
     symbol: "ETH",
     rpc: "https://mainnet.optimism.io",
-    scan: "https://bscscan.com/tx/",
+    scan: "https://optimistic.etherscan.io/tx/",
     chain_id: "10",
     lighthouse_contract_address: "0x61e296fdc8c498ed183a2d19fd5927736e46e3b6",
   },
