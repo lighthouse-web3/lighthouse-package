@@ -5,6 +5,62 @@ const { version } = require("../package.json");
 
 const config = new Conf();
 
+const showHelp = () => {
+  return (
+    chalk.yellow("Welcome to lighthouse-web3\n\n") +
+    "Usage: lighthouse-web3" +
+    chalk.cyan(" [command] ") +
+    chalk.green("[options]\n\n") +
+    chalk.green("Commands (alias)") +
+    chalk.grey(Array(21).fill("\xa0").join("") + "Description") +
+    "\nwallet" +
+    Array(31).fill("\xa0").join("") +
+    "Returns wallet public address" +
+    "\ncreate-wallet" +
+    Array(24).fill("\xa0").join("") +
+    "Creates a new wallet" +
+    "\nimport-wallet" +
+    Array(24).fill("\xa0").join("") +
+    "Import an existing wallet" +
+    "\nwallet-forget" +
+    Array(24).fill("\xa0").join("") +
+    "Remove previously saved wallet" +
+    "\nbalance" +
+    Array(30).fill("\xa0").join("") +
+    "Get current balance of your wallet" +
+    "\ndeploy" +
+    Array(31).fill("\xa0").join("") +
+    "Deploy a file" +
+    "\nstatus" +
+    Array(31).fill("\xa0").join("") +
+    "Get metadata around the storage per CID" +
+    "\nget-uploads" +
+    Array(26).fill("\xa0").join("") +
+    "Get details of file uploaded\n" +
+    chalk.cyan("\nOptions") +
+    "\n--network" +
+    Array(28).fill("\xa0").join("") +
+    "Set network\n" +
+    "--help" +
+    Array(31).fill("\xa0").join("") +
+    "Help for a specific command command\n" +
+    chalk.magenta("\nExample") +
+    "\nChange Network" +
+    Array(4).fill("\xa0").join("") +
+    "lighthouse-web3 --network polygon\n" +
+    Array(18).fill("\xa0").join("") +
+    "lighthouse-web3 --network fantom-testnet\n" +
+    Array(18).fill("\xa0").join("") +
+    "lighthouse-web3 --network binance-mainnet\n" +
+    "\nCreate wallet" +
+    Array(5).fill("\xa0").join("") +
+    "lighthouse-web3 create-wallet\n" +
+    "\nImport wallet" +
+    Array(5).fill("\xa0").join("") +
+    "lighthouse-web3 import-wallet --path wallet.json\n"
+  );
+};
+
 module.exports = {
   command: "$0",
   builder: {
@@ -18,118 +74,47 @@ module.exports = {
       switch (argv.network.toString().toLowerCase()) {
         case "polygon":
         case "polygon-mainnet":
-          config.set("Lighthouse_network", "polygon");
+          config.set("LIGHTHOUSE_GLOBAL_NETWORK", "polygon");
           break;
         case "fantom":
         case "fantom-mainnet":
-          config.set("Lighthouse_network", "fantom");
+          config.set("LIGHTHOUSE_GLOBAL_NETWORK", "fantom");
           break;
         case "binance":
         case "binance-mainnet":
-          config.set("Lighthouse_network", "binance");
+          config.set("LIGHTHOUSE_GLOBAL_NETWORK", "binance");
+          break;
+        case "optimism":
+        case "optimism-mainnet":
+          config.set("LIGHTHOUSE_GLOBAL_NETWORK", "optimism");
           break;
         case "polygon-testnet":
-          config.set("Lighthouse_network", "polygon-testnet");
+          config.set("LIGHTHOUSE_GLOBAL_NETWORK", "polygon-testnet");
           break;
         case "fantom-testnet":
-          config.set("Lighthouse_network", "fantom-testnet");
+          config.set("LIGHTHOUSE_GLOBAL_NETWORK", "fantom-testnet");
           break;
         case "binance-testnet":
-          config.set("Lighthouse_network", "binance-testnet");
+          config.set("LIGHTHOUSE_GLOBAL_NETWORK", "binance-testnet");
+          break;
+        case "optimism-testnet":
+          config.set("LIGHTHOUSE_GLOBAL_NETWORK", "optimism-testnet");
           break;
         default:
-          config.set("Lighthouse_network", "polygon");
+          config.set("LIGHTHOUSE_GLOBAL_NETWORK", "polygon");
       }
     } else {
-      console.log(chalk.yellow("Welcome to lighthouse-web3\n"));
-      console.log(
-        "Usage: lighthouse-web3" +
-          chalk.cyan(" [command] ") +
-          chalk.green("[options]\n")
-      );
-      console.log(
-        chalk.green("Commands (alias)") +
-          chalk.grey(Array(21).fill("\xa0").join("") + "Description")
-      );
-      console.log(
-        "wallet" +
-          Array(31).fill("\xa0").join("") +
-          "Returns wallet public address"
-      );
-      console.log(
-        "create-wallet" +
-          Array(24).fill("\xa0").join("") +
-          "Creates a new wallet"
-      );
-      console.log(
-        "import-wallet" +
-          Array(24).fill("\xa0").join("") +
-          "Import an existing wallet"
-      );
-      console.log(
-        "wallet-forget" +
-          Array(24).fill("\xa0").join("") +
-          "Remove previously saved wallet"
-      );
-      console.log(
-        "balance" +
-          Array(30).fill("\xa0").join("") +
-          "Get current balance of your wallet"
-      );
-      console.log("deploy" + Array(31).fill("\xa0").join("") + "Deploy a file");
-      console.log(
-        "status" +
-          Array(31).fill("\xa0").join("") +
-          "Get metadata around the storage per CID"
-      );
-      console.log(
-        "get-uploads" +
-          Array(26).fill("\xa0").join("") +
-          "Get details of file uploaded\n"
-      );
-
-      console.log(chalk.cyan("Options"));
-      console.log(
-        "--network" + Array(28).fill("\xa0").join("") + "Set network\n"
-      );
-      console.log(
-        "--save" +
-          Array(31).fill("\xa0").join("") +
-          "Saves the wallet after creation\n"
-      );
-      console.log(
-        "--help" +
-          Array(31).fill("\xa0").join("") +
-          "Help for a specific command command\n"
-      );
-      console.log(chalk.magenta("Example"));
-      console.log("Change Network");
-      console.log(
-        Array(5).fill("\xa0").join("") + "lighthouse-web3 --network polygon\n"
-      );
-      console.log(
-        Array(5).fill("\xa0").join("") +
-          "lighthouse-web3 --network fantom-testnet\n"
-      );
-      console.log(
-        Array(5).fill("\xa0").join("") +
-          "lighthouse-web3 --network binance-mainnet\n"
-      );
-      console.log("Create wallet and save it");
-      console.log(
-        Array(5).fill("\xa0").join("") +
-          "lighthouse-web3 create-wallet --save\n"
-      );
-      console.log("Import wallet");
-      console.log(
-        Array(5).fill("\xa0").join("") +
-          "lighthouse-web3 import-wallet --path wallet.json\n"
-      );
+      console.log(showHelp());
 
       const response = await packageJson("lighthouse-web3");
       if (response) {
-        console.log(chalk.yellow("Current Version: ") + version);
-        console.log(chalk.yellow("Latest Version : ") + response.version);
+        console.log(
+          chalk.yellow("Current Version: ") +
+            version +
+            "\n" +
+            chalk.yellow("Latest Version : ") +
+            response.version
+        );
         if (version !== response.version) {
           console.log(
             chalk.yellow("To update run  : ") +

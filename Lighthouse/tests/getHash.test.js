@@ -1,9 +1,9 @@
 const fs = require("fs");
-const Hash = require("../get_hash");
+const Hash = require("../getHash");
 const { resolve } = require("path");
 
-test("get_hash", async () => {
-  const path = resolve(process.cwd(), "Lighthouse/test_images/test_image1.svg");
+test("getHash", async () => {
+  const path = resolve(process.cwd(), "Lighthouse/testImages/testImage1.svg");
   const readStream = fs.createReadStream(path);
   const ipfs_hash = await Hash.of(readStream, {
     cidVersion: 1,

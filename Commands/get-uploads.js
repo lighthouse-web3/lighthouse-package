@@ -1,7 +1,10 @@
 const chalk = require("chalk");
 const Conf = require("conf");
+const ethers = require("ethers");
 
+const getNetwork = require("./Utils/getNetwork");
 const lighthouse = require("../Lighthouse");
+
 const config = new Conf();
 
 module.exports = {
@@ -9,31 +12,49 @@ module.exports = {
   desc: "Get details of file uploaded",
   handler: async function (argv) {
     if (argv.help) {
-      console.log("lighthouse-web3 get-uploads\n");
       console.log(
-        chalk.green("Description: ") + "Get details of file uploaded"
+        "\nlighthouse-web3 get-uploads\n" +
+          chalk.green("Description: ") +
+          "Get details of file uploaded\n"
       );
     } else {
-      try {
-        if (config.get("Lighthouse_publicKey")) {
-          const network = config.get("Lighthouse_network")
-            ? config.get("Lighthouse_network")
-            : "polygon";
+      const network = getNetwork();
 
-          const response = await lighthouse.get_uploads(
-            config.get("Lighthouse_publicKey"),
-            network
+      network && config.get("LIGHTHOUSE_GLOBAL_PUBLICKEY")
+        ? (async () => {
+            try {
+              const response = await lighthouse.getUploads(
+                config.get("LIGHTHOUSE_GLOBAL_PUBLICKEY"),
+                network
+              );
+
+              console.log(
+                "\n" +
+                  Array(4).fill("\xa0").join("") +
+                  chalk.yellow("CID") +
+                  Array(47).fill("\xa0").join("") +
+                  chalk.yellow("File Name") +
+                  Array(5).fill("\xa0").join("") +
+                  chalk.yellow("File Size")
+              );
+              for (let i = 0; i < response.length; i++) {
+                console.log(
+                  Array(4).fill("\xa0").join("") +
+                    response[i]["cid"] +
+                    Array(4).fill("\xa0").join("") +
+                    response[i]["fileName"].substring(0, 10) +
+                    Array(4).fill("\xa0").join("") +
+                    ethers.utils.formatUnits(response[i]["fileSize"], "ether") +
+                    "\n"
+                );
+              }
+            } catch {
+              console.log(chalk.red("Error fetching uploads!"));
+            }
+          })()
+        : console.log(
+            chalk.red("You have not imported wallet or selected the network!")
           );
-          console.log(chalk.yellow("CID: "));
-          for (let i = 0; i < response.length; i++) {
-            console.log(Array(5).fill("\xa0").join("") + response[i]["cid"]);
-          }
-        } else {
-          console.log(chalk.red("Please import wallet first!"));
-        }
-      } catch {
-        console.log(chalk.red("Something went wrong!"));
-      }
     }
   },
 };

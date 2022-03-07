@@ -1,7 +1,7 @@
-const lighthouse = require("../../Lighthouse");
+const lighthouse = require("..");
 
-test("create_wallet", async () => {
-  const wallet = await lighthouse.create_wallet("damn");
+test("createWallet", async () => {
+  const wallet = await lighthouse.createWallet("damn");
 
   expect(wallet).toHaveProperty("privateKey");
   expect(typeof wallet.privateKey).toBe("string");
@@ -11,4 +11,9 @@ test("create_wallet", async () => {
 
   expect(wallet).toHaveProperty("privateKeyEncrypted");
   expect(typeof wallet.privateKeyEncrypted).toBe("string");
+}, 20000);
+
+test("createWallet null", async () => {
+  const wallet = await lighthouse.createWallet(null);
+  expect(wallet).toBe(null);
 }, 20000);

@@ -9,7 +9,6 @@ module.exports = async (encPrivateKey, password) => {
 
     return { privateKey: originalText, publicKey: wallet.address };
   } catch (e) {
-    console.log(e);
     return null;
   }
 };

@@ -1,6 +1,8 @@
 const Conf = require("conf");
 const chalk = require("chalk");
 
+const getNetwork = require("./Utils/getNetwork");
+
 const config = new Conf();
 
 module.exports = {
@@ -8,26 +10,23 @@ module.exports = {
   desc: "Returns wallet public address",
   handler: async function (argv) {
     if (argv.help) {
-      console.log("lighthouse-web3 wallet\n");
       console.log(
-        chalk.green("Description: ") + "Returns wallet public address"
+        "\nlighthouse-web3 wallet\n" +
+          chalk.green("Description: ") +
+          "Returns wallet public address and current network\n"
       );
     } else {
-      if (config.get("Lighthouse_publicKey")) {
+      if (config.get("LIGHTHOUSE_GLOBAL_PUBLICKEY")) {
         console.log(
           chalk.yellow("Public Key:") +
             Array(4).fill("\xa0").join("") +
-            config.get("Lighthouse_publicKey")
+            config.get("LIGHTHOUSE_GLOBAL_PUBLICKEY")
         );
-
-        const network = config.get("Lighthouse_network")
-          ? config.get("Lighthouse_network")
-          : "polygon";
 
         console.log(
           chalk.yellow("Network:") +
             Array(7).fill("\xa0").join("") +
-            network
+            getNetwork()
         );
       } else {
         console.log(chalk.red("Please import wallet first!"));
