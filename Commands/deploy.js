@@ -1,189 +1,241 @@
-const read = require("read");
+const axios = require("axios");
 const Conf = require("conf");
 const chalk = require("chalk");
+const ethers = require("ethers");
 const { resolve } = require("path");
 const Spinner = require("cli-spinner").Spinner;
 
-const ethers = require("ethers");
-
-const { bytesToSize } = require("./byteToSize");
-const package_chain = require("../config.json");
-const { deploy } = require("../Lighthouse/deploy");
-const { get_key } = require("../Lighthouse/get_key");
-const { get_quote } = require("../Lighthouse/get_quote");
+const bytesToSize = require("./Utils/byteToSize");
+const getNetwork = require("./Utils/getNetwork");
+const lighthouseConfig = require("../lighthouse.config");
+const lighthouse = require("../Lighthouse");
+const readInput = require("./Utils/readInput");
 
 const config = new Conf();
+
+const getQuote = async (path, publicKey, network, Spinner) => {
+  const spinner = new Spinner("Getting Quote...");
+  spinner.start();
+
+  const response = await lighthouse.getQuote(path, publicKey, network);
+
+  spinner.stop();
+  process.stdout.clearLine();
+  process.stdout.cursorTo(0);
+
+  if (response) {
+    console.log(
+      chalk.cyan("CID") +
+        Array(60).fill("\xa0").join("") +
+        chalk.cyan("Size") +
+        Array(8).fill("\xa0").join("") +
+        chalk.cyan("Fee") +
+        Array(21).fill("\xa0").join("") +
+        chalk.cyan("Type") +
+        Array(20).fill("\xa0").join("") +
+        chalk.cyan("Name")
+    );
+
+    for (let i = 0; i < response.metaData.length; i++) {
+      console.log(
+        response.metaData[i].cid +
+          Array(63 - response.metaData[i].cid.length)
+            .fill("\xa0")
+            .join("") +
+          bytesToSize(response.metaData[i].fileSize) +
+          Array(
+            12 - bytesToSize(response.metaData[i].fileSize).toString().length
+          )
+            .fill("\xa0")
+            .join("") +
+          response.metaData[i].cost +
+          Array(24 - response.metaData[i].cost.toString().length)
+            .fill("\xa0")
+            .join("") +
+          response.metaData[i].mimeType +
+          Array(24 - response.metaData[i].mimeType.toString().length)
+            .fill("\xa0")
+            .join("") +
+          response.metaData[i].fileName
+      );
+    }
+
+    console.log(
+      "\n" +
+        chalk.cyan("Summary") +
+        "\nTotal Size: " +
+        bytesToSize(response.totalSize)
+    );
+
+    console.log(
+      "Fees: " +
+        response.totalCost.toFixed(18) +
+        " " +
+        lighthouseConfig[network]["symbol"] +
+        "\nGas Fees: " +
+        ethers.utils.parseUnits(
+          ethers.utils.formatEther(response.gasFee),
+          "ether"
+        ) +
+        " wei" +
+        "\nTotal Fee: " +
+        Number(
+          Number(response.totalCost.toFixed(18)) +
+            Number(ethers.utils.formatEther(response.gasFee))
+        ) +
+        " " +
+        lighthouseConfig[network]["symbol"] +
+        "\n" +
+        chalk.cyan("\nWallet") +
+        "\nAddress: " +
+        config.get("Lighthouse_publicKey") +
+        "\nCurrent balance: " +
+        response.currentBalance * Math.pow(10, -18) +
+        " " +
+        lighthouseConfig[network]["symbol"]
+    );
+
+    const balanceAfterDeploy = Number(
+      Number(response.currentBalance * Math.pow(10, -18)) -
+        Number(
+          Number(response.totalCost.toFixed(18)) +
+            Number(ethers.utils.formatEther(response.gasFee))
+        )
+    );
+
+    console.log(
+      "Balance after deploy: " +
+        balanceAfterDeploy +
+        " " +
+        lighthouseConfig[network]["symbol"] +
+        "\n"
+    );
+
+    return {
+      fileName: response.metaData[0].fileName,
+      cid: response.metaData[0].cid,
+      fileSize: response.metaData[0].fileSize,
+      cost: response.totalCost,
+      balanceAfterDeploy: balanceAfterDeploy,
+      type: response.type,
+    };
+  } else {
+    console.log(chalk.red("Error getting quote"));
+    process.exit();
+  }
+};
+
+const deploy = async (path, signer, signedMessage, publicKey, network) => {
+  const deployResponse = await lighthouse.deploy(
+    path,
+    signer,
+    true,
+    signedMessage,
+    publicKey,
+    network
+  );
+
+  console.log(
+    chalk.green("File Deployed, visit following url to view content!\n") +
+      chalk.cyan(
+        "Visit: " +
+          "https://gateway.lighthouse.storage/ipfs/" +
+          deployResponse.Hash +
+          "\n"
+      ) +
+      chalk.cyan(
+        Array(7).fill("\xa0").join("") +
+          "https://ipfs.io/ipfs/" +
+          deployResponse.Hash
+      )
+  );
+
+  console.log("CID: " + deployResponse.Hash);
+  process.exit();
+};
 
 module.exports = {
   command: "deploy <path>",
   desc: "Deploy a file",
   handler: async function (argv) {
     if (argv.help) {
-      console.log("lighthouse-web3 deploy <path>");
-      console.log();
-      console.log(chalk.green("Description: ") + "Deploy a file");
-      console.log();
-      console.log(chalk.cyan("Options:"));
-      console.log("   --path: Required, path to file");
-      console.log();
-      console.log(chalk.magenta("Example:"));
       console.log(
-        "   lighthouse-web3 deploy /home/cosmos/Desktop/ILoveAnime.jpg"
+        "lighthouse-web3 deploy <path>\n\n" +
+          chalk.green("Description: ") +
+          "Deploy a file\n\n" +
+          chalk.cyan("Options:\n") +
+          Array(3).fill("\xa0").join("") +
+          "--path: Required, path to file\n\n" +
+          chalk.magenta("Example:") +
+          Array(3).fill("\xa0").join("") +
+          "lighthouse-web3 deploy /home/cosmos/Desktop/ILoveAnime.jpg\n"
       );
-      console.log();
     } else {
+      // Import nodejs specific library
       const path = resolve(process.cwd(), argv.path);
-      const spinner = new Spinner("Getting Quote...");
-      spinner.start();
-      const response = await get_quote(
+      const network = getNetwork();
+
+      // Display Quote
+      const quoteResponse = await getQuote(
         path,
-        config.get("Lighthouse_publicKey"),
-        config.get("Lighthouse_chain")
-          ? config.get("Lighthouse_chain")
-          : "polygon",
-        package_chain.network
+        config.get("LIGHTHOUSE_GLOBAL_PUBLICKEY"),
+        network,
+        Spinner
       );
-      spinner.stop();
-      process.stdout.clearLine();
-      process.stdout.cursorTo(0);
 
-      if (response) {
-        console.log(
-          chalk.cyan("CID") +
-            Array(60).fill("\xa0").join("") +
-            chalk.cyan("Size") +
-            Array(8).fill("\xa0").join("") +
-            chalk.cyan("Fee") +
-            Array(21).fill("\xa0").join("") +
-            chalk.cyan("Type") +
-            Array(20).fill("\xa0").join("") +
-            chalk.cyan("Name")
-        );
+      // Deploy
+      console.log(
+        chalk.green(
+          "Carefully check the above details are correct, then confirm to complete this upload"
+        ) + " Y/n"
+      );
 
-        console.log(
-          response.ipfs_hash +
-            Array(63 - response.ipfs_hash.length)
-              .fill("\xa0")
-              .join("") +
-            bytesToSize(response.file_size) +
-            Array(12 - bytesToSize(response.file_size).toString().length)
-              .fill("\xa0")
-              .join("") +
-            response.cost +
-            Array(24 - response.cost.toString().length)
-              .fill("\xa0")
-              .join("") +
-            response.mime_type +
-            Array(24 - response.mime_type.length)
-              .fill("\xa0")
-              .join("") +
-            response.file_name
-        );
+      const options = {
+        prompt: "",
+      };
 
-        console.log();
-
-        console.log(chalk.cyan("Summary"));
-        console.log("Total Size: " + bytesToSize(response.file_size));
-        console.log("Fees: " + response.cost);
-        console.log("Gas Fees: " + ethers.utils.formatEther(response.gasFee));
-        console.log(
-          "Total Fee: " + (response.cost + response.gasFee * 10 ** -18)
-        );
-
-        console.log();
-
-        console.log(chalk.cyan("Wallet"));
-        console.log("Address: " + config.get("Lighthouse_publicKey"));
-        console.log("Current balance: " + response.current_balance * 10 ** -18);
-        const balance_after_deploy =
-          (Number(response.current_balance) -
-            (response.cost + response.gasFee)) *
-          10 ** -18;
-        console.log("Balance after deploy: " + balance_after_deploy);
-
-        console.log();
-
-        console.log(
-          chalk.green(
-            "Carefully check the above details are correct, then confirm to complete this upload"
-          ) + " Y/n"
-        );
-
-        const options = {
-          prompt: "",
-        };
-
-        read(options, async (err, result) => {
-          if (
-            result.trim() == "Y" ||
-            result.trim() == "y" ||
-            result.trim() == "yes"
-          ) {
-            if (balance_after_deploy < 0) {
+      const selected = await readInput(options);
+      if (
+        selected.trim() == "Y" ||
+        selected.trim() == "y" ||
+        selected.trim() == "yes"
+      ) {
+        quoteResponse.balanceAfterDeploy < 0
+          ? (() => {
               console.log(chalk.red("Insufficient balance!"));
               process.exit();
-            } else {
+            })()
+          : (async () => {
               const options = {
                 prompt: "Enter your password: ",
                 silent: true,
                 default: "",
               };
-
-              read(options, async (err, password) => {
-                const key = await get_key(
-                  config.get("Lighthouse_privateKeyEncrypted"),
-                  password.trim()
+              const password = await readInput(options);
+              const key = await lighthouse.getKey(
+                config.get("Lighthouse_privateKeyEncrypted"),
+                password.trim()
+              );
+              if (key) {
+                const provider = new ethers.providers.JsonRpcProvider(
+                  lighthouseConfig[network]["rpc"]
                 );
+                const signer = new ethers.Wallet(key.privateKey, provider);
+                const publicKey = await signer.getAddress();
+                const messageResponse = await axios.get(
+                  `https://api.lighthouse.storage/api/lighthouse/get_message?publicKey=${publicKey}`
+                );
+                const message = messageResponse.data;
+                const signedMessage = await signer.signMessage(message);
 
-                if (key) {
-                  const chain = config.get("Lighthouse_chain")
-                    ? config.get("Lighthouse_chain")
-                    : "polygon";
-                  const current_network = package_chain.network;
-                  const provider = new ethers.providers.JsonRpcProvider(
-                    package_chain[current_network][chain]["rpc"]
-                  );
-                  const signer = new ethers.Wallet(key.privateKey, provider);
-                  const deploy_response = await deploy(
-                    path,
-                    signer,
-                    response.ipfs_hash,
-                    true,
-                    chain,
-                    current_network
-                  );
-                  console.log(
-                    chalk.green(
-                      "File Deployed, visit following url to view content!"
-                    )
-                  );
-                  console.log(
-                    chalk.cyan(
-                      "Visit: " +
-                        "https://dweb.link/ipfs/" +
-                        deploy_response.cid
-                    )
-                  );
-                  console.log(
-                    chalk.cyan(
-                      "     : " + "https://ipfs.io/ipfs/" + deploy_response.cid
-                    )
-                  );
-                  console.log("CID: " + deploy_response.cid);
-                  process.exit();
-                } else {
-                  console.log(chalk.red("Something Went Wrong!"));
-                  process.exit();
-                }
-              });
-            }
-          } else {
-            console.log(chalk.red("Upload Cancelled!"));
-            process.exit();
-          }
-        });
+                await deploy(path, signer, signedMessage, publicKey, network);
+              } else {
+                console.log(chalk.red("Something Went Wrong!"));
+                process.exit();
+              }
+            })();
       } else {
-        console.log(chalk.red("Something Went Wrong!"));
+        console.log(chalk.red("Cancelled"));
         process.exit();
       }
     }

@@ -1,8 +1,7 @@
 const Conf = require("conf");
 const chalk = require("chalk");
 
-// const package_config = require("../config.json");
-// const { check_deposit } = require("../Lighthouse/check_deposit");
+const getNetwork = require("./Utils/getNetwork");
 
 const config = new Conf();
 
@@ -11,26 +10,24 @@ module.exports = {
   desc: "Returns wallet public address",
   handler: async function (argv) {
     if (argv.help) {
-      console.log("lighthouse-web3 wallet");
-      console.log();
       console.log(
-        chalk.green("Description: ") + "Returns wallet public address"
+        "\nlighthouse-web3 wallet\n" +
+          chalk.green("Description: ") +
+          "Returns wallet public address and current network\n"
       );
     } else {
-      if (config.get("Lighthouse_publicKey")) {
+      if (config.get("LIGHTHOUSE_GLOBAL_PUBLICKEY")) {
         console.log(
-          chalk.yellow("Public Key:    ") + config.get("Lighthouse_publicKey")
+          chalk.yellow("Public Key:") +
+            Array(4).fill("\xa0").join("") +
+            config.get("LIGHTHOUSE_GLOBAL_PUBLICKEY")
         );
-        const chain = config.get("Lighthouse_chain")
-          ? config.get("Lighthouse_chain")
-          : "polygon";
-        console.log(chalk.yellow("Current Chain: ") + chain);
 
-        // const deposit = await check_deposit();
-        // console.log(deposit);
-        // console.log(
-        //   chalk.yellow("Total Deposit: ") + deposit
-        // );
+        console.log(
+          chalk.yellow("Network:") +
+            Array(7).fill("\xa0").join("") +
+            getNetwork()
+        );
       } else {
         console.log(chalk.red("Please import wallet first!"));
       }

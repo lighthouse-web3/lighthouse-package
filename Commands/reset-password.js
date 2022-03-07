@@ -1,9 +1,10 @@
 const chalk = require("chalk");
 const Conf = require("conf");
-const read = require("read");
 const fs = require("fs");
 
-const { restore_keys } = require("../Lighthouse/restore_keys");
+const readInput = require("./Utils/readInput");
+const lighthouse = require("../Lighthouse");
+
 const config = new Conf();
 
 module.exports = {
@@ -11,10 +12,10 @@ module.exports = {
   desc: "Change password of your wallet",
   handler: async function (argv) {
     if (argv.help) {
-      console.log("lighthouse-web3 reset-password <privateKey>");
-      console.log();
       console.log(
-        chalk.green("Description: ") + "Change password of your wallet"
+        "lighthouse-web3 reset-password <privateKey>\n" +
+          chalk.green("Description: ") +
+          "Change password of your wallet"
       );
     } else {
       const privateKey = argv.privateKey;
@@ -24,30 +25,25 @@ module.exports = {
         default: "",
       };
 
-      read(options, async (err, result) => {
-        const wallet = await restore_keys(privateKey, result.trim());
-        if (wallet) {
-          fs.writeFile(
-            "wallet.json",
-            JSON.stringify(wallet, null, 4),
-            function (err) {
-              if (err) {
-                console.log(chalk.red("Creating Wallet Failed!"));
-              }
+      const password = await readInput(options);
+      const wallet = await lighthouse.restoreKeys(privateKey, password);
+      if (wallet) {
+        fs.writeFile("wallet.json", JSON.stringify(wallet, null, 4), (err) => {
+          if (err) {
+            console.log(chalk.red("Creating Wallet Failed!"));
+          }
 
-              config.set(
-                "Lighthouse_privateKeyEncrypted",
-                wallet["privateKeyEncrypted"]
-              );
-              config.set("Lighthouse_publicKey", wallet["publicKey"]);
-
-              console.log(chalk.green("Password Changed!"));
-            }
+          config.set(
+            "LIGHTHOUSE_GLOBAL_PRIVATEKEYENCRYPTED",
+            wallet["privateKeyEncrypted"]
           );
-        } else {
-          console.log(chalk.red("Creating Wallet Failed!"));
-        }
-      });
+          config.set("LIGHTHOUSE_GLOBAL_PUBLICKEY", wallet["publicKey"]);
+
+          console.log(chalk.green("Password Changed!"));
+        });
+      } else {
+        console.log(chalk.red("Creating Wallet Failed!"));
+      }
     }
   },
 };

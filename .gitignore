@@ -23,7 +23,7 @@ typings/
 .env
 .env.test
 
-wallet.json()
+wallet.json
 
 # Exclude coverage from being pushed
 Lighthouse/tests/coverage/*

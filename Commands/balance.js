@@ -2,8 +2,8 @@ const Conf = require("conf");
 const chalk = require("chalk");
 const Spinner = require("cli-spinner").Spinner;
 
-const package_config = require("../config.json");
-const { get_balance } = require("../Lighthouse/get_balance");
+const lighthouse = require("../Lighthouse");
+const getNetwork = require("./Utils/getNetwork");
 
 const config = new Conf();
 
@@ -12,31 +12,35 @@ module.exports = {
   desc: "Get current balance of your wallet",
   handler: async function (argv) {
     if (argv.help) {
-      console.log("lighthouse-web3 balance");
-      console.log();
       console.log(
-        chalk.green("Description: ") + "Get current balance of your wallet"
+        "lighthouse-web3 balance\n" +
+          chalk.green("Description: ") +
+          "Get current balance of your wallet\n"
       );
-      console.log();
     } else {
-      if (config.get("Lighthouse_publicKey")) {
+      if (config.get("LIGHTHOUSE_GLOBAL_PUBLICKEY")) {
         const spinner = new Spinner("");
         spinner.start();
-        const balance = await get_balance(
-          config.get("Lighthouse_publicKey"),
-          config.get("Lighthouse_chain")
-            ? config.get("Lighthouse_chain")
-            : "polygon",
-          package_config.network
+
+        const network = getNetwork();
+
+        const balance = await lighthouse.getBalance(
+          config.get("LIGHTHOUSE_GLOBAL_PUBLICKEY"),
+          network
         );
+
         spinner.stop();
         process.stdout.clearLine();
         process.stdout.cursorTo(0);
-        if (balance) {
-          console.log(chalk.green("balance " + balance.data * 10 ** -18));
-        } else {
-          console.log(chalk.red("Something Went Wrong!"));
-        }
+
+        balance
+          ? console.log(
+              chalk.yellow("\nbalance ") +
+                balance +
+                chalk.yellow("\nNetwork ") +
+                network
+            )
+          : console.log(chalk.red("Error fetching balance!"));
       } else {
         console.log(chalk.red("Please import wallet first!"));
       }

@@ -1,5 +1,6 @@
 const chalk = require("chalk");
 const Conf = require("conf");
+
 const config = new Conf();
 
 module.exports = {
@@ -7,12 +8,14 @@ module.exports = {
   desc: "Remove previously saved wallet",
   handler: async function (argv) {
     if (argv.help) {
-      console.log("lighthouse-web3 wallet-forget");
-      console.log();
-      console.log(chalk.green("Description: ")+ "Removes previously saved wallet");
-    } else{
-      config.delete("Lighthouse_privateKeyEncrypted");
-      config.delete("Lighthouse_publicKey");
+      console.log(
+        "\nlighthouse-web3 wallet-forget\n" +
+          chalk.green("Description: ") +
+          "Removes previously saved wallet\n"
+      );
+    } else {
+      config.delete("LIGHTHOUSE_GLOBAL_PRIVATEKEYENCRYPTED");
+      config.delete("LIGHTHOUSE_GLOBAL_PUBLICKEY");
       console.log(chalk.green("Wallet Removed!"));
     }
   },
