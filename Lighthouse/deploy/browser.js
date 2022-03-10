@@ -3,10 +3,9 @@ const lighthouseConfig = require("../../lighthouse.config");
 
 module.exports = async (e, publicKey, signed_message, file) => {
   try{
+    const endpoint = lighthouseConfig.node;
     if(file){
       e.persist();
-    
-      const endpoint = lighthouseConfig.node;
 
       const formData = new FormData();
       formData.append("data", e.target.files[0], e.target.files[0].name);
@@ -25,8 +24,6 @@ module.exports = async (e, publicKey, signed_message, file) => {
       return(response.data);
     } else{
       e.persist();
-    
-      const endpoint = "https://node.lighthouse.storage/api/v0/add";
 
       const formData = new FormData();
       for(let i=0; i<e.target.files.length; i++){
