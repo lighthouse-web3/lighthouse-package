@@ -25,10 +25,14 @@ if (typeof window === "undefined") {
   };
 } else {
   const deploy = require("./deploy/browser");
+  const uploadEncrypted = require("./deploy/uploadEncryptedBrowser");
+  const decryptFile = require("./deploy/decryptFile");
   const getQuote = require("./getQuote/browser");
 
   module.exports = {
     deploy,
+    uploadEncrypted,
+    decryptFile,
     addCid,
     createWallet,
     getKey,
