@@ -36,7 +36,10 @@ const showHelp = () => {
     "Get metadata around the storage per CID" +
     "\nget-uploads" +
     Array(26).fill("\xa0").join("") +
-    "Get details of file uploaded\n" +
+    "Get details of file uploaded" +
+    "\napi-key" +
+    Array(30).fill("\xa0").join("") +
+    "Get new api key or show current key\n" +
     chalk.cyan("\nOptions") +
     "\n--network" +
     Array(28).fill("\xa0").join("") +

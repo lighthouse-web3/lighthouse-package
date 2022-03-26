@@ -26,11 +26,11 @@ const getQuote = async (path, publicKey, network, Spinner) => {
   if (response) {
     console.log(
       chalk.cyan("Name") +
-      Array(30).fill("\xa0").join("") +
-      chalk.cyan("Size") +
-      Array(8).fill("\xa0").join("") +
-      chalk.cyan("Type") +
-      Array(20).fill("\xa0").join("")
+        Array(30).fill("\xa0").join("") +
+        chalk.cyan("Size") +
+        Array(8).fill("\xa0").join("") +
+        chalk.cyan("Type") +
+        Array(20).fill("\xa0").join("")
     );
 
     for (let i = 0; i < response.metaData.length; i++) {
@@ -45,7 +45,7 @@ const getQuote = async (path, publicKey, network, Spinner) => {
           )
             .fill("\xa0")
             .join("") +
-          response.metaData[i].mimeType 
+          response.metaData[i].mimeType
       );
     }
 
@@ -57,21 +57,24 @@ const getQuote = async (path, publicKey, network, Spinner) => {
     );
 
     console.log(
-        "Data Limit: " +
-        response.dataLimit.toFixed(8) + " GB" +
+      "Data Limit: " +
+        response.dataLimit.toFixed(8) +
+        " GB" +
         "\nData Used : " +
-        response.dataUsed.toFixed(8) + " GB"
+        response.dataUsed.toFixed(8) +
+        " GB"
     );
 
     const totalSizeInGB = response.totalSize / lighthouseConfig.gbInBytes;
-    const remainingAfterUpload = response.dataLimit - (response.dataUsed + totalSizeInGB);
+    const remainingAfterUpload =
+      response.dataLimit - (response.dataUsed + totalSizeInGB);
 
     return {
       fileName: response.metaData[0].fileName,
       fileSize: response.metaData[0].fileSize,
       cost: response.totalCost,
       type: response.type,
-      remainingAfterUpload: remainingAfterUpload
+      remainingAfterUpload: remainingAfterUpload,
     };
   } else {
     console.log(chalk.red("Error getting quote"));
@@ -97,11 +100,7 @@ const deploy = async (path, signer, publicKey, apiKey, network) => {
   let spinner = new Spinner("Uploading...");
   spinner.start();
 
-  const deployResponse = await lighthouse.deploy(
-    path,
-    apiKey,
-    publicKey
-  );
+  const deployResponse = await lighthouse.deploy(path, apiKey, publicKey);
 
   spinner.stop();
   process.stdout.clearLine();
@@ -139,17 +138,23 @@ const deploy = async (path, signer, publicKey, apiKey, network) => {
     selected.trim() == "Y" ||
     selected.trim() == "y" ||
     selected.trim() == "yes"
-  ){
+  ) {
     spinner = new Spinner("Executing transaction...");
     spinner.start();
-    const txObj = await lighthouse.pushCidToChain(signer, deployResponse.Hash, deployResponse.Name, deployResponse.Size, network);
+    const txObj = await lighthouse.pushCidToChain(
+      signer,
+      deployResponse.Hash,
+      deployResponse.Name,
+      deployResponse.Size,
+      network
+    );
     spinner.stop();
     process.stdout.clearLine();
     process.stdout.cursorTo(0);
     transactionLog(txObj, network);
   }
 
-  return
+  return;
 };
 
 module.exports = {
@@ -200,7 +205,11 @@ module.exports = {
       ) {
         quoteResponse.remainingAfterUpload < 0
           ? (() => {
-              console.log(chalk.red("File size larger than allowed limit. Please Recharge!!!"));
+              console.log(
+                chalk.red(
+                  "File size larger than allowed limit. Please Recharge!!!"
+                )
+              );
               process.exit();
             })()
           : (async () => {
@@ -222,10 +231,9 @@ module.exports = {
                 const publicKey = await signer.getAddress();
                 const apiKey = config.get("LIGHTHOUSE_GLOBAL_API_KEY");
 
-                apiKey?
-                await deploy(path, signer, publicKey, apiKey, network)
-                :
-                console.log(chalk.red("API Key not found!"));
+                apiKey
+                  ? await deploy(path, signer, publicKey, apiKey, network)
+                  : console.log(chalk.red("API Key not found!"));
               } else {
                 console.log(chalk.red("Something Went Wrong!"));
                 process.exit();
