@@ -33,7 +33,6 @@ if (typeof window === "undefined") {
   const deploy = require("./deploy/browser");
   const uploadEncrypted = require("./deploy/encryptionBrowser/uploadEncryptedBrowser");
   const decryptFile = require("./deploy/encryptionBrowser/decryptFile");
-  const getQuote = require("./getQuote/browser");
 
   module.exports = {
     deploy,
@@ -43,7 +42,6 @@ if (typeof window === "undefined") {
     getApiKey,
     createWallet,
     getKey,
-    getQuote,
     getBalance,
     getUploads,
     status,
