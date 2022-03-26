@@ -1,9 +1,5 @@
 const axios = require("axios");
-const ethers = require("ethers");
-
-const Hash = require("../getHash");
 const lighthouseConfig = require("../../lighthouse.config");
-const { lighthouseAbi } = require("../contractAbi/lighthouseAbi.js");
 
 // Function to create a directory tree for all files in folder
 const getAllFiles = (
@@ -58,17 +54,20 @@ const getCosting = async (path, publicKey, network) => {
   const fs = eval("require")("fs");
   const mime = eval("require")("mime-types");
 
+  // Get users data usage
+  const user_data_usage = (await axios.get(
+    lighthouseConfig.URL +
+      `/api/lighthouse/user_data_usage?publicKey=${publicKey}`
+  )).data;
+
   if (fs.lstatSync(path).isDirectory()) {
     // Get metadata and cid for all files
     const sources = getAllFiles(resolve, relative, join, fs, path);
-    const dirName = path.split("/").pop();
     const metaData = [];
-    const hashList = [];
     let totalSize = 0;
 
     for (let i = 0; i < sources.length; i++) {
       try {
-        const readStream = fs.createReadStream(sources[i].path);
         const stats = fs.statSync(sources[i].path);
         const mimeType = mime.lookup(sources[i].path);
         const fileSizeInBytes = stats.size;
@@ -76,76 +75,22 @@ const getCosting = async (path, publicKey, network) => {
 
         totalSize += fileSizeInBytes;
 
-        const cid = await Hash.of(readStream, {
-          cidVersion: 1,
-          rawLeaves: true,
-          chunker: "rabin",
-          minChunkSize: 1048576,
-        });
-
         metaData.push({
           fileSize: fileSizeInBytes,
           mimeType: mimeType,
           fileName: fileName,
-          cid: cid,
         });
-
-        hashList.push(cid);
       } catch (err) {
         continue;
       }
     }
 
-    // Get ticker for the given currency
-    const response = await axios.get(
-      lighthouseConfig.URL +
-        `/api/lighthouse/get_ticker?symbol=${lighthouseConfig[network]["symbol"]}`
-    );
-    const tokenPriceUsd = response.data;
-
-    const gbInBytes = lighthouseConfig.gbInBytes; // 1 GB in bytes
-    const costPerGB = lighthouseConfig.costPerGB; // 5 USD per GB
-
-    // Get cost of each file and total cost
-    for (let i = 0; i < metaData.length; i++) {
-      const fileSize = metaData[i].fileSize / gbInBytes;
-      const costUsd = fileSize * costPerGB;
-      let fileCost = costUsd / tokenPriceUsd;
-      metaData[i].cost = fileCost;
-    }
-
-    const totalSizeInGB = totalSize / gbInBytes;
-    const totalCostUsd = totalSizeInGB * costPerGB;
-    const totalCost = totalCostUsd / tokenPriceUsd;
-
-    // Get current balance
-    const provider = new ethers.providers.JsonRpcProvider(
-      lighthouseConfig[network]["rpc"]
-    );
-    const currentBalance = await provider.getBalance(publicKey);
-
-    // Estimate gas fee
-    const contract = new ethers.Contract(
-      lighthouseConfig[network]["lighthouse_contract_address"],
-      lighthouseAbi,
-      provider
-    );
-
-    const gasFee = (
-      await contract.estimateGas.store(
-        hashList[hashList.length - 1],
-        {},
-        dirName,
-        totalSize
-      )
-    ).toNumber();
     // Return data
     return {
       metaData: metaData,
-      currentBalance: currentBalance,
-      gasFee: gasFee,
+      dataLimit: user_data_usage.dataLimit,
+      dataUsed: user_data_usage.dataUsed,
       totalSize: totalSize,
-      totalCost: totalCost,
     };
   } else {
     const stats = fs.statSync(path);
@@ -153,60 +98,19 @@ const getCosting = async (path, publicKey, network) => {
     const fileSizeInBytes = stats.size;
     const fileName = path.split("/").pop();
 
-    const readStream = fs.createReadStream(path);
-    const cid = await Hash.of(readStream, {
-      cidVersion: 1,
-      rawLeaves: true,
-      chunker: "rabin",
-      minChunkSize: 1048576,
-    });
-
-    // Get ticker for the given currency
-    const response = await axios.get(
-      lighthouseConfig.URL +
-        `/api/lighthouse/get_ticker?symbol=${lighthouseConfig[network]["symbol"]}`
-    );
-    const tokenPriceUsd = response.data;
-
-    // Get cost of file
-    const gbInBytes = lighthouseConfig.gbInBytes; // 1 GB in bytes
-    const costPerGB = lighthouseConfig.costPerGB; // 5 USD per GB
-    const totalSize = fileSizeInBytes / gbInBytes;
-    const totalCostUsd = totalSize * costPerGB;
-    const totalCost = totalCostUsd / tokenPriceUsd;
-
-    // Get current balance
-    const provider = new ethers.providers.JsonRpcProvider(
-      lighthouseConfig[network]["rpc"]
-    );
-    const currentBalance = await provider.getBalance(publicKey);
-
-    // Estimate gas fee
-    const contract = new ethers.Contract(
-      lighthouseConfig[network]["lighthouse_contract_address"],
-      lighthouseAbi,
-      provider
-    );
-    const gasFee = (
-      await contract.estimateGas.store(cid, {}, fileName, fileSizeInBytes)
-    ).toNumber();
-
     // return response data
     const metaData = [
       {
         fileSize: fileSizeInBytes,
         mimeType: mimeType,
         fileName: fileName,
-        cid: cid,
-        cost: totalCost,
       },
     ];
     return {
       metaData: metaData,
-      gasFee: gasFee,
-      currentBalance: currentBalance,
+      dataLimit: user_data_usage.dataLimit,
+      dataUsed: user_data_usage.dataUsed,
       totalSize: fileSizeInBytes,
-      totalCost: totalCost,
     };
   }
 };
