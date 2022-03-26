@@ -22,7 +22,7 @@ module.exports = async (signer, cid, name, size, network) => {
       signer
     );
 
-    const txResponse = await contract.store(cid, "", name, size,);
+    const txResponse = await contract.store(cid, "", name, size);
 
     const txReceipt = await txResponse.wait();
     return txReceipt;
