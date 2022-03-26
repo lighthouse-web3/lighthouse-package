@@ -25,21 +25,18 @@ const getQuote = async (path, publicKey, network, Spinner) => {
 
   if (response) {
     console.log(
-      chalk.cyan("CID") +
-        Array(60).fill("\xa0").join("") +
-        chalk.cyan("Size") +
-        Array(8).fill("\xa0").join("") +
-        chalk.cyan("Fee") +
-        Array(21).fill("\xa0").join("") +
-        chalk.cyan("Type") +
-        Array(20).fill("\xa0").join("") +
-        chalk.cyan("Name")
+      chalk.cyan("Name") +
+      Array(30).fill("\xa0").join("") +
+      chalk.cyan("Size") +
+      Array(8).fill("\xa0").join("") +
+      chalk.cyan("Type") +
+      Array(20).fill("\xa0").join("")
     );
 
     for (let i = 0; i < response.metaData.length; i++) {
       console.log(
-        response.metaData[i].cid +
-          Array(63 - response.metaData[i].cid.length)
+        response.metaData[i].fileName +
+          Array(34 - response.metaData[i].fileName.length)
             .fill("\xa0")
             .join("") +
           bytesToSize(response.metaData[i].fileSize) +
@@ -48,15 +45,7 @@ const getQuote = async (path, publicKey, network, Spinner) => {
           )
             .fill("\xa0")
             .join("") +
-          response.metaData[i].cost +
-          Array(24 - response.metaData[i].cost.toString().length)
-            .fill("\xa0")
-            .join("") +
-          response.metaData[i].mimeType +
-          Array(24 - response.metaData[i].mimeType.toString().length)
-            .fill("\xa0")
-            .join("") +
-          response.metaData[i].fileName
+          response.metaData[i].mimeType 
       );
     }
 
@@ -68,56 +57,21 @@ const getQuote = async (path, publicKey, network, Spinner) => {
     );
 
     console.log(
-      "Fees: " +
-        response.totalCost.toFixed(18) +
-        " " +
-        lighthouseConfig[network]["symbol"] +
-        "\nGas Fees: " +
-        ethers.utils.parseUnits(
-          ethers.utils.formatEther(response.gasFee),
-          "ether"
-        ) +
-        " wei" +
-        "\nTotal Fee: " +
-        Number(
-          Number(response.totalCost.toFixed(18)) +
-            Number(ethers.utils.formatEther(response.gasFee))
-        ) +
-        " " +
-        lighthouseConfig[network]["symbol"] +
-        "\n" +
-        chalk.cyan("\nWallet") +
-        "\nAddress: " +
-        config.get("LIGHTHOUSE_GLOBAL_PUBLICKEY") +
-        "\nCurrent balance: " +
-        response.currentBalance * Math.pow(10, -18) +
-        " " +
-        lighthouseConfig[network]["symbol"]
+        "Data Limit: " +
+        response.dataLimit.toFixed(8) + " GB" +
+        "\nData Used : " +
+        response.dataUsed.toFixed(8) + " GB"
     );
 
-    const balanceAfterDeploy = Number(
-      Number(response.currentBalance * Math.pow(10, -18)) -
-        Number(
-          Number(response.totalCost.toFixed(18)) +
-            Number(ethers.utils.formatEther(response.gasFee))
-        )
-    );
-
-    console.log(
-      "Balance after deploy: " +
-        balanceAfterDeploy +
-        " " +
-        lighthouseConfig[network]["symbol"] +
-        "\n"
-    );
+    const totalSizeInGB = response.totalSize / lighthouseConfig.gbInBytes;
+    const remainingAfterUpload = response.dataLimit - (response.dataUsed + totalSizeInGB);
 
     return {
       fileName: response.metaData[0].fileName,
-      cid: response.metaData[0].cid,
       fileSize: response.metaData[0].fileSize,
       cost: response.totalCost,
-      balanceAfterDeploy: balanceAfterDeploy,
       type: response.type,
+      remainingAfterUpload: remainingAfterUpload
     };
   } else {
     console.log(chalk.red("Error getting quote"));
@@ -125,15 +79,33 @@ const getQuote = async (path, publicKey, network, Spinner) => {
   }
 };
 
-const deploy = async (path, signer, signedMessage, publicKey, network) => {
+const transactionLog = (txObj, network) => {
+  const networkConfig = lighthouseConfig[network];
+
+  if (!networkConfig) {
+    console.error(`No network found for ${network}`);
+  }
+
+  if (txObj) {
+    console.log("Transaction: " + networkConfig.scan + txObj.transactionHash);
+  } else {
+    console.log("Transaction failed");
+  }
+};
+
+const deploy = async (path, signer, publicKey, apiKey, network) => {
+  let spinner = new Spinner("Uploading...");
+  spinner.start();
+
   const deployResponse = await lighthouse.deploy(
     path,
-    signer,
-    true,
-    signedMessage,
-    publicKey,
-    network
+    apiKey,
+    publicKey
   );
+
+  spinner.stop();
+  process.stdout.clearLine();
+  process.stdout.cursorTo(0);
 
   console.log(
     chalk.green("File Deployed, visit following url to view content!\n") +
@@ -151,7 +123,33 @@ const deploy = async (path, signer, signedMessage, publicKey, network) => {
   );
 
   console.log("CID: " + deployResponse.Hash);
-  process.exit();
+
+  console.log(
+    chalk.green(
+      "Push CID to blockchain network now(Y) or we will do it for you(N)"
+    ) + " Y/n"
+  );
+
+  const options = {
+    prompt: "",
+  };
+
+  const selected = await readInput(options);
+  if (
+    selected.trim() == "Y" ||
+    selected.trim() == "y" ||
+    selected.trim() == "yes"
+  ){
+    spinner = new Spinner("Executing transaction...");
+    spinner.start();
+    const txObj = await lighthouse.pushCidToChain(signer, deployResponse.Hash, deployResponse.Name, deployResponse.Size, network);
+    spinner.stop();
+    process.stdout.clearLine();
+    process.stdout.cursorTo(0);
+    transactionLog(txObj, network);
+  }
+
+  return
 };
 
 module.exports = {
@@ -200,9 +198,9 @@ module.exports = {
         selected.trim() == "y" ||
         selected.trim() == "yes"
       ) {
-        quoteResponse.balanceAfterDeploy < 0
+        quoteResponse.remainingAfterUpload < 0
           ? (() => {
-              console.log(chalk.red("Insufficient balance!"));
+              console.log(chalk.red("File size larger than allowed limit. Please Recharge!!!"));
               process.exit();
             })()
           : (async () => {
@@ -222,13 +220,12 @@ module.exports = {
                 );
                 const signer = new ethers.Wallet(key.privateKey, provider);
                 const publicKey = await signer.getAddress();
-                const messageResponse = await axios.get(
-                  `https://api.lighthouse.storage/api/lighthouse/get_message?publicKey=${publicKey}`
-                );
-                const message = messageResponse.data;
-                const signedMessage = await signer.signMessage(message);
+                const apiKey = config.get("LIGHTHOUSE_GLOBAL_API_KEY");
 
-                await deploy(path, signer, signedMessage, publicKey, network);
+                apiKey?
+                await deploy(path, signer, publicKey, apiKey, network)
+                :
+                console.log(chalk.red("API Key not found!"));
               } else {
                 console.log(chalk.red("Something Went Wrong!"));
                 process.exit();
