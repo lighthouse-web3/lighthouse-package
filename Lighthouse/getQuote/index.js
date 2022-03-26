@@ -55,10 +55,12 @@ const getCosting = async (path, publicKey, network) => {
   const mime = eval("require")("mime-types");
 
   // Get users data usage
-  const user_data_usage = (await axios.get(
-    lighthouseConfig.URL +
-      `/api/lighthouse/user_data_usage?publicKey=${publicKey}`
-  )).data;
+  const user_data_usage = (
+    await axios.get(
+      lighthouseConfig.URL +
+        `/api/lighthouse/user_data_usage?publicKey=${publicKey}`
+    )
+  ).data;
 
   if (fs.lstatSync(path).isDirectory()) {
     // Get metadata and cid for all files
