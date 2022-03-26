@@ -32,13 +32,16 @@ module.exports = {
         balance
           ? console.log(
               chalk.yellow("\nData Limit: ") +
-              Array(4).fill("\xa0").join("") +
-              balance.dataLimit.toFixed(8) + " GB" +
-              chalk.yellow("\nData Used: ") +
-              Array(5).fill("\xa0").join("") +
-              balance.dataUsed.toFixed(8) + " GB" +
-              chalk.yellow("\nData Remaining: ") +
-              (balance.dataLimit - balance.dataUsed).toFixed(8) + " GB"
+                Array(4).fill("\xa0").join("") +
+                balance.dataLimit.toFixed(8) +
+                " GB" +
+                chalk.yellow("\nData Used: ") +
+                Array(5).fill("\xa0").join("") +
+                balance.dataUsed.toFixed(8) +
+                " GB" +
+                chalk.yellow("\nData Remaining: ") +
+                (balance.dataLimit - balance.dataUsed).toFixed(8) +
+                " GB"
             )
           : console.log(chalk.red("Error fetching balance!"));
       } else {
