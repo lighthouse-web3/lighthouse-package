@@ -1,5 +1,4 @@
-const axios = require("axios");
-const lighthouseConfig = require("../../lighthouse.config");
+const getBalance = require("../getBalance");
 
 // Function to create a directory tree for all files in folder
 const getAllFiles = (
@@ -55,12 +54,7 @@ const getCosting = async (path, publicKey, network) => {
   const mime = eval("require")("mime-types");
 
   // Get users data usage
-  const user_data_usage = (
-    await axios.get(
-      lighthouseConfig.URL +
-        `/api/lighthouse/user_data_usage?publicKey=${publicKey}`
-    )
-  ).data;
+  const user_data_usage = await getBalance(publicKey);
 
   if (fs.lstatSync(path).isDirectory()) {
     // Get metadata and cid for all files
@@ -121,7 +115,6 @@ module.exports = async (path, publicKey, network) => {
   try {
     return await getCosting(path, publicKey, network);
   } catch (err) {
-    console.log(err);
     return null;
   }
 };
