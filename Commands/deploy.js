@@ -58,9 +58,9 @@ const getQuote = async (path, publicKey, network, Spinner) => {
 
     console.log(
       "Data Limit: " +
-        bytesToSize(quoteResponse.dataLimit) +
+        bytesToSize(parseInt(quoteResponse.dataLimit)) +
         "\nData Used : " +
-        bytesToSize(quoteResponse.dataUsed) +
+        bytesToSize(parseInt(quoteResponse.dataUsed)) +
         "\nAfter Deploy: " +
         bytesToSize(
           parseInt(quoteResponse.dataLimit) -

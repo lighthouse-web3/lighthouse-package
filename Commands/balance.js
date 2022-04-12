@@ -34,10 +34,10 @@ module.exports = {
           ? console.log(
               chalk.yellow("\nData Limit: ") +
                 Array(4).fill("\xa0").join("") +
-                byteToSize(balance.dataLimit) +
+                byteToSize(parseInt(balance.dataLimit)) +
                 chalk.yellow("\nData Used: ") +
                 Array(5).fill("\xa0").join("") +
-                byteToSize(balance.dataUsed) +
+                byteToSize(parseInt(balance.dataUsed)) +
                 chalk.yellow("\nData Remaining: ") +
                 byteToSize(
                   parseInt(balance.dataLimit) - parseInt(balance.dataUsed)
