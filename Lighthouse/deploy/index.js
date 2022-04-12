@@ -1,6 +1,6 @@
 const deployFile = require("./deployFile");
 
-module.exports = async (path, apiKey, publicKey) => {
+module.exports = async (path, apiKey) => {
   // Upload File to IPFS
-  return await deployFile(path, publicKey, apiKey);
+  return await deployFile(path, apiKey);
 };
