@@ -1,4 +1,3 @@
-const axios = require("axios");
 const Conf = require("conf");
 const chalk = require("chalk");
 const ethers = require("ethers");
@@ -17,13 +16,13 @@ const getQuote = async (path, publicKey, network, Spinner) => {
   const spinner = new Spinner("Getting Quote...");
   spinner.start();
 
-  const response = await lighthouse.getQuote(path, publicKey, network);
+  const quoteResponse = await lighthouse.getQuote(path, publicKey, network);
 
   spinner.stop();
   process.stdout.clearLine();
   process.stdout.cursorTo(0);
 
-  if (response) {
+  if (quoteResponse) {
     console.log(
       chalk.cyan("Name") +
         Array(30).fill("\xa0").join("") +
@@ -33,19 +32,20 @@ const getQuote = async (path, publicKey, network, Spinner) => {
         Array(20).fill("\xa0").join("")
     );
 
-    for (let i = 0; i < response.metaData.length; i++) {
+    for (let i = 0; i < quoteResponse.metaData.length; i++) {
       console.log(
-        response.metaData[i].fileName +
-          Array(34 - response.metaData[i].fileName.length)
+        quoteResponse.metaData[i].fileName +
+          Array(34 - quoteResponse.metaData[i].fileName.length)
             .fill("\xa0")
             .join("") +
-          bytesToSize(response.metaData[i].fileSize) +
+          bytesToSize(quoteResponse.metaData[i].fileSize) +
           Array(
-            12 - bytesToSize(response.metaData[i].fileSize).toString().length
+            12 -
+              bytesToSize(quoteResponse.metaData[i].fileSize).toString().length
           )
             .fill("\xa0")
             .join("") +
-          response.metaData[i].mimeType
+          quoteResponse.metaData[i].mimeType
       );
     }
 
@@ -53,27 +53,30 @@ const getQuote = async (path, publicKey, network, Spinner) => {
       "\n" +
         chalk.cyan("Summary") +
         "\nTotal Size: " +
-        bytesToSize(response.totalSize)
+        bytesToSize(quoteResponse.totalSize)
     );
 
     console.log(
       "Data Limit: " +
-        response.dataLimit.toFixed(8) +
-        " GB" +
+        bytesToSize(quoteResponse.dataLimit) +
         "\nData Used : " +
-        response.dataUsed.toFixed(8) +
-        " GB"
+        bytesToSize(quoteResponse.dataUsed) +
+        "\nAfter Deploy: " +
+        bytesToSize(
+          parseInt(quoteResponse.dataLimit) -
+            (parseInt(quoteResponse.dataUsed) + quoteResponse.totalSize)
+        )
     );
 
-    const totalSizeInGB = response.totalSize / lighthouseConfig.gbInBytes;
     const remainingAfterUpload =
-      response.dataLimit - (response.dataUsed + totalSizeInGB);
+      parseInt(quoteResponse.dataLimit) -
+      (parseInt(quoteResponse.dataUsed) + quoteResponse.totalSize);
 
     return {
-      fileName: response.metaData[0].fileName,
-      fileSize: response.metaData[0].fileSize,
-      cost: response.totalCost,
-      type: response.type,
+      fileName: quoteResponse.metaData[0].fileName,
+      fileSize: quoteResponse.metaData[0].fileSize,
+      cost: quoteResponse.totalCost,
+      type: quoteResponse.type,
       remainingAfterUpload: remainingAfterUpload,
     };
   } else {
@@ -96,11 +99,11 @@ const transactionLog = (txObj, network) => {
   }
 };
 
-const deploy = async (path, signer, publicKey, apiKey, network) => {
+const deploy = async (path, signer, apiKey, network) => {
   let spinner = new Spinner("Uploading...");
   spinner.start();
 
-  const deployResponse = await lighthouse.deploy(path, apiKey, publicKey);
+  const deployResponse = await lighthouse.deploy(path, apiKey);
 
   spinner.stop();
   process.stdout.clearLine();
@@ -228,11 +231,10 @@ module.exports = {
                   lighthouseConfig[network]["rpc"]
                 );
                 const signer = new ethers.Wallet(key.privateKey, provider);
-                const publicKey = await signer.getAddress();
                 const apiKey = config.get("LIGHTHOUSE_GLOBAL_API_KEY");
 
                 apiKey
-                  ? await deploy(path, signer, publicKey, apiKey, network)
+                  ? await deploy(path, signer, apiKey, network)
                   : console.log(chalk.red("API Key not found!"));
               } else {
                 console.log(chalk.red("Something Went Wrong!"));
