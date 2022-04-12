@@ -10,13 +10,11 @@ const status = require("./status");
 
 if (typeof window === "undefined") {
   const deploy = require("./deploy");
-  const uploadEncrypted = require("./deploy/encryption/deployFile");
   const getQuote = require("./getQuote");
   const pushCidToChain = require("./pushCidToChain");
 
   module.exports = {
     deploy,
-    uploadEncrypted,
     addCid,
     getApiKey,
     createWallet,
@@ -31,13 +29,9 @@ if (typeof window === "undefined") {
   };
 } else {
   const deploy = require("./deploy/browser");
-  const uploadEncrypted = require("./deploy/encryptionBrowser/uploadEncryptedBrowser");
-  const decryptFile = require("./deploy/encryptionBrowser/decryptFile");
 
   module.exports = {
     deploy,
-    uploadEncrypted,
-    decryptFile,
     addCid,
     getApiKey,
     createWallet,
