@@ -24,8 +24,7 @@ module.exports = {
         ? (async () => {
             try {
               const response = await lighthouse.getUploads(
-                config.get("LIGHTHOUSE_GLOBAL_PUBLICKEY"),
-                network
+                config.get("LIGHTHOUSE_GLOBAL_PUBLICKEY")
               );
 
               console.log(
@@ -44,7 +43,7 @@ module.exports = {
                     Array(4).fill("\xa0").join("") +
                     response[i]["fileName"].substring(0, 10) +
                     Array(4).fill("\xa0").join("") +
-                    bytesToSize(Number(response[i]["fileSize"]["hex"])) +
+                    bytesToSize(response[i]["fileSizeInBytes"]) +
                     "\n"
                 );
               }
