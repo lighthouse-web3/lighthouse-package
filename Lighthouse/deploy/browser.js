@@ -1,7 +1,7 @@
 const axios = require("axios");
 const lighthouseConfig = require("../../lighthouse.config");
 
-module.exports = async (e, publicKey, signed_message) => {
+module.exports = async (e, apiKey, publicKey, signedMessage) => {
   try {
     const endpoint = lighthouseConfig.node;
     e.persist();
@@ -10,7 +10,13 @@ module.exports = async (e, publicKey, signed_message) => {
     for (let i = 0; i < e.target.files.length; i++) {
       formData.append("file", e.target.files[i]);
     }
-    const token = "Bearer " + publicKey + " " + signed_message;
+
+    let token = "";
+    if (apiKey) {
+      token = "Bearer " + apiKey;
+    } else {
+      token = "Bearer " + publicKey + " " + signedMessage;
+    }
 
     const response = await axios.post(endpoint, formData, {
       maxContentLength: "Infinity",

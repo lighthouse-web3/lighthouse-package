@@ -8,12 +8,12 @@ const lighthouseConfig = require("../../lighthouse.config");
   @param {string} signedMessage - The signed message for verification.
 */
 
-module.exports = (sourcePath, publicKey, signedMessage) => {
+module.exports = (sourcePath, apiKey) => {
   const fs = eval("require")("fs");
   const NodeFormData = eval("require")("form-data");
   const recursive = eval("require")("recursive-fs");
   const basePathConverter = eval("require")("base-path-converter");
-  const token = "Bearer " + publicKey + " " + signedMessage;
+  const token = "Bearer " + apiKey;
 
   return new Promise((resolve, reject) => {
     const endpoint = lighthouseConfig.node;
