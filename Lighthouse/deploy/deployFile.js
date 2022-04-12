@@ -50,7 +50,7 @@ module.exports = (sourcePath, apiKey) => {
           })
           .catch(function (error) {
             console.log(error);
-            reject(formattedError);
+            reject(error);
           });
       } else {
         recursive.readdirr(sourcePath, function (err, dirs, files) {
