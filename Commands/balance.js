@@ -3,12 +3,13 @@ const chalk = require("chalk");
 const Spinner = require("cli-spinner").Spinner;
 
 const lighthouse = require("../Lighthouse");
+const byteToSize = require("./Utils/byteToSize");
 
 const config = new Conf();
 
 module.exports = {
   command: "balance",
-  desc: "Get current balance of your wallet",
+  desc: "Get your data usage",
   handler: async function (argv) {
     if (argv.help) {
       console.log(
@@ -33,15 +34,14 @@ module.exports = {
           ? console.log(
               chalk.yellow("\nData Limit: ") +
                 Array(4).fill("\xa0").join("") +
-                balance.dataLimit.toFixed(8) +
-                " GB" +
+                byteToSize(balance.dataLimit) +
                 chalk.yellow("\nData Used: ") +
                 Array(5).fill("\xa0").join("") +
-                balance.dataUsed.toFixed(8) +
-                " GB" +
+                byteToSize(balance.dataUsed) +
                 chalk.yellow("\nData Remaining: ") +
-                (balance.dataLimit - balance.dataUsed).toFixed(8) +
-                " GB"
+                byteToSize(
+                  parseInt(balance.dataLimit) - parseInt(balance.dataUsed)
+                )
             )
           : console.log(chalk.red("Error fetching balance!"));
       } else {
