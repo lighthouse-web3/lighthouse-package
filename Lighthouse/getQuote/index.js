@@ -48,7 +48,7 @@ const getAllFiles = (
 };
 
 // Function return cost and file metadata
-const getCosting = async (path, publicKey, network) => {
+const getCosting = async (path, publicKey) => {
   const { resolve, relative, join } = eval("require")("path");
   const fs = eval("require")("fs");
   const mime = eval("require")("mime-types");
@@ -111,9 +111,9 @@ const getCosting = async (path, publicKey, network) => {
   }
 };
 
-module.exports = async (path, publicKey, network) => {
+module.exports = async (path, publicKey) => {
   try {
-    return await getCosting(path, publicKey, network);
+    return await getCosting(path, publicKey);
   } catch (err) {
     return null;
   }

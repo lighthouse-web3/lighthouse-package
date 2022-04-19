@@ -12,11 +12,11 @@ const readInput = require("./Utils/readInput");
 
 const config = new Conf();
 
-const getQuote = async (path, publicKey, network, Spinner) => {
+const getQuote = async (path, publicKey, Spinner) => {
   const spinner = new Spinner("Getting Quote...");
   spinner.start();
 
-  const quoteResponse = await lighthouse.getQuote(path, publicKey, network);
+  const quoteResponse = await lighthouse.getQuote(path, publicKey);
 
   spinner.stop();
   process.stdout.clearLine();
@@ -185,7 +185,6 @@ module.exports = {
       const quoteResponse = await getQuote(
         path,
         config.get("LIGHTHOUSE_GLOBAL_PUBLICKEY"),
-        network,
         Spinner
       );
 
