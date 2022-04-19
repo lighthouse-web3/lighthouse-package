@@ -206,41 +206,47 @@ module.exports = {
         selected.trim() == "y" ||
         selected.trim() == "yes"
       ) {
-        quoteResponse.remainingAfterUpload < 0
-          ? (() => {
-              console.log(
-                chalk.red(
-                  "File size larger than allowed limit. Please Recharge!!!"
-                )
-              );
-              process.exit();
-            })()
-          : (async () => {
-              const options = {
-                prompt: "Enter your password: ",
-                silent: true,
-                default: "",
-              };
-              const password = await readInput(options);
-              const key = await lighthouse.getKey(
-                config.get("LIGHTHOUSE_GLOBAL_PRIVATEKEYENCRYPTED"),
-                password.trim()
-              );
-              if (key) {
-                const provider = new ethers.providers.JsonRpcProvider(
-                  lighthouseConfig[network]["rpc"]
+        if (config.get("LIGHTHOUSE_GLOBAL_API_KEY") === null) {
+          console.log(
+            chalk.red("Please create api-key first: use api-key command")
+          );
+        } else {
+          quoteResponse.remainingAfterUpload < 0
+            ? (() => {
+                console.log(
+                  chalk.red(
+                    "File size larger than allowed limit. Please Recharge!!!"
+                  )
                 );
-                const signer = new ethers.Wallet(key.privateKey, provider);
-                const apiKey = config.get("LIGHTHOUSE_GLOBAL_API_KEY");
-
-                apiKey
-                  ? await deploy(path, signer, apiKey, network)
-                  : console.log(chalk.red("API Key not found!"));
-              } else {
-                console.log(chalk.red("Something Went Wrong!"));
                 process.exit();
-              }
-            })();
+              })()
+            : (async () => {
+                const options = {
+                  prompt: "Enter your password: ",
+                  silent: true,
+                  default: "",
+                };
+                const password = await readInput(options);
+                const key = await lighthouse.getKey(
+                  config.get("LIGHTHOUSE_GLOBAL_PRIVATEKEYENCRYPTED"),
+                  password.trim()
+                );
+                if (key) {
+                  const provider = new ethers.providers.JsonRpcProvider(
+                    lighthouseConfig[network]["rpc"]
+                  );
+                  const signer = new ethers.Wallet(key.privateKey, provider);
+                  const apiKey = config.get("LIGHTHOUSE_GLOBAL_API_KEY");
+
+                  apiKey
+                    ? await deploy(path, signer, apiKey, network)
+                    : console.log(chalk.red("API Key not found!"));
+                } else {
+                  console.log(chalk.red("Something Went Wrong!"));
+                  process.exit();
+                }
+              })();
+        }
       } else {
         console.log(chalk.red("Cancelled"));
         process.exit();
