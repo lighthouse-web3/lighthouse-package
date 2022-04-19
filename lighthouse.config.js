@@ -26,12 +26,12 @@ const defaultConfig = {
     rpc: "https://speedy-nodes-nyc.moralis.io/8fcbf40af9af2844774d0ea2/bsc/mainnet",
     scan: "https://bscscan.com/tx/",
     chain_id: "56",
-    lighthouse_contract_address: "0xf81f7df9e0b2953e2666b208645a8cd5d2d9e845",
+    lighthouse_contract_address: "0x340ff23c060626644e55fc10298c5e995b1f41c1",
   },
   optimism: {
     symbol: "ETH",
     rpc: "https://mainnet.optimism.io",
-    scan: "https://bscscan.com/tx/",
+    scan: "https://optimistic.etherscan.io/tx/",
     chain_id: "10",
     lighthouse_contract_address: "0x61e296fdc8c498ed183a2d19fd5927736e46e3b6",
   },
@@ -54,7 +54,7 @@ const defaultConfig = {
     rpc: "https://speedy-nodes-nyc.moralis.io/8fcbf40af9af2844774d0ea2/bsc/testnet",
     scan: "https://testnet.bscscan.com/tx/",
     chain_id: "97",
-    lighthouse_contract_address: "0xbCEe1a1f22F316569951e8F833f61a6ffCeee535",
+    lighthouse_contract_address: "0x53f4a7d35AcDc5024587c5fA1E3bEcC6233888E9",
   },
   "optimism-testnet": {
     symbol: "ETH",

@@ -14,7 +14,7 @@ const { lighthouseAbi } = require("../contractAbi/lighthouseAbi.js");
   @param {string} network - Network on which transaction to execute.
 */
 
-module.exports = async (signer, cid, name, size, cost, network) => {
+module.exports = async (signer, cid, name, size, network) => {
   try {
     const contract = new ethers.Contract(
       lighthouseConfig[network]["lighthouse_contract_address"],
@@ -22,9 +22,7 @@ module.exports = async (signer, cid, name, size, cost, network) => {
       signer
     );
 
-    const txResponse = await contract.store(cid, "", name, size, {
-      value: ethers.utils.parseEther(cost),
-    });
+    const txResponse = await contract.store(cid, "", name, size);
 
     const txReceipt = await txResponse.wait();
     return txReceipt;

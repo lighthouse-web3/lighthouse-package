@@ -1,33 +1,34 @@
-module.exports = async (e, publicKey, signed_message) => {
-  return new Promise(function (resolve, reject) {
+const axios = require("axios");
+const lighthouseConfig = require("../../lighthouse.config");
+
+module.exports = async (e, apiKey, publicKey, signedMessage) => {
+  try {
+    const endpoint = lighthouseConfig.node;
     e.persist();
+
     const formData = new FormData();
-    formData.append("data", e.target.files[0], e.target.files[0].name);
+    for (let i = 0; i < e.target.files.length; i++) {
+      formData.append("file", e.target.files[i]);
+    }
 
-    const xhr = new XMLHttpRequest();
+    let token = "";
+    if (apiKey) {
+      token = "Bearer " + apiKey;
+    } else {
+      token = "Bearer " + publicKey + " " + signedMessage;
+    }
 
-    xhr.open("POST", "https://node.lighthouse.storage/api/v0/add");
+    const response = await axios.post(endpoint, formData, {
+      maxContentLength: "Infinity",
+      maxBodyLength: "Infinity",
+      headers: {
+        "Content-type": `multipart/form-data; boundary= ${formData._boundary}`,
+        Authorization: token,
+      },
+    });
 
-    const token = "Bearer " + publicKey + " " + signed_message;
-    xhr.setRequestHeader("Authorization", token);
-
-    xhr.send(formData);
-
-    xhr.onload = function () {
-      if (xhr.status >= 200 && xhr.status < 300) {
-        resolve(JSON.parse(xhr.response));
-      } else {
-        reject({
-          status: xhr.status,
-          statusText: xhr.statusText,
-        });
-      }
-    };
-    xhr.onerror = function () {
-      reject({
-        status: xhr.status,
-        statusText: xhr.statusText,
-      });
-    };
-  });
+    return response.data;
+  } catch {
+    return null;
+  }
 };

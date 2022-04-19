@@ -1,7 +1,7 @@
 const chalk = require("chalk");
 const Conf = require("conf");
-const ethers = require("ethers");
 
+const bytesToSize = require("./Utils/byteToSize");
 const getNetwork = require("./Utils/getNetwork");
 const lighthouse = require("../Lighthouse");
 
@@ -24,8 +24,7 @@ module.exports = {
         ? (async () => {
             try {
               const response = await lighthouse.getUploads(
-                config.get("LIGHTHOUSE_GLOBAL_PUBLICKEY"),
-                network
+                config.get("LIGHTHOUSE_GLOBAL_PUBLICKEY")
               );
 
               console.log(
@@ -44,7 +43,7 @@ module.exports = {
                     Array(4).fill("\xa0").join("") +
                     response[i]["fileName"].substring(0, 10) +
                     Array(4).fill("\xa0").join("") +
-                    ethers.utils.formatUnits(response[i]["fileSize"], "ether") +
+                    bytesToSize(response[i]["fileSizeInBytes"]) +
                     "\n"
                 );
               }

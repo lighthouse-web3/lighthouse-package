@@ -1,13 +1,16 @@
-const ethers = require("ethers");
+const axios = require("axios");
 const lighthouseConfig = require("../../lighthouse.config");
 
-module.exports = async (publicKey, network) => {
+module.exports = async (publicKey) => {
   try {
-    const provider = new ethers.providers.JsonRpcProvider(
-      lighthouseConfig[network]["rpc"]
-    );
-    const balance = await provider.getBalance(publicKey);
-    return ethers.utils.formatEther(balance);
+    // Get users data usage
+    const user_data_usage = (
+      await axios.get(
+        lighthouseConfig.URL +
+          `/api/user/user_data_usage?publicKey=${publicKey}`
+      )
+    ).data;
+    return user_data_usage;
   } catch {
     return null;
   }
