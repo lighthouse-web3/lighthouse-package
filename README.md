@@ -8,16 +8,6 @@ Lighthouse is a permanent decentralized file storage protocol that allows the ab
 npm install -g lighthouse-web3
 ```
 
-### Local Usage
-
-If you don't want to install the library as a global depdency, you can use ``npm link`` instead
-
-```bash
-cd directory-of-the-project/ && npm link .
-```
-
-
-
 ## CLI Usage
 
 ```bash
@@ -39,6 +29,12 @@ lighthouse-web3 deploy <path>
 
 # status
 lighthouse-web3 status <cid>
+
+# get-uploads
+lighthouse-web3 get-uploads
+
+# wallet
+lighthouse-web3 wallet
 ```
 
 ## NodeJs Example
@@ -47,12 +43,18 @@ lighthouse-web3 status <cid>
 const lighthouse = require("lighthouse-web3");
 
 // Create wallet
-const balance = await lighthouse.create_wallet(
+const balance = await lighthouse.createWallet(
   "Password for private key encryption"
 );
 
 // Get wallet balance
-const balance = await lighthouse.get_balance("Public Key");
+const balance = await lighthouse.getBalance("Public Key");
+
+// Get Quote
+const quote = await lighthouse.getQuote('/home/cosmos/Desktop/wow.jpg' '0x1Ec09D4B3Cb565b7CCe2eEAf71CC90c9b46c5c26', 'fantom');
+
+// Deploy File
+const deploy = await lighthouse.deploy('/home/cosmos/Desktop/wow.jpg', signer, false, signedMessage, publicKey, "fantom");
 ```
 
 Refer [GitBook](https://lighthouse-storage.gitbook.io/lighthouse/)

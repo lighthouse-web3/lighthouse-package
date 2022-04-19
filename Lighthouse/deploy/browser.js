@@ -1,33 +1,48 @@
-module.exports = async (e, publicKey, signed_message) => {
-  return new Promise(function (resolve, reject) {
-    e.persist();
-    const formData = new FormData();
-    formData.append("data", e.target.files[0], e.target.files[0].name);
+const axios = require("axios");
+const lighthouseConfig = require("../../lighthouse.config");
 
-    const xhr = new XMLHttpRequest();
+module.exports = async (e, publicKey, signed_message, file) => {
+  try{
+    const endpoint = lighthouseConfig.node;
+    if(file){
+      e.persist();
 
-    xhr.open("POST", "https://node.lighthouse.storage/api/v0/add");
+      const formData = new FormData();
+      formData.append("data", e.target.files[0], e.target.files[0].name);
 
-    const token = "Bearer " + publicKey + " " + signed_message;
-    xhr.setRequestHeader("Authorization", token);
+      const token = "Bearer " + publicKey + " " + signed_message;
 
-    xhr.send(formData);
+      const response = await axios.post(endpoint, formData, {
+          maxContentLength: "Infinity",
+          maxBodyLength: "Infinity",
+          headers: {
+            "Content-type": `multipart/form-data; boundary= ${formData._boundary}`,
+            Authorization: token,
+          },
+        }
+      );
+      return(response.data);
+    } else{
+      e.persist();
 
-    xhr.onload = function () {
-      if (xhr.status >= 200 && xhr.status < 300) {
-        resolve(JSON.parse(xhr.response));
-      } else {
-        reject({
-          status: xhr.status,
-          statusText: xhr.statusText,
-        });
+      const formData = new FormData();
+      for(let i=0; i<e.target.files.length; i++){
+        formData.append("file", e.target.files[i]);
       }
-    };
-    xhr.onerror = function () {
-      reject({
-        status: xhr.status,
-        statusText: xhr.statusText,
+      const token = "Bearer " + publicKey + " " + signed_message;
+  
+      const response = await axios.post(endpoint, formData, {
+        maxContentLength: "Infinity",
+        maxBodyLength: "Infinity",
+        headers: {
+          "Content-type": `multipart/form-data; boundary= ${formData._boundary}`,
+          Authorization: token,
+        },
       });
-    };
-  });
+
+      return(response.data);
+    }
+  } catch{
+    return null;
+  }
 };

@@ -88,7 +88,7 @@ const getQuote = async (path, publicKey, network, Spinner) => {
         "\n" +
         chalk.cyan("\nWallet") +
         "\nAddress: " +
-        config.get("Lighthouse_publicKey") +
+        config.get("LIGHTHOUSE_GLOBAL_PUBLICKEY") +
         "\nCurrent balance: " +
         response.currentBalance * Math.pow(10, -18) +
         " " +
@@ -213,7 +213,7 @@ module.exports = {
               };
               const password = await readInput(options);
               const key = await lighthouse.getKey(
-                config.get("Lighthouse_privateKeyEncrypted"),
+                config.get("LIGHTHOUSE_GLOBAL_PRIVATEKEYENCRYPTED"),
                 password.trim()
               );
               if (key) {
