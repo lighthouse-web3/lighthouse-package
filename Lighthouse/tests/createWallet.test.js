@@ -1,16 +1,8 @@
 const lighthouse = require("..");
 
 test("createWallet", async () => {
-  const wallet = await lighthouse.createWallet("damn");
-
-  expect(wallet).toHaveProperty("privateKey");
-  expect(typeof wallet.privateKey).toBe("string");
-
-  expect(wallet).toHaveProperty("publicKey");
-  expect(typeof wallet.publicKey).toBe("string");
-
-  expect(wallet).toHaveProperty("privateKeyEncrypted");
-  expect(typeof wallet.privateKeyEncrypted).toBe("string");
+  const encryptedWallet = JSON.parse(await lighthouse.createWallet("Uchihas"));
+  expect(encryptedWallet).toHaveProperty("address");
 }, 20000);
 
 test("createWallet null", async () => {
