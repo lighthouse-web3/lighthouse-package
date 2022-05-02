@@ -3,7 +3,7 @@ const chalk = require("chalk");
 const Spinner = require("cli-spinner").Spinner;
 
 const lighthouse = require("../Lighthouse");
-const byteToSize = require("./Utils/byteToSize");
+const byteToSize = require("../Utils/byteToSize");
 
 const config = new Conf();
 
@@ -18,7 +18,10 @@ module.exports = {
           "Get data limit and usage of your account.\n"
       );
     } else {
-      if (config.get("LIGHTHOUSE_GLOBAL_PUBLICKEY")) {
+      try {
+        if (!config.get("LIGHTHOUSE_GLOBAL_PUBLICKEY")) {
+          throw new Error("Wallet not created/imported");
+        }
         const spinner = new Spinner("");
         spinner.start();
 
@@ -30,22 +33,22 @@ module.exports = {
         process.stdout.clearLine();
         process.stdout.cursorTo(0);
 
-        balance
-          ? console.log(
-              chalk.yellow("\nData Limit: ") +
-                Array(4).fill("\xa0").join("") +
-                byteToSize(parseInt(balance.dataLimit)) +
-                chalk.yellow("\nData Used: ") +
-                Array(5).fill("\xa0").join("") +
-                byteToSize(parseInt(balance.dataUsed)) +
-                chalk.yellow("\nData Remaining: ") +
-                byteToSize(
-                  parseInt(balance.dataLimit) - parseInt(balance.dataUsed)
-                )
-            )
-          : console.log(chalk.red("Error fetching balance!"));
-      } else {
-        console.log(chalk.red("Please import wallet first!"));
+        if (!balance) {
+          throw new Error("Error fetching balance!");
+        }
+
+        console.log(
+          chalk.yellow("\nData Limit: ") +
+            Array(4).fill("\xa0").join("") +
+            byteToSize(parseInt(balance.dataLimit)) +
+            chalk.yellow("\nData Used: ") +
+            Array(5).fill("\xa0").join("") +
+            byteToSize(parseInt(balance.dataUsed)) +
+            chalk.yellow("\nData Remaining: ") +
+            byteToSize(parseInt(balance.dataLimit) - parseInt(balance.dataUsed))
+        );
+      } catch (error) {
+        console.log(chalk.red(error.message));
       }
     }
   },
