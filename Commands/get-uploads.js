@@ -1,8 +1,7 @@
 const chalk = require("chalk");
 const Conf = require("conf");
 
-const bytesToSize = require("./Utils/byteToSize");
-const getNetwork = require("./Utils/getNetwork");
+const bytesToSize = require("../Utils/byteToSize");
 const lighthouse = require("../Lighthouse");
 
 const config = new Conf();
@@ -18,42 +17,41 @@ module.exports = {
           "Get details of file uploaded\n"
       );
     } else {
-      const network = getNetwork();
+      try {
+        if (!config.get("LIGHTHOUSE_GLOBAL_PUBLICKEY")) {
+          throw new Error("Wallet not created/imported");
+        }
 
-      network && config.get("LIGHTHOUSE_GLOBAL_PUBLICKEY")
-        ? (async () => {
-            try {
-              const response = await lighthouse.getUploads(
-                config.get("LIGHTHOUSE_GLOBAL_PUBLICKEY")
-              );
+        const response = await lighthouse.getUploads(
+          config.get("LIGHTHOUSE_GLOBAL_PUBLICKEY")
+        );
+        if (!response) {
+          throw new Error("Error Getting Uploads!!!");
+        }
 
-              console.log(
-                "\n" +
-                  Array(4).fill("\xa0").join("") +
-                  chalk.yellow("CID") +
-                  Array(47).fill("\xa0").join("") +
-                  chalk.yellow("File Name") +
-                  Array(5).fill("\xa0").join("") +
-                  chalk.yellow("File Size")
-              );
-              for (let i = 0; i < response.length; i++) {
-                console.log(
-                  Array(4).fill("\xa0").join("") +
-                    response[i]["cid"] +
-                    Array(4).fill("\xa0").join("") +
-                    response[i]["fileName"].substring(0, 10) +
-                    Array(4).fill("\xa0").join("") +
-                    bytesToSize(response[i]["fileSizeInBytes"]) +
-                    "\n"
-                );
-              }
-            } catch {
-              console.log(chalk.red("Error fetching uploads!"));
-            }
-          })()
-        : console.log(
-            chalk.red("You have not imported wallet or selected the network!")
+        console.log(
+          "\n" +
+            Array(4).fill("\xa0").join("") +
+            chalk.yellow("CID") +
+            Array(47).fill("\xa0").join("") +
+            chalk.yellow("File Name") +
+            Array(5).fill("\xa0").join("") +
+            chalk.yellow("File Size")
+        );
+        for (let i = 0; i < response.length; i++) {
+          console.log(
+            Array(4).fill("\xa0").join("") +
+              response[i]["cid"] +
+              Array(4).fill("\xa0").join("") +
+              response[i]["fileName"].substring(0, 10) +
+              Array(4).fill("\xa0").join("") +
+              bytesToSize(response[i]["fileSizeInBytes"]) +
+              "\n"
           );
+        }
+      } catch (error) {
+        console.log(chalk.red(error.message));
+      }
     }
   },
 };
