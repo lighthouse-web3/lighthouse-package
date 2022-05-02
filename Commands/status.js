@@ -1,6 +1,6 @@
 const chalk = require("chalk");
 
-const bytesToSize = require("./Utils/byteToSize");
+const bytesToSize = require("../Utils/byteToSize");
 const lighthouse = require("../Lighthouse");
 
 const showResponse = (status) => {
@@ -56,11 +56,16 @@ module.exports = {
           "Get storage status of a CID"
       );
     } else {
-      const status = await lighthouse.status(argv.cid);
+      try {
+        const status = await lighthouse.status(argv.cid);
+        if (!status) {
+          throw new Error("Error getting status");
+        }
 
-      status
-        ? showResponse(status)
-        : console.log(chalk.red("Error getting status"));
+        showResponse(status);
+      } catch (error) {
+        console.log(chalk.red(error.message));
+      }
     }
   },
 };
