@@ -20,6 +20,8 @@ module.exports = {
           "Get a new api key\n" +
           chalk.green("Options: \n") +
           Array(3).fill("\xa0").join("") +
+          "-- new: To create new api key\n" +
+          Array(3).fill("\xa0").join("") +
           "- import: To import existing api-key\n" +
           chalk.magenta("Example: \n") +
           Array(5).fill("\xa0").join("") +
