@@ -1,4 +1,4 @@
-const coverageToNumber = 2; // [0..100]
+const coverageToNumber = 60; // [0..100]
 
 // Or async function
 module.exports = async () => {
@@ -17,7 +17,7 @@ module.exports = async () => {
     // following lines are about coverage
     collectCoverage: true, //[true|false]
     collectCoverageFrom: ["<rootDir>/Lighthouse/**/*.js"],
-    coverageDirectory: "<rootDir>/Lighthouse/tests/coverage",
+    coverageDirectory: "<rootDir>/coverage",
     coverageReporters: ["lcov"],
     coverageThreshold: {
       global: {
