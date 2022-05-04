@@ -1,48 +1,59 @@
 const chalk = require("chalk");
 const Conf = require("conf");
-const fs = require("fs");
+const ethers = require("ethers");
 
-const readInput = require("./Utils/readInput");
-const lighthouse = require("../Lighthouse");
-
+const readInput = require("../Utils/readInput");
 const config = new Conf();
 
 module.exports = {
-  command: "reset-password <privateKey>",
+  command: "reset-password",
   desc: "Change password of your wallet",
   handler: async function (argv) {
     if (argv.help) {
       console.log(
-        "lighthouse-web3 reset-password <privateKey>\n" +
+        "lighthouse-web3 reset-password\n" +
           chalk.green("Description: ") +
           "Change password of your wallet"
       );
     } else {
-      const privateKey = argv.privateKey;
-      const options = {
-        prompt: "Set new password for your wallet:",
-        silent: true,
-        default: "",
-      };
+      try {
+        let options = {
+          prompt: "Enter old password for your wallet:",
+          silent: true,
+          default: "",
+        };
+        const oldPassword = await readInput(options);
+        const decryptedWallet = ethers.Wallet.fromEncryptedJsonSync(
+          config.get("LIGHTHOUSE_GLOBAL_WALLET"),
+          oldPassword.trim()
+        );
+        if (!decryptedWallet) {
+          throw new Error("Incorrect Password!");
+        }
 
-      const password = await readInput(options);
-      const wallet = await lighthouse.restoreKeys(privateKey, password);
-      if (wallet) {
-        fs.writeFile("wallet.json", JSON.stringify(wallet, null, 4), (err) => {
-          if (err) {
-            console.log(chalk.red("Creating Wallet Failed!"));
-          }
+        options = {
+          prompt: "Set new password for your wallet:",
+          silent: true,
+          default: "",
+        };
 
-          config.set(
-            "LIGHTHOUSE_GLOBAL_PRIVATEKEYENCRYPTED",
-            wallet["privateKeyEncrypted"]
-          );
-          config.set("LIGHTHOUSE_GLOBAL_PUBLICKEY", wallet["publicKey"]);
+        const newPassword = await readInput(options);
+        const encryptedWallet = await decryptedWallet.encrypt(
+          newPassword.trim()
+        );
+        if (!encryptedWallet) {
+          throw new Error("Password reset failed!");
+        }
 
-          console.log(chalk.green("Password Changed!"));
-        });
-      } else {
-        console.log(chalk.red("Creating Wallet Failed!"));
+        config.set("LIGHTHOUSE_GLOBAL_WALLET", encryptedWallet);
+        config.set("LIGHTHOUSE_GLOBAL_PUBLICKEY", decryptedWallet.address);
+
+        console.log(
+          chalk.cyan("Public Key: " + decryptedWallet.address) +
+            chalk.green("\nPassword reset successful")
+        );
+      } catch (error) {
+        console.log(chalk.red(error.message));
       }
     }
   },

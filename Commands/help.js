@@ -25,6 +25,9 @@ const showHelp = () => {
     "\nwallet-forget" +
     Array(24).fill("\xa0").join("") +
     "Remove previously saved wallet" +
+    "\nreset-password" +
+    Array(23).fill("\xa0").join("") +
+    "Change your password" +
     "\nbalance" +
     Array(30).fill("\xa0").join("") +
     "Get your data usage" +
@@ -48,6 +51,9 @@ const showHelp = () => {
     Array(31).fill("\xa0").join("") +
     "Help for a specific command command\n" +
     chalk.magenta("\nExample") +
+    "\nNew api-key" +
+    Array(7).fill("\xa0").join("") +
+    "lighthouse-web3 api-key --new\n" +
     "\nChange Network" +
     Array(4).fill("\xa0").join("") +
     "lighthouse-web3 --network polygon\n" +
