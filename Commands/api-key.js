@@ -4,7 +4,7 @@ const chalk = require("chalk");
 const ethers = require("ethers");
 
 const lighthouse = require("../Lighthouse");
-const readInput = require("./Utils/readInput");
+const readInput = require("../Utils/readInput");
 const lighthouseConfig = require("../lighthouse.config");
 
 const config = new Conf();
@@ -20,6 +20,8 @@ module.exports = {
           "Get a new api key\n" +
           chalk.green("Options: \n") +
           Array(3).fill("\xa0").join("") +
+          "-- new: To create new api key\n" +
+          Array(3).fill("\xa0").join("") +
           "- import: To import existing api-key\n" +
           chalk.magenta("Example: \n") +
           Array(5).fill("\xa0").join("") +
@@ -30,50 +32,48 @@ module.exports = {
         config.set("LIGHTHOUSE_GLOBAL_API_KEY", argv.import);
         console.log(chalk.green("\nApi Key imported!!"));
       } else {
-        if (config.get("LIGHTHOUSE_GLOBAL_API_KEY") && !argv.new) {
-          console.log(
-            chalk.yellow("\nApi Key: ") +
-              config.get("LIGHTHOUSE_GLOBAL_API_KEY")
-          );
-        } else {
-          const publicKey = config.get("LIGHTHOUSE_GLOBAL_PUBLICKEY");
-          const options = {
-            prompt: "Enter your password: ",
-            silent: true,
-            default: "",
-          };
-          const password = await readInput(options);
-          const key = await lighthouse.getKey(
-            config.get("LIGHTHOUSE_GLOBAL_PRIVATEKEYENCRYPTED"),
-            password.trim()
-          );
+        try {
+          if (config.get("LIGHTHOUSE_GLOBAL_API_KEY") && !argv.new) {
+            console.log(
+              chalk.yellow("\nApi Key: ") +
+                config.get("LIGHTHOUSE_GLOBAL_API_KEY")
+            );
+          } else {
+            if (!config.get("LIGHTHOUSE_GLOBAL_WALLET")) {
+              throw new Error("Create/Import wallet first!!!");
+            }
 
-          key
-            ? (async () => {
-                const verificationMessage = (
-                  await axios.get(
-                    lighthouseConfig.URL +
-                      `/api/auth/get_message?publicKey=${publicKey}`
-                  )
-                ).data;
-                const provider = new ethers.getDefaultProvider();
-                const signer = new ethers.Wallet(key.privateKey, provider);
-                const signedMessage = await signer.signMessage(
-                  verificationMessage
-                );
+            const options = {
+              prompt: "Enter your password: ",
+              silent: true,
+              default: "",
+            };
+            const password = await readInput(options);
+            const decryptedWallet = ethers.Wallet.fromEncryptedJsonSync(
+              config.get("LIGHTHOUSE_GLOBAL_WALLET"),
+              password.trim()
+            );
 
-                const apiKey = await lighthouse.getApiKey(
-                  publicKey,
-                  signedMessage
-                );
+            const verificationMessage = (
+              await axios.get(
+                lighthouseConfig.URL +
+                  `/api/auth/get_message?publicKey=${decryptedWallet.address}`
+              )
+            ).data;
+            const signedMessage = await decryptedWallet.signMessage(
+              verificationMessage
+            );
 
-                config.set("LIGHTHOUSE_GLOBAL_API_KEY", apiKey);
-                console.log(chalk.yellow("\nApi Key: ") + apiKey);
-              })()
-            : (() => {
-                console.log(chalk.red("Incorrect password!"));
-                process.exit();
-              })();
+            const apiKey = await lighthouse.getApiKey(
+              decryptedWallet.address,
+              signedMessage
+            );
+
+            config.set("LIGHTHOUSE_GLOBAL_API_KEY", apiKey);
+            console.log(chalk.yellow("\nApi Key: ") + apiKey);
+          }
+        } catch (error) {
+          console.log(chalk.red(error.message));
         }
       }
     }

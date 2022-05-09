@@ -1,5 +1,5 @@
 // Configuration Object
-/** @type {import("./Lighthouse/types").DefaultConfig} */
+/** @type {import("./types").DefaultConfig} */
 
 const defaultConfig = {
   URL: "https://api.lighthouse.storage",

@@ -4,13 +4,32 @@ const ethers = require("ethers");
 const { resolve } = require("path");
 const Spinner = require("cli-spinner").Spinner;
 
-const bytesToSize = require("./Utils/byteToSize");
-const getNetwork = require("./Utils/getNetwork");
+const bytesToSize = require("../Utils/byteToSize");
+const getNetwork = require("../Utils/getNetwork");
 const lighthouseConfig = require("../lighthouse.config");
 const lighthouse = require("../Lighthouse");
-const readInput = require("./Utils/readInput");
+const readInput = require("../Utils/readInput");
+const { lighthouseAbi } = require("../Utils/contractAbi/lighthouseAbi");
 
 const config = new Conf();
+
+const pushCidToChain = async (signer, cid, name, size, network) => {
+  try {
+    const contract = new ethers.Contract(
+      lighthouseConfig[network]["lighthouse_contract_address"],
+      lighthouseAbi,
+      signer
+    );
+
+    const txResponse = await contract.store(cid, "", name, size);
+
+    const txReceipt = await txResponse.wait();
+    return txReceipt;
+  } catch (e) {
+    console.log(e);
+    return null;
+  }
+};
 
 const getQuote = async (path, publicKey, Spinner) => {
   const spinner = new Spinner("Getting Quote...");
@@ -104,6 +123,7 @@ const deploy = async (path, signer, apiKey, network) => {
   spinner.start();
 
   const deployResponse = await lighthouse.deploy(path, apiKey);
+  console.log(deployResponse)
 
   spinner.stop();
   process.stdout.clearLine();
@@ -138,13 +158,13 @@ const deploy = async (path, signer, apiKey, network) => {
 
   const selected = await readInput(options);
   if (
-    selected.trim() == "Y" ||
-    selected.trim() == "y" ||
-    selected.trim() == "yes"
+    selected.trim() === "Y" ||
+    selected.trim() === "y" ||
+    selected.trim() === "yes"
   ) {
     spinner = new Spinner("Executing transaction...");
     spinner.start();
-    const txObj = await lighthouse.pushCidToChain(
+    const txObj = await pushCidToChain(
       signer,
       deployResponse.Hash,
       deployResponse.Name,
@@ -177,78 +197,73 @@ module.exports = {
           "lighthouse-web3 deploy /home/cosmos/Desktop/ILoveAnime.jpg\n"
       );
     } else {
-      // Import nodejs specific library
-      const path = resolve(process.cwd(), argv.path);
-      const network = getNetwork();
+      try {
+        // Import nodejs specific library
+        const path = resolve(process.cwd(), argv.path);
+        console.log(path)
+        const network = getNetwork();
 
-      // Display Quote
-      const quoteResponse = await getQuote(
-        path,
-        config.get("LIGHTHOUSE_GLOBAL_PUBLICKEY"),
-        Spinner
-      );
+        // Display Quote
+        const quoteResponse = await getQuote(
+          path,
+          config.get("LIGHTHOUSE_GLOBAL_PUBLICKEY"),
+          Spinner
+        );
 
-      // Deploy
-      console.log(
-        chalk.green(
-          "Carefully check the above details are correct, then confirm to complete this upload"
-        ) + " Y/n"
-      );
+        // Deploy
+        console.log(
+          chalk.green(
+            "Carefully check the above details are correct, then confirm to complete this upload"
+          ) + " Y/n"
+        );
 
-      const options = {
-        prompt: "",
-      };
+        let options = {
+          prompt: "",
+        };
 
-      const selected = await readInput(options);
-      if (
-        selected.trim() == "Y" ||
-        selected.trim() == "y" ||
-        selected.trim() == "yes"
-      ) {
-        if (config.get("LIGHTHOUSE_GLOBAL_API_KEY") === null) {
-          console.log(
-            chalk.red("Please create api-key first: use api-key command")
-          );
-        } else {
-          quoteResponse.remainingAfterUpload < 0
-            ? (() => {
-                console.log(
-                  chalk.red(
-                    "File size larger than allowed limit. Please Recharge!!!"
-                  )
-                );
-                process.exit();
-              })()
-            : (async () => {
-                const options = {
-                  prompt: "Enter your password: ",
-                  silent: true,
-                  default: "",
-                };
-                const password = await readInput(options);
-                const key = await lighthouse.getKey(
-                  config.get("LIGHTHOUSE_GLOBAL_PRIVATEKEYENCRYPTED"),
-                  password.trim()
-                );
-                if (key) {
-                  const provider = new ethers.providers.JsonRpcProvider(
-                    lighthouseConfig[network]["rpc"]
-                  );
-                  const signer = new ethers.Wallet(key.privateKey, provider);
-                  const apiKey = config.get("LIGHTHOUSE_GLOBAL_API_KEY");
-
-                  apiKey
-                    ? await deploy(path, signer, apiKey, network)
-                    : console.log(chalk.red("API Key not found!"));
-                } else {
-                  console.log(chalk.red("Something Went Wrong!"));
-                  process.exit();
-                }
-              })();
+        const selected = await readInput(options);
+        console.log(selected)
+        if (
+          selected.trim() === "n" ||
+          selected.trim() === "N" ||
+          selected.trim() === "no"
+        ) {
+          throw new Error("Canceled Upload");
         }
-      } else {
-        console.log(chalk.red("Cancelled"));
-        process.exit();
+
+        if (!config.get("LIGHTHOUSE_GLOBAL_API_KEY")) {
+          throw new Error("Please create api-key first: use api-key command");
+        }
+
+        if (quoteResponse.remainingAfterUpload < 0) {
+          throw new Error(
+            "File size larger than allowed limit. Please Recharge!!!"
+          );
+        }
+
+        options = {
+          prompt: "Enter your password: ",
+          silent: true,
+          default: "",
+        };
+        const password = await readInput(options);
+        const decryptedWallet = ethers.Wallet.fromEncryptedJsonSync(
+          config.get("LIGHTHOUSE_GLOBAL_WALLET"),
+          password.trim()
+        );
+
+        if (!decryptedWallet) {
+          throw new Error("Incorrect password!");
+        }
+
+        const provider = new ethers.providers.JsonRpcProvider(
+          lighthouseConfig[network]["rpc"]
+        );
+        const signer = new ethers.Wallet(decryptedWallet.privateKey, provider);
+        const apiKey = config.get("LIGHTHOUSE_GLOBAL_API_KEY");
+        await deploy(path, signer, apiKey, network);
+      } catch (error) {
+        console.log(chalk.red(error.message));
       }
     }
   },

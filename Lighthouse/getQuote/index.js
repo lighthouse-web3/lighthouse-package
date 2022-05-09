@@ -1,84 +1,31 @@
 const getBalance = require("../getBalance");
 
-// Function to create a directory tree for all files in folder
-const getAllFiles = (
-  resolve,
-  relative,
-  join,
-  fs,
-  dirPath,
-  originalPath,
-  arrayOfFiles
-) => {
-  files = fs.readdirSync(dirPath);
-
-  arrayOfFiles = arrayOfFiles || [];
-  originalPath = originalPath || resolve(dirPath, "..");
-
-  folder = relative(originalPath, join(dirPath, "/"));
-
-  arrayOfFiles.push({
-    path: folder.replace(/\\/g, "/"),
-    mtime: fs.statSync(folder).mtime,
-  });
-
-  files.forEach(function (file) {
-    if (fs.statSync(dirPath + "/" + file).isDirectory()) {
-      arrayOfFiles = getAllFiles(
-        resolve,
-        relative,
-        join,
-        fs,
-        dirPath + "/" + file,
-        originalPath,
-        arrayOfFiles
-      );
-    } else {
-      file = join(dirPath, "/", file);
-
-      arrayOfFiles.push({
-        path: relative(originalPath, file).replace(/\\/g, "/"),
-        content: fs.readFileSync(file),
-        mtime: fs.statSync(file).mtime,
-      });
-    }
-  });
-
-  return arrayOfFiles;
-};
-
 // Function return cost and file metadata
 const getCosting = async (path, publicKey) => {
-  const { resolve, relative, join } = eval("require")("path");
   const fs = eval("require")("fs");
   const mime = eval("require")("mime-types");
-
+  const recursive = eval("require")("recursive-fs");
   // Get users data usage
   const user_data_usage = await getBalance(publicKey);
-
   if (fs.lstatSync(path).isDirectory()) {
     // Get metadata and cid for all files
-    const sources = getAllFiles(resolve, relative, join, fs, path);
+    const sources = (await recursive.readdirr(path)).files;
     const metaData = [];
     let totalSize = 0;
 
     for (let i = 0; i < sources.length; i++) {
-      try {
-        const stats = fs.statSync(sources[i].path);
-        const mimeType = mime.lookup(sources[i].path);
-        const fileSizeInBytes = stats.size;
-        const fileName = sources[i].path.split("/").pop();
+      const stats = fs.statSync(sources[i]);
+      const mimeType = mime.lookup(sources[i]);
+      const fileSizeInBytes = stats.size;
+      const fileName = sources[i].split("/").pop();
 
-        totalSize += fileSizeInBytes;
+      totalSize += fileSizeInBytes;
 
-        metaData.push({
-          fileSize: fileSizeInBytes,
-          mimeType: mimeType,
-          fileName: fileName,
-        });
-      } catch (err) {
-        continue;
-      }
+      metaData.push({
+        fileSize: fileSizeInBytes,
+        mimeType: mimeType,
+        fileName: fileName,
+      });
     }
 
     // Return data
