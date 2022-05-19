@@ -26,7 +26,7 @@ const pushCidToChain = async (signer, cid, name, size, network) => {
     const txReceipt = await txResponse.wait();
     return txReceipt;
   } catch (e) {
-    console.log(e);
+    console.log(e.error);
     return null;
   }
 };
@@ -123,7 +123,6 @@ const deploy = async (path, signer, apiKey, network) => {
   spinner.start();
 
   const deployResponse = await lighthouse.deploy(path, apiKey);
-  console.log(deployResponse)
 
   spinner.stop();
   process.stdout.clearLine();
@@ -200,7 +199,7 @@ module.exports = {
       try {
         // Import nodejs specific library
         const path = resolve(process.cwd(), argv.path);
-        console.log(path)
+        console.log(path);
         const network = getNetwork();
 
         // Display Quote
@@ -222,7 +221,6 @@ module.exports = {
         };
 
         const selected = await readInput(options);
-        console.log(selected)
         if (
           selected.trim() === "n" ||
           selected.trim() === "N" ||
