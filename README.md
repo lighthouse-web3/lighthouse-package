@@ -16,10 +16,12 @@ lighthouse-web3 create-wallet
 
 # import-wallet
 lighthouse-web3 import-wallet --key <private_key>
-lighthouse-web3 import-wallet --path <path_to_wallet_file>
 
 # wallet-forget
 lighthouse-web3 wallet-forget
+
+# api-key
+lighthouse-web3 api-key --new
 
 # balance
 lighthouse-web3 balance
@@ -43,18 +45,15 @@ lighthouse-web3 wallet
 const lighthouse = require("lighthouse-web3");
 
 // Create wallet
-const balance = await lighthouse.createWallet(
-  "Password for private key encryption"
+const wallet = await lighthouse.createWallet(
+  "Password for wallet encryption"
 );
 
 // Get wallet balance
-const balance = await lighthouse.getBalance("Public Key");
-
-// Get Quote
-const quote = await lighthouse.getQuote('/home/cosmos/Desktop/wow.jpg' '0x1Ec09D4B3Cb565b7CCe2eEAf71CC90c9b46c5c26', 'fantom');
+const balance = await lighthouse.getBalance(publicKey);
 
 // Deploy File
-const deploy = await lighthouse.deploy('/home/cosmos/Desktop/wow.jpg', signer, false, signedMessage, publicKey, "fantom");
+const deploy = await lighthouse.deploy('/home/cosmos/Desktop/wow.jpg', api-key);
 ```
 
 Refer [GitBook](https://lighthouse-storage.gitbook.io/lighthouse/)
