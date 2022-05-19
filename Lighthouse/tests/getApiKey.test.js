@@ -23,7 +23,7 @@ test("getApiKey Main Case", async () => {
 }, 60000);
 
 test("getApiKey Null Case", async () => {
-  const publicKey = "0xA3C960B3BA29367ecBCAf1430452C6cd7516F588";
+  const publicKey = "0xEaF4E24ffC1A2f53c07839a74966A6611b8Cb8A1";
   const apiKey = await lighthouse.getApiKey(publicKey, "signedMessage");
   
   expect(apiKey).toBe(null);
