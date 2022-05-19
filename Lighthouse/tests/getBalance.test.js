@@ -13,7 +13,6 @@ test("getBalance Null Case", async () => {
   const balance = await lighthouse.getBalance(
     "0x487fc2fE07c593EAb555729c3DD6dF85020B5133"
   );
-  console.log(balance);
 
   expect(balance).toBe(null);
 }, 20000);
