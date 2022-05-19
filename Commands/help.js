@@ -84,33 +84,42 @@ module.exports = {
         case "polygon":
         case "polygon-mainnet":
           config.set("LIGHTHOUSE_GLOBAL_NETWORK", "polygon");
+          console.log(chalk.green("Switched to polygon mainnet"));
           break;
         case "fantom":
         case "fantom-mainnet":
           config.set("LIGHTHOUSE_GLOBAL_NETWORK", "fantom");
+          console.log(chalk.green("Switched to fantom mainnet"));
           break;
         case "binance":
         case "binance-mainnet":
           config.set("LIGHTHOUSE_GLOBAL_NETWORK", "binance");
+          console.log(chalk.green("Switched to binance mainnet"));
           break;
         case "optimism":
         case "optimism-mainnet":
           config.set("LIGHTHOUSE_GLOBAL_NETWORK", "optimism");
+          console.log(chalk.green("Switched to optimism mainnet"));
           break;
         case "polygon-testnet":
           config.set("LIGHTHOUSE_GLOBAL_NETWORK", "polygon-testnet");
+          console.log(chalk.green("Switched to polygon testnet"));
           break;
         case "fantom-testnet":
           config.set("LIGHTHOUSE_GLOBAL_NETWORK", "fantom-testnet");
+          console.log(chalk.green("Switched to fantom testnet"));
           break;
         case "binance-testnet":
           config.set("LIGHTHOUSE_GLOBAL_NETWORK", "binance-testnet");
+          console.log(chalk.green("Switched to binance testnet"));
           break;
         case "optimism-testnet":
           config.set("LIGHTHOUSE_GLOBAL_NETWORK", "optimism-testnet");
+          console.log(chalk.green("Switched to optimism testnet"));
           break;
         default:
           config.set("LIGHTHOUSE_GLOBAL_NETWORK", "polygon");
+          console.log(chalk.green("Switched to polygon mainnet"));
       }
     } else {
       console.log(showHelp());
