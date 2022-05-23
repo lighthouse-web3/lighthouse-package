@@ -2,7 +2,7 @@
 
 const yargs = require("yargs");
 
-yargs.version("1.3.7");
+yargs.version("0.1.0");
 yargs.commandDir("Commands");
 yargs.parserConfiguration({
   "parse-numbers": false,

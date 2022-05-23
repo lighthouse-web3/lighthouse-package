@@ -1,8 +1,10 @@
+const axios = require("axios");
 const Conf = require("conf");
 const chalk = require("chalk");
 const ethers = require("ethers");
 
 const readInput = require("../Utils/readInput");
+const lighthouseConfig = require("../lighthouse.config");
 
 const config = new Conf();
 
@@ -33,7 +35,10 @@ module.exports = {
         if (!wallet) {
           throw new Error("Importing Wallet Failed!");
         }
-
+        const _ = await axios.get(
+          lighthouseConfig.URL +
+            `/api/auth/get_message?publicKey=${wallet.address}`
+        );
         const encryptedWallet = await wallet.encrypt(password.trim());
 
         config.set("LIGHTHOUSE_GLOBAL_WALLET", encryptedWallet);
