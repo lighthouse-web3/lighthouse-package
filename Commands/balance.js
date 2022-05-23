@@ -107,6 +107,22 @@ module.exports = {
               )
           );
 
+          const contractDai = new ethers.Contract(
+            lighthouseConfig[network]["dai_contract_address"],
+            contractABI,
+            provider
+          );
+          console.log(
+            chalk.yellow("DAI Balance: ") +
+              Array(3).fill("\xa0").join("") +
+              ethers.utils.formatUnits(
+                await contractDai.balanceOf(
+                  config.get("LIGHTHOUSE_GLOBAL_PUBLICKEY")
+                ),
+                lighthouseConfig[network]["dai_contract_decimal"]
+              )
+          );
+
           console.log(
             chalk.yellow(network) +
               ":" +

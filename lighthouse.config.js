@@ -15,7 +15,9 @@ const defaultConfig = {
     lighthouse_contract_address: "0xf468602B34C482f34ca498D9a0DE7957539961d3",
     usdt_contract_address: "0x049d68029688eAbF473097a2fC38ef61633A3C7A",
     usdc_contract_address: "0x04068DA6C83AFCFA0e13ba15A6696662335D5B75",
+    dai_contract_address: "0x8D11eC38a3EB5E956B052f67Da8Bdc9bef8Abf3E",
     usd_contract_decimal: 6,
+    dai_contract_decimal: 18,
   },
   polygon: {
     symbol: "MATIC",
@@ -25,7 +27,9 @@ const defaultConfig = {
     lighthouse_contract_address: "0xaD13C488b01DbcE976B67e552Bd352e824E53E1D",
     usdt_contract_address: "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
     usdc_contract_address: "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174",
+    dai_contract_address: "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
     usd_contract_decimal: 6,
+    dai_contract_decimal: 18,
   },
   binance: {
     symbol: "BNB",
@@ -35,7 +39,9 @@ const defaultConfig = {
     lighthouse_contract_address: "0x340ff23c060626644e55fc10298c5e995b1f41c1",
     usdt_contract_address: "0x55d398326f99059fF775485246999027B3197955",
     usdc_contract_address: "0x8AC76a51cc950d9822D68b83fE1Ad97B32Cd580d",
+    dai_contract_address: "0x1dC56F2705Ff2983f31fb5964CC3E19749A7CBA7",
     usd_contract_decimal: 18,
+    dai_contract_decimal: 18,
   },
   optimism: {
     symbol: "ETH",
@@ -45,7 +51,9 @@ const defaultConfig = {
     lighthouse_contract_address: "0x61e296fdc8c498ed183a2d19fd5927736e46e3b6",
     usdt_contract_address: "0x94b008aA00579c1307B0EF2c499aD98a8ce58e58",
     usdc_contract_address: "0x7F5c764cBc14f9669B88837ca1490cCa17c31607",
+    dai_contract_address: "0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1",
     usd_contract_decimal: 6,
+    dai_contract_decimal: 18,
   },
   "fantom-testnet": {
     symbol: "FTM",
