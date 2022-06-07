@@ -41,67 +41,68 @@ const getQuote = async (path, publicKey, Spinner) => {
   process.stdout.clearLine();
   process.stdout.cursorTo(0);
 
-  if (quoteResponse) {
-    console.log(
-      chalk.cyan("Name") +
-        Array(30).fill("\xa0").join("") +
-        chalk.cyan("Size") +
-        Array(8).fill("\xa0").join("") +
-        chalk.cyan("Type") +
-        Array(20).fill("\xa0").join("")
-    );
-
-    for (let i = 0; i < quoteResponse.metaData.length; i++) {
-      console.log(
-        quoteResponse.metaData[i].fileName +
-          Array(34 - quoteResponse.metaData[i].fileName.length)
-            .fill("\xa0")
-            .join("") +
-          bytesToSize(quoteResponse.metaData[i].fileSize) +
-          Array(
-            12 -
-              bytesToSize(quoteResponse.metaData[i].fileSize).toString().length
-          )
-            .fill("\xa0")
-            .join("") +
-          quoteResponse.metaData[i].mimeType
-      );
-    }
-
-    console.log(
-      "\n" +
-        chalk.cyan("Summary") +
-        "\nTotal Size: " +
-        bytesToSize(quoteResponse.totalSize)
-    );
-
-    console.log(
-      "Data Limit: " +
-        bytesToSize(parseInt(quoteResponse.dataLimit)) +
-        "\nData Used : " +
-        bytesToSize(parseInt(quoteResponse.dataUsed)) +
-        "\nAfter Deploy: " +
-        bytesToSize(
-          parseInt(quoteResponse.dataLimit) -
-            (parseInt(quoteResponse.dataUsed) + quoteResponse.totalSize)
-        )
-    );
-
-    const remainingAfterUpload =
-      parseInt(quoteResponse.dataLimit) -
-      (parseInt(quoteResponse.dataUsed) + quoteResponse.totalSize);
-
-    return {
-      fileName: quoteResponse.metaData[0].fileName,
-      fileSize: quoteResponse.metaData[0].fileSize,
-      cost: quoteResponse.totalCost,
-      type: quoteResponse.type,
-      remainingAfterUpload: remainingAfterUpload,
-    };
-  } else {
-    console.log(chalk.red("Error getting quote"));
+  if(!quoteResponse){
+    console.log(chalk.red("Error getting quote!"));
+    console.log(chalk.yellow("Check if the wallet is imported!"));
     process.exit();
   }
+
+  console.log(
+    chalk.cyan("Name") +
+      Array(30).fill("\xa0").join("") +
+      chalk.cyan("Size") +
+      Array(8).fill("\xa0").join("") +
+      chalk.cyan("Type") +
+      Array(20).fill("\xa0").join("")
+  );
+
+  for (let i = 0; i < quoteResponse.metaData.length; i++) {
+    console.log(
+      quoteResponse.metaData[i].fileName +
+        Array(34 - quoteResponse.metaData[i].fileName.length)
+          .fill("\xa0")
+          .join("") +
+        bytesToSize(quoteResponse.metaData[i].fileSize) +
+        Array(
+          12 -
+            bytesToSize(quoteResponse.metaData[i].fileSize).toString().length
+        )
+          .fill("\xa0")
+          .join("") +
+        quoteResponse.metaData[i].mimeType
+    );
+  }
+
+  console.log(
+    "\n" +
+      chalk.cyan("Summary") +
+      "\nTotal Size: " +
+      bytesToSize(quoteResponse.totalSize)
+  );
+
+  console.log(
+    "Data Limit: " +
+      bytesToSize(parseInt(quoteResponse.dataLimit)) +
+      "\nData Used : " +
+      bytesToSize(parseInt(quoteResponse.dataUsed)) +
+      "\nAfter Deploy: " +
+      bytesToSize(
+        parseInt(quoteResponse.dataLimit) -
+          (parseInt(quoteResponse.dataUsed) + quoteResponse.totalSize)
+      )
+  );
+
+  const remainingAfterUpload =
+    parseInt(quoteResponse.dataLimit) -
+    (parseInt(quoteResponse.dataUsed) + quoteResponse.totalSize);
+
+  return {
+    fileName: quoteResponse.metaData[0].fileName,
+    fileSize: quoteResponse.metaData[0].fileSize,
+    cost: quoteResponse.totalCost,
+    type: quoteResponse.type,
+    remainingAfterUpload: remainingAfterUpload,
+  };
 };
 
 const transactionLog = (txObj, network) => {
