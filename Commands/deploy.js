@@ -129,6 +129,12 @@ const deploy = async (path, signer, apiKey, network) => {
   process.stdout.clearLine();
   process.stdout.cursorTo(0);
 
+  if(!deployResponse){
+    console.log(chalk.red("Deploy failed!"));
+    console.log(chalk.yellow("Check if api key is correct or create a new key!"));
+    process.exit();
+  }
+
   console.log(
     chalk.green("File Deployed, visit following url to view content!\n") +
       chalk.cyan(
