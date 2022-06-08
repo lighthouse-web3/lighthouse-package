@@ -129,7 +129,7 @@ const deploy = async (path, signer, apiKey, network) => {
   process.stdout.clearLine();
   process.stdout.cursorTo(0);
 
-  if(!deployResponse){
+  if(!deployResponse.Hash){
     console.log(chalk.red("Deploy failed!"));
     console.log(chalk.yellow("Check if api key is correct or create a new key!"));
     process.exit();
