@@ -22,7 +22,7 @@
     "url": "https://github.com/lighthouse-web3/lighthouse-package.git"
   },
   "publishConfig": {
-    "registry":"https://npm.pkg.github.com"
+    "registry": "https://npm.pkg.github.com"
   },
   "license": "MIT",
   "dependencies": {
@@ -40,6 +40,9 @@
     "package-json": "^7.0.0",
     "read": "^1.0.7",
     "recursive-fs": "^2.1.0",
+    "tweetnacl": "^1.0.3",
+    "tweetnacl-util": "^0.15.1",
+    "uuid": "^8.3.2",
     "yargs": "^17.2.1"
   },
   "devDependencies": {
