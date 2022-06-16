@@ -19,10 +19,12 @@ if (typeof window === "undefined") {
     getBalance,
     getUploads,
     status,
-    getContractAddress,
+    getContractAddress
   };
 } else {
   const deploy = require("./deploy/browser");
+  const uploadEncrypted = require("./deployEncrypted/browser");
+  const decryptFile = require("./deployEncrypted/browser/decryptFile");
 
   module.exports = {
     deploy,
@@ -32,5 +34,7 @@ if (typeof window === "undefined") {
     getUploads,
     status,
     getContractAddress,
+    uploadEncrypted,
+    decryptFile
   };
 }
