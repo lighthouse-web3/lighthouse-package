@@ -1,3 +1,4 @@
+/* istanbul ignore file */
 const importKeyFromBytes = async (keyBytes) =>
   window.crypto.subtle.importKey("raw", keyBytes, "PBKDF2", false, [
     "deriveKey",
