@@ -124,7 +124,7 @@ module.exports = {
     } else {
       console.log(showHelp());
 
-      const response = await packageJson("lighthouse-web3");
+      const response = await packageJson("@lighthouse-web3/sdk");
       if (response) {
         console.log(
           chalk.yellow("Current Version: ") +
