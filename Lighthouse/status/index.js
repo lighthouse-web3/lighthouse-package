@@ -5,7 +5,8 @@ module.exports = async (cid) => {
   try {
     const status = (
       await axios.get(
-        lighthouseConfig.URL + `/api/lighthouse/cid_status/?cid=${cid}`
+        lighthouseConfig.lighthouseAPI +
+          `/api/lighthouse/cid_status/?cid=${cid}`
       )
     ).data;
 

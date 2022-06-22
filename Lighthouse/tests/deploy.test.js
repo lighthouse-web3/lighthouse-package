@@ -8,15 +8,16 @@ const lighthouseConfig = require("../../lighthouse.config");
 test("deploy Main Case File", async () => {
   const path = resolve(process.cwd(), "Utils/testImages/testImage1.svg");
 
-  const publicKey = "0xA3C960B3BA29367ecBCAf1430452C6cd7516F588";
+  const publicKey = "0x1Ec09D4B3Cb565b7CCe2eEAf71CC90c9b46c5c26";
   const verificationMessage = (
     await axios.get(
-      lighthouseConfig.URL + `/api/auth/get_message?publicKey=${publicKey}`
+      lighthouseConfig.lighthouseAPI +
+        `/api/auth/get_message?publicKey=${publicKey}`
     )
   ).data;
   const provider = new ethers.getDefaultProvider();
   const signer = new ethers.Wallet(
-    "0x6aa0ee41fa9cf65f90c06e5db8fa2834399b59b37974b21f2e405955630d472a",
+    "0xd7f1e7ccf6e3620327d3b29c57018d076305148eec487c57d8121beac0067895",
     provider
   );
   const signedMessage = await signer.signMessage(verificationMessage);
@@ -37,15 +38,16 @@ test("deploy Main Case File", async () => {
 test("deploy Main Case Folder", async () => {
   const path = resolve(process.cwd(), "Utils/testImages");
 
-  const publicKey = "0xA3C960B3BA29367ecBCAf1430452C6cd7516F588";
+  const publicKey = "0x1Ec09D4B3Cb565b7CCe2eEAf71CC90c9b46c5c26";
   const verificationMessage = (
     await axios.get(
-      lighthouseConfig.URL + `/api/auth/get_message?publicKey=${publicKey}`
+      lighthouseConfig.lighthouseAPI +
+        `/api/auth/get_message?publicKey=${publicKey}`
     )
   ).data;
   const provider = new ethers.getDefaultProvider();
   const signer = new ethers.Wallet(
-    "0x6aa0ee41fa9cf65f90c06e5db8fa2834399b59b37974b21f2e405955630d472a",
+    "0xd7f1e7ccf6e3620327d3b29c57018d076305148eec487c57d8121beac0067895",
     provider
   );
   const signedMessage = await signer.signMessage(verificationMessage);

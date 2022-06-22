@@ -5,7 +5,8 @@ module.exports = async (publicKey) => {
   try {
     const uploads = (
       await axios.get(
-        lighthouseConfig.URL + `/api/user/get_uploads?publicKey=${publicKey}`
+        lighthouseConfig.lighthouseAPI +
+          `/api/user/get_uploads?publicKey=${publicKey}`
       )
     ).data;
     return uploads;

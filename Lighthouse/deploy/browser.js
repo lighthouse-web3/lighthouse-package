@@ -1,9 +1,10 @@
+/* istanbul ignore file */
 const axios = require("axios");
 const lighthouseConfig = require("../../lighthouse.config");
 
-module.exports = async (e, apiKey, publicKey, signedMessage) => {
+module.exports = async (e, accessToken) => {
   try {
-    const endpoint = lighthouseConfig.node;
+    const endpoint = lighthouseConfig.lighthouseNode + "/api/v0/add";
     e.persist();
 
     const formData = new FormData();
@@ -11,12 +12,7 @@ module.exports = async (e, apiKey, publicKey, signedMessage) => {
       formData.append("file", e.target.files[i]);
     }
 
-    let token = "";
-    if (apiKey) {
-      token = "Bearer " + apiKey;
-    } else {
-      token = "Bearer " + publicKey + " " + signedMessage;
-    }
+    const token = "Bearer " + accessToken;
 
     const response = await axios.post(endpoint, formData, {
       maxContentLength: "Infinity",
