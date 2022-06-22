@@ -1,9 +1,11 @@
+/* istanbul ignore file */
 const axios = require("axios");
-const lighthouseConfig = require("../../../lighthouse.config");
-const { encryptFile } = require("./encryptionBrowser");
 const { v4: uuidv4 } = require("uuid");
 const nacl = require("tweetnacl");
 const util = require("tweetnacl-util");
+
+const { encryptFile } = require("./encryptionBrowser");
+const lighthouseConfig = require("../../../lighthouse.config");
 
 const readFileAsync = (file) => {
   return new Promise((resolve, reject) => {
@@ -19,12 +21,13 @@ const readFileAsync = (file) => {
   });
 };
 
-module.exports = async (e, publicKey, signed_message, secretKey) => {
+module.exports = async (e, accessToken, secretKey, publicKey) => {
   try {
     // Get users encryption public key
     const encryptionPublicKey = (
       await axios.get(
-        lighthouseConfig.URL + `/api/encryption/get_encryption_publicKey?publicKey=${publicKey}`
+        lighthouseConfig.lighthouseAPI +
+          `/api/encryption/get_encryption_publicKey?publicKey=${publicKey}`
       )
     ).data.encryptionPublicKey;
 
@@ -37,7 +40,6 @@ module.exports = async (e, publicKey, signed_message, secretKey) => {
     const fileEncryptionKey = uuidv4().toString();
 
     // Encrypt fileEncryptionKey
-    // const nonce = new Uint8Array(24);
     const nonce = nacl.randomBytes(24);
     const encryptedKey = util.encodeBase64(
       nacl.box(
@@ -47,15 +49,15 @@ module.exports = async (e, publicKey, signed_message, secretKey) => {
         util.decodeBase64(secretKey)
       )
     );
-    console.log(encryptedKey);
+
     if (!encryptedKey) {
       throw new Error("Failed to encrypt key!!!");
     }
 
     // Upload file
     e.persist();
-    const endpoint = lighthouseConfig.node;
-    const token = "Bearer " + publicKey + " " + signed_message;
+    const endpoint = lighthouseConfig.lighthouseNode + "/api/v0/add";
+    const token = "Bearer " + accessToken;
 
     const fileArr = [];
     for (let i = 0; i < e.target.files.length; i++) {
@@ -92,19 +94,21 @@ module.exports = async (e, publicKey, signed_message, secretKey) => {
 
     // Save encrypted fileEncryptionKey
     const data = {
-      publicKey: publicKey,
+      publicKey: publicKey.toLowerCase(),
       cid: response.data.Hash,
       nonce: util.encodeBase64(nonce),
+      fileEncryptionKey: encryptedKey,
       fileName: response.data.Name,
       fileSizeInBytes: response.data.Size,
       sharedFrom: encryptionPublicKey,
       sharedTo: encryptionPublicKey,
-      fileEncryptionKey: encryptedKey,
     };
 
     const _ = await axios.post(
-      lighthouseConfig.URL + "/api/encryption/save_encryption_key",
-      data
+      lighthouseConfig.lighthouseAPI +
+        "/api/encryption/save_file_encryption_key",
+      data,
+      { headers: { Authorization: `Bearer ${accessToken}` } }
     );
 
     // return response
