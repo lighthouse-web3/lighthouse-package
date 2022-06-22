@@ -1,9 +1,11 @@
+/* istanbul ignore file */
 const axios = require("axios");
 const { decryptFile } = require("./encryptionBrowser");
+const lighthouseConfig = require("../../../lighthouse.config");
 
 module.exports = async (cid, fileEncryptionKey) => {
   const result = await axios.post(
-    "https://node.lighthouse.storage/api/v0/cat/" + cid,
+    lighthouseConfig.lighthouseNode + "/api/v0/cat/" + cid,
     null,
     {
       "Content-Type": "application/json",
