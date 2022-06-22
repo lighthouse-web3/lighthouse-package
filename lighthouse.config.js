@@ -2,8 +2,8 @@
 /** @type {import("./types").DefaultConfig} */
 
 const defaultConfig = {
-  URL: "https://api.lighthouse.storage",
-  node: "https://node.lighthouse.storage/api/v0/add",
+  lighthouseAPI: "https://api.lighthouse.storage",
+  lighthouseNode: "https://node.lighthouse.storage",
   network: "polygon",
   gbInBytes: 1073741824,
   costPerGB: 5,
@@ -60,7 +60,7 @@ const defaultConfig = {
     rpc: "https://rpc.testnet.fantom.network/",
     scan: "https://testnet.ftmscan.com/tx/",
     chain_id: "0xfa2",
-    lighthouse_contract_address: "0x61E296FDc8c498Ed183a2D19FD5927736E46E3B6",
+    lighthouse_contract_address: "0xa02d3813b7334057dDbDa6Fe559b90280078bAD9",
   },
   "polygon-testnet": {
     symbol: "MATIC",
