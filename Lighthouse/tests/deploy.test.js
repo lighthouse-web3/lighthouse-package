@@ -11,7 +11,8 @@ test("deploy Main Case File", async () => {
   const publicKey = "0xA3C960B3BA29367ecBCAf1430452C6cd7516F588";
   const verificationMessage = (
     await axios.get(
-      lighthouseConfig.URL + `/api/auth/get_message?publicKey=${publicKey}`
+      lighthouseConfig.lighthouseAPI +
+        `/api/auth/get_message?publicKey=${publicKey}`
     )
   ).data;
   const provider = new ethers.getDefaultProvider();
@@ -40,7 +41,8 @@ test("deploy Main Case Folder", async () => {
   const publicKey = "0xA3C960B3BA29367ecBCAf1430452C6cd7516F588";
   const verificationMessage = (
     await axios.get(
-      lighthouseConfig.URL + `/api/auth/get_message?publicKey=${publicKey}`
+      lighthouseConfig.lighthouseAPI +
+        `/api/auth/get_message?publicKey=${publicKey}`
     )
   ).data;
   const provider = new ethers.getDefaultProvider();
