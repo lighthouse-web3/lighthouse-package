@@ -5,7 +5,7 @@ Lighthouse is a permanent decentralized file storage protocol that allows the ab
 ## Installation
 
 ```bash
-npm install -g lighthouse-web3
+npm install -g @lighthouse-web3/sdk
 ```
 
 ## CLI Usage
@@ -42,7 +42,7 @@ lighthouse-web3 wallet
 ## NodeJs Example
 
 ```javascript
-const lighthouse = require("lighthouse-web3");
+const lighthouse = require("@lighthouse-web3/sdk");
 
 // Create wallet
 const wallet = await lighthouse.createWallet(
