@@ -1,9 +1,12 @@
+/* istanbul ignore file */
 const addCid = require("./addCid");
 const getApiKey = require("./getApiKey");
 const createWallet = require("./createWallet");
 const getBalance = require("./getBalance");
 const getUploads = require("./getUploads");
 const getContractAddress = require("./getContractAddress");
+const getEncryptionKeyPair = require("./encryption/getEncryptionKeyPair");
+const decryptPassword = require("./encryption/decryptPassword");
 const status = require("./status");
 
 if (typeof window === "undefined") {
@@ -19,7 +22,9 @@ if (typeof window === "undefined") {
     getBalance,
     getUploads,
     status,
-    getContractAddress
+    getContractAddress,
+    getEncryptionKeyPair,
+    decryptPassword,
   };
 } else {
   const deploy = require("./deploy/browser");
@@ -35,6 +40,8 @@ if (typeof window === "undefined") {
     status,
     getContractAddress,
     uploadEncrypted,
-    decryptFile
+    decryptFile,
+    getEncryptionKeyPair,
+    decryptPassword,
   };
 }
