@@ -41,7 +41,7 @@ const getQuote = async (path, publicKey, Spinner) => {
   process.stdout.clearLine();
   process.stdout.cursorTo(0);
 
-  if(!quoteResponse){
+  if (!quoteResponse) {
     console.log(chalk.red("Error getting quote!"));
     console.log(chalk.yellow("Check if the wallet is imported!"));
     process.exit();
@@ -64,8 +64,7 @@ const getQuote = async (path, publicKey, Spinner) => {
           .join("") +
         bytesToSize(quoteResponse.metaData[i].fileSize) +
         Array(
-          12 -
-            bytesToSize(quoteResponse.metaData[i].fileSize).toString().length
+          12 - bytesToSize(quoteResponse.metaData[i].fileSize).toString().length
         )
           .fill("\xa0")
           .join("") +
@@ -129,9 +128,11 @@ const deploy = async (path, signer, apiKey, network) => {
   process.stdout.clearLine();
   process.stdout.cursorTo(0);
 
-  if(!deployResponse.Hash){
+  if (!deployResponse.Hash) {
     console.log(chalk.red("Deploy failed!"));
-    console.log(chalk.yellow("Check if api key is correct or create a new key!"));
+    console.log(
+      chalk.yellow("Check if api key is correct or create a new key!")
+    );
     process.exit();
   }
 
@@ -155,7 +156,14 @@ const deploy = async (path, signer, apiKey, network) => {
   console.log(
     chalk.green(
       "Push CID to blockchain network now(Y) or we will do it for you(N)"
-    ) + " Y/n"
+    ) +
+      " Y/n" +
+      chalk.yellow(
+        "\nNote: this feature is currently available on fantom testnet. "
+      ) +
+      chalk.yellow(
+        "\nPlease wait for the next patch update for optimism, polygon and binance support."
+      )
   );
 
   const options = {
@@ -163,6 +171,11 @@ const deploy = async (path, signer, apiKey, network) => {
   };
 
   const selected = await readInput(options);
+
+  if (network !== "fantom-testnet") {
+    return;
+  }
+
   if (
     selected.trim() === "Y" ||
     selected.trim() === "y" ||
