@@ -41,67 +41,67 @@ const getQuote = async (path, publicKey, Spinner) => {
   process.stdout.clearLine();
   process.stdout.cursorTo(0);
 
-  if (quoteResponse) {
-    console.log(
-      chalk.cyan("Name") +
-        Array(30).fill("\xa0").join("") +
-        chalk.cyan("Size") +
-        Array(8).fill("\xa0").join("") +
-        chalk.cyan("Type") +
-        Array(20).fill("\xa0").join("")
-    );
-
-    for (let i = 0; i < quoteResponse.metaData.length; i++) {
-      console.log(
-        quoteResponse.metaData[i].fileName +
-          Array(34 - quoteResponse.metaData[i].fileName.length)
-            .fill("\xa0")
-            .join("") +
-          bytesToSize(quoteResponse.metaData[i].fileSize) +
-          Array(
-            12 -
-              bytesToSize(quoteResponse.metaData[i].fileSize).toString().length
-          )
-            .fill("\xa0")
-            .join("") +
-          quoteResponse.metaData[i].mimeType
-      );
-    }
-
-    console.log(
-      "\n" +
-        chalk.cyan("Summary") +
-        "\nTotal Size: " +
-        bytesToSize(quoteResponse.totalSize)
-    );
-
-    console.log(
-      "Data Limit: " +
-        bytesToSize(parseInt(quoteResponse.dataLimit)) +
-        "\nData Used : " +
-        bytesToSize(parseInt(quoteResponse.dataUsed)) +
-        "\nAfter Deploy: " +
-        bytesToSize(
-          parseInt(quoteResponse.dataLimit) -
-            (parseInt(quoteResponse.dataUsed) + quoteResponse.totalSize)
-        )
-    );
-
-    const remainingAfterUpload =
-      parseInt(quoteResponse.dataLimit) -
-      (parseInt(quoteResponse.dataUsed) + quoteResponse.totalSize);
-
-    return {
-      fileName: quoteResponse.metaData[0].fileName,
-      fileSize: quoteResponse.metaData[0].fileSize,
-      cost: quoteResponse.totalCost,
-      type: quoteResponse.type,
-      remainingAfterUpload: remainingAfterUpload,
-    };
-  } else {
-    console.log(chalk.red("Error getting quote"));
+  if (!quoteResponse) {
+    console.log(chalk.red("Error getting quote!"));
+    console.log(chalk.yellow("Check if the wallet is imported!"));
     process.exit();
   }
+
+  console.log(
+    chalk.cyan("Name") +
+      Array(30).fill("\xa0").join("") +
+      chalk.cyan("Size") +
+      Array(8).fill("\xa0").join("") +
+      chalk.cyan("Type") +
+      Array(20).fill("\xa0").join("")
+  );
+
+  for (let i = 0; i < quoteResponse.metaData.length; i++) {
+    console.log(
+      quoteResponse.metaData[i].fileName +
+        Array(34 - quoteResponse.metaData[i].fileName.length)
+          .fill("\xa0")
+          .join("") +
+        bytesToSize(quoteResponse.metaData[i].fileSize) +
+        Array(
+          12 - bytesToSize(quoteResponse.metaData[i].fileSize).toString().length
+        )
+          .fill("\xa0")
+          .join("") +
+        quoteResponse.metaData[i].mimeType
+    );
+  }
+
+  console.log(
+    "\n" +
+      chalk.cyan("Summary") +
+      "\nTotal Size: " +
+      bytesToSize(quoteResponse.totalSize)
+  );
+
+  console.log(
+    "Data Limit: " +
+      bytesToSize(parseInt(quoteResponse.dataLimit)) +
+      "\nData Used : " +
+      bytesToSize(parseInt(quoteResponse.dataUsed)) +
+      "\nAfter Deploy: " +
+      bytesToSize(
+        parseInt(quoteResponse.dataLimit) -
+          (parseInt(quoteResponse.dataUsed) + quoteResponse.totalSize)
+      )
+  );
+
+  const remainingAfterUpload =
+    parseInt(quoteResponse.dataLimit) -
+    (parseInt(quoteResponse.dataUsed) + quoteResponse.totalSize);
+
+  return {
+    fileName: quoteResponse.metaData[0].fileName,
+    fileSize: quoteResponse.metaData[0].fileSize,
+    cost: quoteResponse.totalCost,
+    type: quoteResponse.type,
+    remainingAfterUpload: remainingAfterUpload,
+  };
 };
 
 const transactionLog = (txObj, network) => {
@@ -128,6 +128,14 @@ const deploy = async (path, signer, apiKey, network) => {
   process.stdout.clearLine();
   process.stdout.cursorTo(0);
 
+  if (!deployResponse.Hash) {
+    console.log(chalk.red("Deploy failed!"));
+    console.log(
+      chalk.yellow("Check if api key is correct or create a new key!")
+    );
+    process.exit();
+  }
+
   console.log(
     chalk.green("File Deployed, visit following url to view content!\n") +
       chalk.cyan(
@@ -148,7 +156,14 @@ const deploy = async (path, signer, apiKey, network) => {
   console.log(
     chalk.green(
       "Push CID to blockchain network now(Y) or we will do it for you(N)"
-    ) + " Y/n"
+    ) +
+      " Y/n" +
+      chalk.yellow(
+        "\nNote: this feature is currently available on fantom testnet. "
+      ) +
+      chalk.yellow(
+        "\nPlease wait for the next patch update for optimism, polygon and binance support."
+      )
   );
 
   const options = {
@@ -156,6 +171,11 @@ const deploy = async (path, signer, apiKey, network) => {
   };
 
   const selected = await readInput(options);
+
+  if (network !== "fantom-testnet") {
+    return;
+  }
+
   if (
     selected.trim() === "Y" ||
     selected.trim() === "y" ||

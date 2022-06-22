@@ -36,7 +36,7 @@ module.exports = {
           throw new Error("Importing Wallet Failed!");
         }
         const _ = await axios.get(
-          lighthouseConfig.URL +
+          lighthouseConfig.lighthouseAPI +
             `/api/auth/get_message?publicKey=${wallet.address}`
         );
         const encryptedWallet = await wallet.encrypt(password.trim());

@@ -7,7 +7,8 @@ test("getApiKey Main Case", async () => {
   const publicKey = "0xEaF4E24ffC1A2f53c07839a74966A6611b8Cb8A1";
   const verificationMessage = (
     await axios.get(
-      lighthouseConfig.URL + `/api/auth/get_message?publicKey=${publicKey}`
+      lighthouseConfig.lighthouseAPI +
+        `/api/auth/get_message?publicKey=${publicKey}`
     )
   ).data;
   const provider = new ethers.getDefaultProvider();
@@ -25,6 +26,6 @@ test("getApiKey Main Case", async () => {
 test("getApiKey Null Case", async () => {
   const publicKey = "0xEaF4E24ffC1A2f53c07839a74966A6611b8Cb8A1";
   const apiKey = await lighthouse.getApiKey(publicKey, "signedMessage");
-  
+
   expect(apiKey).toBe(null);
 }, 60000);

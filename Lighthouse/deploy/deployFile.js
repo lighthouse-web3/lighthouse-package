@@ -8,32 +8,31 @@ const lighthouseConfig = require("../../lighthouse.config");
   @param {string} signedMessage - The signed message for verification.
 */
 
-module.exports = async(sourcePath, apiKey) => {
+module.exports = async (sourcePath, apiKey) => {
   const fs = eval("require")("fs");
   const NodeFormData = eval("require")("form-data");
   const recursive = eval("require")("recursive-fs");
   const basePathConverter = eval("require")("base-path-converter");
   const token = "Bearer " + apiKey;
-  try{
-    const endpoint = lighthouseConfig.node;
+  try {
+    const endpoint = lighthouseConfig.lighthouseNode + "/api/v0/add";
     const stats = fs.lstatSync(sourcePath);
-    
+
     if (stats.isFile()) {
       //we need to create a single read stream instead of reading the directory recursively
       const data = new NodeFormData();
 
       data.append("file", fs.createReadStream(sourcePath));
 
-      const response = await axios
-        .post(endpoint, data, {
-          withCredentials: true,
-          maxContentLength: "Infinity", //this is needed to prevent axios from erroring out with large directories
-          maxBodyLength: "Infinity",
-          headers: {
-            "Content-type": `multipart/form-data; boundary= ${data._boundary}`,
-            Authorization: token,
-          },
-        })
+      const response = await axios.post(endpoint, data, {
+        withCredentials: true,
+        maxContentLength: "Infinity", //this is needed to prevent axios from erroring out with large directories
+        maxBodyLength: "Infinity",
+        headers: {
+          "Content-type": `multipart/form-data; boundary= ${data._boundary}`,
+          Authorization: token,
+        },
+      });
 
       return response.data;
     } else {
@@ -46,22 +45,21 @@ module.exports = async(sourcePath, apiKey) => {
         });
       });
 
-      const response = await axios
-        .post(endpoint, data, {
-          withCredentials: true,
-          maxContentLength: "Infinity",
-          maxBodyLength: "Infinity", //this is needed to prevent axios from erroring out with large directories
-          headers: {
-            "Content-type": `multipart/form-data; boundary= ${data._boundary}`,
-            Authorization: token,
-          },
-        })
+      const response = await axios.post(endpoint, data, {
+        withCredentials: true,
+        maxContentLength: "Infinity",
+        maxBodyLength: "Infinity", //this is needed to prevent axios from erroring out with large directories
+        headers: {
+          "Content-type": `multipart/form-data; boundary= ${data._boundary}`,
+          Authorization: token,
+        },
+      });
       const temp = response.data.split("\n");
       const toReturn = JSON.parse(temp[temp.length - 2]);
-      
-      return toReturn;      
+
+      return toReturn;
     }
-  } catch(error){
-    return(error.message);
+  } catch (error) {
+    return error.message;
   }
 };

@@ -56,7 +56,7 @@ module.exports = {
 
             const verificationMessage = (
               await axios.get(
-                lighthouseConfig.URL +
+                lighthouseConfig.lighthouseAPI +
                   `/api/auth/get_message?publicKey=${decryptedWallet.address}`
               )
             ).data;

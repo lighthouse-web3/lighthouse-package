@@ -6,7 +6,7 @@ module.exports = async (publicKey) => {
     // Get users data usage
     const user_data_usage = (
       await axios.get(
-        lighthouseConfig.URL +
+        lighthouseConfig.lighthouseAPI +
           `/api/user/user_data_usage?publicKey=${publicKey}`
       )
     ).data;
