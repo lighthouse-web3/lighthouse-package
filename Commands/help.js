@@ -34,6 +34,9 @@ const showHelp = () => {
     "\ndeploy" +
     Array(31).fill("\xa0").join("") +
     "Deploy a file" +
+    "\ndeploy-encrypted" +
+    Array(21).fill("\xa0").join("") +
+    "Deploy a file with encryption" +
     "\nstatus" +
     Array(31).fill("\xa0").join("") +
     "Get metadata around the storage per CID" +
@@ -124,7 +127,7 @@ module.exports = {
     } else {
       console.log(showHelp());
 
-      const response = await packageJson("lighthouse-web3");
+      const response = await packageJson("@lighthouse-web3/sdk");
       if (response) {
         console.log(
           chalk.yellow("Current Version: ") +
