@@ -3,7 +3,7 @@ const ethers = require("ethers");
 const lighthouse = require("..");
 const lighthouseConfig = require("../../lighthouse.config");
 
-test("deploy Main Case File", async () => {
+test("getEncryptionKeyPair Main Case File", async () => {
   const publicKey = "0xA3C960B3BA29367ecBCAf1430452C6cd7516F588";
   const verificationMessage = (
     await axios.get(
@@ -75,3 +75,7 @@ test("Share main", async () => {
   expect(response.status).toBe(200);
 }, 60000);
 
+test("EncryptKey Main Case", async () => {
+  const encryptedKey = await lighthouse.encryptKey("random string", "5G6SIQkcpBYAY0xJpT6I1/JVe+s2zDdM4RXtqDhqbUU=", "zirVOldhZIs6SY9sk6wpEuZuB+YWlPvg2w8ik3+KaD8=");
+  expect(typeof encryptedKey.encryptedFileEncryptionKey).toBe("string");
+}, 20000);

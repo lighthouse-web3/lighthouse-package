@@ -1,10 +1,9 @@
 /* istanbul ignore file */
 const axios = require("axios");
 const { v4: uuidv4 } = require("uuid");
-const nacl = require("tweetnacl");
-const util = require("tweetnacl-util");
 
 const { encryptFile } = require("./encryptionBrowser");
+const encryptKey = require("../../encryption/encryptKey");
 const lighthouseConfig = require("../../../lighthouse.config");
 
 const readFileAsync = (file) => {
@@ -40,17 +39,9 @@ module.exports = async (e, accessToken, secretKey, publicKey) => {
     const fileEncryptionKey = uuidv4().toString();
 
     // Encrypt fileEncryptionKey
-    const nonce = nacl.randomBytes(24);
-    const encryptedKey = util.encodeBase64(
-      nacl.box(
-        util.decodeUTF8(fileEncryptionKey),
-        nonce,
-        util.decodeBase64(encryptionPublicKey),
-        util.decodeBase64(secretKey)
-      )
-    );
+    const encryptedKey = encryptKey(fileEncryptionKey, encryptionPublicKey, secretKey);
 
-    if (!encryptedKey) {
+    if (!encryptedKey.encryptedFileEncryptionKey) {
       throw new Error("Failed to encrypt key!!!");
     }
 
@@ -96,8 +87,8 @@ module.exports = async (e, accessToken, secretKey, publicKey) => {
     const data = {
       publicKey: publicKey.toLowerCase(),
       cid: response.data.Hash,
-      nonce: util.encodeBase64(nonce),
-      fileEncryptionKey: encryptedKey,
+      nonce: encryptedKey.nonce,
+      fileEncryptionKey: encryptedKey.encryptedFileEncryptionKey,
       fileName: response.data.Name,
       fileSizeInBytes: response.data.Size,
       sharedFrom: encryptionPublicKey,
@@ -108,7 +99,7 @@ module.exports = async (e, accessToken, secretKey, publicKey) => {
       lighthouseConfig.lighthouseAPI +
         "/api/encryption/save_file_encryption_key",
       data,
-      { headers: { Authorization: `Bearer ${accessToken}` } }
+      { headers: { Authorization: token } }
     );
 
     // return response
