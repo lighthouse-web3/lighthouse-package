@@ -7,11 +7,14 @@ const getUploads = require("./getUploads");
 const getContractAddress = require("./getContractAddress");
 const getEncryptionKeyPair = require("./encryption/getEncryptionKeyPair");
 const decryptPassword = require("./encryption/decryptPassword");
+const encryptKey = require("./encryption/encryptKey");
+const share = require("./encryption/decryptPassword");
 const status = require("./status");
 
 if (typeof window === "undefined") {
   const deploy = require("./deploy");
   const getQuote = require("./getQuote");
+  const uploadEncrypted = require("./deployEncrypted/node");
 
   module.exports = {
     deploy,
@@ -23,8 +26,11 @@ if (typeof window === "undefined") {
     getUploads,
     status,
     getContractAddress,
+    uploadEncrypted,
     getEncryptionKeyPair,
     decryptPassword,
+    encryptKey,
+    share
   };
 } else {
   const deploy = require("./deploy/browser");
@@ -43,5 +49,7 @@ if (typeof window === "undefined") {
     decryptFile,
     getEncryptionKeyPair,
     decryptPassword,
+    encryptKey,
+    share
   };
 }
