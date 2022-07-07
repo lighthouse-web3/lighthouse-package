@@ -4,6 +4,15 @@
 const defaultConfig = {
   lighthouseAPI: "https://api.lighthouse.storage",
   lighthouseNode: "https://node.lighthouse.storage",
+  lighthouseBLSAuthNode:
+    "http://ec2-13-232-52-9.ap-south-1.compute.amazonaws.com:8080",
+  lighthouseBLSNodes: [
+    "http://ec2-13-232-52-9.ap-south-1.compute.amazonaws.com/api/setSharedKey/1",
+    "http://ec2-13-232-52-9.ap-south-1.compute.amazonaws.com/api/setSharedKey/2",
+    "http://ec2-13-232-52-9.ap-south-1.compute.amazonaws.com/api/setSharedKey/3",
+    "http://ec2-13-232-52-9.ap-south-1.compute.amazonaws.com/api/setSharedKey/4",
+    "http://ec2-13-232-52-9.ap-south-1.compute.amazonaws.com/api/setSharedKey/5",
+  ],
   network: "polygon",
   gbInBytes: 1073741824,
   costPerGB: 5,
