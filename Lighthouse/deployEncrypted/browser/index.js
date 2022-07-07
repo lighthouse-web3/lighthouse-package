@@ -102,6 +102,7 @@ module.exports = async (e, accessToken, secretKey, publicKey) => {
     //   sharedTo: encryptionPublicKey,
     // };
 
+    // shade encryption key
     const { idData, keyShades } = await getKeyShades(
       encryptedKey.encryptedFileEncryptionKey
     );
@@ -113,6 +114,7 @@ module.exports = async (e, accessToken, secretKey, publicKey) => {
       data
     );
 
+    // send encryption key
     const sentShades = await Promise.all(
       lighthouseConfig.lighthouseBLSNodes.map((url, index) => {
         return axios.post(
