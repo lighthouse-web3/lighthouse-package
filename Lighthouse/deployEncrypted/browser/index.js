@@ -1,7 +1,7 @@
 /* istanbul ignore file */
 const axios = require("axios");
 const { v4: uuidv4 } = require("uuid");
-const { getKeyShades, randSelect } = require("./helper");
+const { getKeyShades, randSelect } = require("../../../Utils/bls_helper");
 const { encryptFile } = require("./encryptionBrowser");
 const encryptKey = require("../../encryption/encryptKey");
 const lighthouseConfig = require("../../../lighthouse.config");

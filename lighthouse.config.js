@@ -13,6 +13,13 @@ const defaultConfig = {
     "http://ec2-13-232-52-9.ap-south-1.compute.amazonaws.com/api/setSharedKey/4",
     "http://ec2-13-232-52-9.ap-south-1.compute.amazonaws.com/api/setSharedKey/5",
   ],
+  lighthouseBLSNodesRetrieval: [
+    "http://ec2-13-232-52-9.ap-south-1.compute.amazonaws.com/api/retrieveSharedKey/1",
+    "http://ec2-13-232-52-9.ap-south-1.compute.amazonaws.com/api/retrieveSharedKey/2",
+    "http://ec2-13-232-52-9.ap-south-1.compute.amazonaws.com/api/retrieveSharedKey/3",
+    "http://ec2-13-232-52-9.ap-south-1.compute.amazonaws.com/api/retrieveSharedKey/4",
+    "http://ec2-13-232-52-9.ap-south-1.compute.amazonaws.com/api/retrieveSharedKey/5",
+  ],
   network: "polygon",
   gbInBytes: 1073741824,
   costPerGB: 5,
