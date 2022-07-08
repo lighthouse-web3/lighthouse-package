@@ -1,3 +1,6 @@
+/* istanbul ignore file */
+/* Not in use currently, kept for future use */
+
 const axios = require("axios");
 const nacl = require("tweetnacl");
 const util = require("tweetnacl-util");
