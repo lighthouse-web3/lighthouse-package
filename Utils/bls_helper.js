@@ -1,4 +1,10 @@
-const bls = require("bls-eth-wasm");
+let bls = null;
+if (typeof window === "undefined") {
+  bls = eval("require")("bls-eth-wasm");
+} else{
+  bls = require("bls-eth-wasm/browser");
+}
+
 const k = 3;
 const n = 5;
 
