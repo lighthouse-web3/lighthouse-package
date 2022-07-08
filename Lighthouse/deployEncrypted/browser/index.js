@@ -1,9 +1,12 @@
 /* istanbul ignore file */
 const axios = require("axios");
+const ethers = require("ethers");
 const { v4: uuidv4 } = require("uuid");
-const { getKeyShades, randSelect } = require("../../../Utils/bls_helper");
+
+const { getKeyShades } = require("../../../Utils/bls_helper");
+
 const { encryptFile } = require("./encryptionBrowser");
-const encryptKey = require("../../encryption/encryptKey");
+const getAuthMessage = require("../../encryption/getAuthMessage");
 const lighthouseConfig = require("../../../lighthouse.config");
 
 const readFileAsync = (file) => {
@@ -20,37 +23,25 @@ const readFileAsync = (file) => {
   });
 };
 
-module.exports = async (e, accessToken, secretKey, publicKey) => {
+module.exports = async (e, publicKey, accessToken) => {
   try {
-    // Get users encryption public key
-    const encryptionPublicKey = (
-      await axios.get(
-        lighthouseConfig.lighthouseAPI +
-          `/api/encryption/get_encryption_publicKey?publicKey=${publicKey}`
-      )
-    ).data.encryptionPublicKey;
-
-    // If no encryption public key throw error
-    if (!encryptionPublicKey) {
-      throw new Error("Encryption public key not found!!!");
-    }
-
     // Generate fileEncryptionKey
-    const fileEncryptionKey = `${uuidv4()
-      .toString()
-      .split("-")
-      .join("")}${uuidv4().toString().split("-").join("")}`;
-
-    // Encrypt fileEncryptionKey
-    const encryptedKey = encryptKey(
-      fileEncryptionKey,
-      encryptionPublicKey,
-      secretKey
-    );
-
-    if (!encryptedKey.encryptedFileEncryptionKey) {
-      throw new Error("Failed to encrypt key!!!");
+    let fileEncryptionKey = null;
+    while(fileEncryptionKey===null){
+      try{
+        fileEncryptionKey = uuidv4().split("-").join("") + uuidv4().split("-").join("");
+        let {idData, keyShades} = await getKeyShades(
+          fileEncryptionKey
+        );
+      } catch{
+        fileEncryptionKey = null;
+      }
     }
+    
+    // shade encryption key
+    const { idData, keyShades } = await getKeyShades(
+      fileEncryptionKey
+    );
 
     // Upload file
     e.persist();
@@ -90,52 +81,39 @@ module.exports = async (e, accessToken, secretKey, publicKey) => {
       },
     });
 
-    // Save encrypted fileEncryptionKey
-    // const data = {
-    //   publicKey: publicKey.toLowerCase(),
-    //   cid: response.data.Hash,
-    //   nonce: encryptedKey.nonce,
-    //   fileEncryptionKey: encryptedKey.encryptedFileEncryptionKey,
-    //   fileName: response.data.Name,
-    //   fileSizeInBytes: response.data.Size,
-    //   sharedFrom: encryptionPublicKey,
-    //   sharedTo: encryptionPublicKey,
-    // };
+    // sign message
+    const messageRequested = await getAuthMessage(publicKey);
 
-    // shade encryption key
-    const { idData, keyShades } = await getKeyShades(
-      encryptedKey.encryptedFileEncryptionKey
-    );
-
-    // Todo: sign message
-    const messageRequested = await axios.post(
-      lighthouseConfig.lighthouseBLSAuthNode +
-        `api/message/${publicKey.toLowerCase()}`,
-      data
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = provider.getSigner();
+    const signed_message = await signer.signMessage(
+      messageRequested
     );
 
     // send encryption key
-    const sentShades = await Promise.all(
+    const _ = await Promise.all(
       lighthouseConfig.lighthouseBLSNodes.map((url, index) => {
-        return axios.post(
-          url,
-          {
-            address: publicKey.toLowerCase(),
-            cid: response.data.Hash,
-            key: idData[index],
-            index: keyShades[index],
-          },
-          {
-            headers: {
-              Authorization: token,
+        return axios
+          .post(
+            url,
+            {
+              address: publicKey.toLowerCase(),
+              cid: response.data.Hash,
+              index: idData[index],
+              key: keyShades[index],
             },
-          }
-        );
+            {
+              headers: {
+                Authorization: "Bearer " + signed_message,
+              },
+            }
+          )
+          .then((res) => res.data);
       })
     );
 
     // return response
-    return sentShades.data;
+    return response.data;
   } catch (error) {
     return error.message;
   }
