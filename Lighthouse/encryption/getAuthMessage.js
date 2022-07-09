@@ -1,15 +1,15 @@
 const axios = require("axios");
 const lighthouseConfig = require("../../lighthouse.config");
 
-module.exports = async(publicKey) =>{
-  try{
+module.exports = async (publicKey) => {
+  try {
     const messageRequested = await axios.post(
       lighthouseConfig.lighthouseBLSAuthNode +
         `/api/message/${publicKey.toLowerCase()}`
     );
-    
+
     return messageRequested.data[0]["message"];
-  } catch(error){
+  } catch (error) {
     return null;
   }
-}
+};

@@ -1,11 +1,14 @@
-const lighthouseConfig = require("../../lighthouse.config");
 const axios = require("axios");
+
+const lighthouseConfig = require("../../lighthouse.config");
 const { recoverKey, randSelect } = require("../../Utils/bls_helper");
 
 module.exports = async (cid, publicKey, signedMessage) => {
   const nodeIndexSelected = randSelect(3, 5);
   let nodeUrl = await Promise.all(
-    nodeIndexSelected.map((elem) => lighthouseConfig.lighthouseBLSNodesRetrieval[elem])
+    nodeIndexSelected.map(
+      (elem) => lighthouseConfig.lighthouseBLSNodesRetrieval[elem]
+    )
   );
 
   // send encryption key
@@ -24,7 +27,9 @@ module.exports = async (cid, publicKey, signedMessage) => {
             },
           }
         )
-        .then((res) => {return res.data});
+        .then((res) => {
+          return res.data;
+        });
     })
   );
 
