@@ -8,17 +8,21 @@ const util = require("tweetnacl-util");
 const lighthouseConfig = require("../../lighthouse.config");
 
 module.exports = async (publicKey, accessToken) => {
-  try{
+  try {
     const keyPair = nacl.box.keyPair();
 
-    const response = await axios.post(lighthouseConfig.lighthouseAPI + `/api/auth/save_encryption_publicKey`, {
-      publicKey: publicKey,
-      encryptionPublicKey: util.encodeBase64(keyPair.publicKey)
-    }, {
-      headers: { Authorization: `Bearer ${accessToken}` }
-    });
+    const response = await axios.post(
+      lighthouseConfig.lighthouseAPI + `/api/auth/save_encryption_publicKey`,
+      {
+        publicKey: publicKey,
+        encryptionPublicKey: util.encodeBase64(keyPair.publicKey),
+      },
+      {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      }
+    );
 
-    if(response.status !== 200){
+    if (response.status !== 200) {
       throw new Error("Internal Server Error!!!");
     }
 

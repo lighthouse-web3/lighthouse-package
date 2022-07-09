@@ -34,7 +34,7 @@ module.exports = async (
       })
     );
 
-    return("Shared");
+    return "Shared";
   } catch (error) {
     return error.message;
   }
