@@ -6,6 +6,7 @@ const lighthouseConfig = require("../../../lighthouse.config");
 module.exports = async (sourcePath, apiKey, publicKey, signed_message) => {
   try {
     const fs = eval("require")("fs");
+    const mime = eval("require")('mime-types');
     const NodeFormData = eval("require")("form-data");
     const { encryptFile } = eval("require")("./encryptionNode");
     const { getKeyShades } = eval("require")("../../../Utils/bls_helper");
@@ -17,28 +18,30 @@ module.exports = async (sourcePath, apiKey, publicKey, signed_message) => {
     if (stats.isFile()) {
       // Upload file
       const formDdata = new NodeFormData();
-      
+      const mimeType = mime.lookup(sourcePath);
+
       // Generate fileEncryptionKey
       let fileEncryptionKey = null;
-      while(fileEncryptionKey===null){
-        try{
-          fileEncryptionKey = uuidv4().split("-").join("") + uuidv4().split("-").join("");
-          let {idData, keyShades} = await getKeyShades(
-            fileEncryptionKey
-          );
-        } catch{
+      while (fileEncryptionKey === null) {
+        try {
+          fileEncryptionKey =
+            uuidv4().split("-").join("") + uuidv4().split("-").join("");
+          let { idData, keyShades } = await getKeyShades(fileEncryptionKey);
+        } catch {
           fileEncryptionKey = null;
         }
       }
 
       // shade encryption key
-      const { idData, keyShades } = await getKeyShades(
-        fileEncryptionKey
-      );
+      const { idData, keyShades } = await getKeyShades(fileEncryptionKey);
 
       const fileData = fs.readFileSync(sourcePath);
       const encryptedData = await encryptFile(fileData, fileEncryptionKey);
-      formDdata.append("file", Buffer.from(encryptedData), sourcePath.replace(/^.*[\\\/]/, ''));
+      formDdata.append(
+        "file",
+        Buffer.from(encryptedData),
+        sourcePath.replace(/^.*[\\\/]/, "")
+      );
 
       const response = await axios.post(endpoint, formDdata, {
         withCredentials: true,
@@ -46,39 +49,40 @@ module.exports = async (sourcePath, apiKey, publicKey, signed_message) => {
         maxBodyLength: "Infinity",
         headers: {
           "Content-type": `multipart/form-data; boundary= ${formDdata._boundary}`,
+          "Encryption": true,
+          "Mime-Type": mimeType,
           Authorization: token,
         },
       });
 
       // send encryption key
-    const _ = await Promise.all(
-      lighthouseConfig.lighthouseBLSNodes.map((url, index) => {
-        return axios
-          .post(
-            url,
-            {
-              address: publicKey.toLowerCase(),
-              cid: response.data.Hash,
-              index: idData[index],
-              key: keyShades[index],
-            },
-            {
-              headers: {
-                Authorization: "Bearer " + signed_message,
+      const _ = await Promise.all(
+        lighthouseConfig.lighthouseBLSNodes.map((url, index) => {
+          return axios
+            .post(
+              url,
+              {
+                address: publicKey.toLowerCase(),
+                cid: response.data.Hash,
+                index: idData[index],
+                key: keyShades[index],
               },
-            }
-          )
-          .then((res) => res.data);
-      })
-    );
+              {
+                headers: {
+                  Authorization: "Bearer " + signed_message,
+                },
+              }
+            )
+            .then((res) => res.data);
+        })
+      );
 
       // return response
       return response.data;
-    } else{
+    } else {
       throw new Error("Directory currently not supported!!!");
     }
   } catch (error) {
-    console.log(error)
     return error.message;
   }
 };

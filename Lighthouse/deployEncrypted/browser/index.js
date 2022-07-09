@@ -27,24 +27,25 @@ module.exports = async (e, publicKey, accessToken) => {
   try {
     // Generate fileEncryptionKey
     let fileEncryptionKey = null;
-    while(fileEncryptionKey===null){
-      try{
-        fileEncryptionKey = uuidv4().split("-").join("") + uuidv4().split("-").join("");
-        let {idData, keyShades} = await getKeyShades(
-          fileEncryptionKey
-        );
-      } catch{
+    while (fileEncryptionKey === null) {
+      try {
+        fileEncryptionKey =
+          uuidv4().split("-").join("") + uuidv4().split("-").join("");
+        let { idData, keyShades } = await getKeyShades(fileEncryptionKey);
+      } catch {
         fileEncryptionKey = null;
       }
     }
-    
+
     // shade encryption key
-    const { idData, keyShades } = await getKeyShades(
-      fileEncryptionKey
-    );
+    const { idData, keyShades } = await getKeyShades(fileEncryptionKey);
 
     // Upload file
     e.persist();
+    let mimeType = null;
+    if(e.target.files.length === 1){
+      mimeType = e.target.files[i].type;
+    }
     const endpoint = lighthouseConfig.lighthouseNode + "/api/v0/add";
     const token = "Bearer " + accessToken;
 
@@ -77,6 +78,8 @@ module.exports = async (e, publicKey, accessToken) => {
       maxBodyLength: "Infinity",
       headers: {
         "Content-type": `multipart/form-data; boundary= ${formData._boundary}`,
+        "Encryption": true,
+        "Mime-Type": mimeType,
         Authorization: token,
       },
     });
@@ -86,9 +89,7 @@ module.exports = async (e, publicKey, accessToken) => {
 
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     const signer = provider.getSigner();
-    const signed_message = await signer.signMessage(
-      messageRequested
-    );
+    const signed_message = await signer.signMessage(messageRequested);
 
     // send encryption key
     const _ = await Promise.all(
