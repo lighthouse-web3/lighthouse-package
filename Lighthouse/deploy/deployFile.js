@@ -10,10 +10,12 @@ const lighthouseConfig = require("../../lighthouse.config");
 
 module.exports = async (sourcePath, apiKey) => {
   const fs = eval("require")("fs");
+  const mime = eval("require")('mime-types');
   const NodeFormData = eval("require")("form-data");
   const recursive = eval("require")("recursive-fs");
   const basePathConverter = eval("require")("base-path-converter");
   const token = "Bearer " + apiKey;
+  
   try {
     const endpoint = lighthouseConfig.lighthouseNode + "/api/v0/add";
     const stats = fs.lstatSync(sourcePath);
@@ -21,6 +23,7 @@ module.exports = async (sourcePath, apiKey) => {
     if (stats.isFile()) {
       //we need to create a single read stream instead of reading the directory recursively
       const data = new NodeFormData();
+      const mimeType = mime.lookup(sourcePath);
 
       data.append("file", fs.createReadStream(sourcePath));
 
@@ -30,6 +33,8 @@ module.exports = async (sourcePath, apiKey) => {
         maxBodyLength: "Infinity",
         headers: {
           "Content-type": `multipart/form-data; boundary= ${data._boundary}`,
+          "Encryption": false,
+          "Mime-Type": mimeType,
           Authorization: token,
         },
       });
@@ -51,6 +56,8 @@ module.exports = async (sourcePath, apiKey) => {
         maxBodyLength: "Infinity", //this is needed to prevent axios from erroring out with large directories
         headers: {
           "Content-type": `multipart/form-data; boundary= ${data._boundary}`,
+          "Encryption": false,
+          "Mime-Type": null,
           Authorization: token,
         },
       });

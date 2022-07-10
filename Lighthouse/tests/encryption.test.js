@@ -1,81 +1,73 @@
-const axios = require("axios");
 const ethers = require("ethers");
 const lighthouse = require("..");
-const lighthouseConfig = require("../../lighthouse.config");
 
-test("getEncryptionKeyPair Main Case File", async () => {
-  const publicKey = "0xA3C960B3BA29367ecBCAf1430452C6cd7516F588";
-  const verificationMessage = (
-    await axios.get(
-      lighthouseConfig.lighthouseAPI +
-        `/api/auth/get_message?publicKey=${publicKey}`
-    )
-  ).data;
-  const provider = new ethers.getDefaultProvider();
-  const signer = new ethers.Wallet(
-    "0x6aa0ee41fa9cf65f90c06e5db8fa2834399b59b37974b21f2e405955630d472a",
-    provider
+const sign_auth_message = async(publicKey, privateKey) =>{
+  const provider = new ethers.providers.JsonRpcProvider();
+  const signer = new ethers.Wallet(privateKey, provider);
+  const messageRequested = await lighthouse.getAuthMessage(publicKey)
+  const signedMessage = await signer.signMessage(messageRequested);
+  return(signedMessage)
+}
+
+test("fetchEncryptionKey Main Case File", async () => {
+  const publicKey = "0xa3c960b3ba29367ecbcaf1430452c6cd7516f588";
+  const cid = "QmQF7wqkWUERTqrAE8nBW65si6Cz5poHHh6rRuMt21kaab";
+
+  const signed_message = await sign_auth_message(publicKey, "0x6aa0ee41fa9cf65f90c06e5db8fa2834399b59b37974b21f2e405955630d472a");
+
+  const key = await lighthouse.fetchEncryptionKey(
+    cid,
+    publicKey,
+    signed_message
   );
-  const signedMessage = await signer.signMessage(verificationMessage);
-  const apiKey = await lighthouse.getApiKey(publicKey, signedMessage);
 
-  const keyPair = await lighthouse.getEncryptionKeyPair(publicKey, apiKey);
-  expect(typeof keyPair.publicKey).toBe("string");
+  expect(typeof key).toBe("string");
+}, 60000);
+
+test("fetchEncryptionKey Not Authorized", async () => {
+  const publicKey = "0xa3c960b3ba29367ecbcaf1430452c6cd7516f588";
+  const cid = "QmQF7wqkWUERTqrAE8nBW65si6Cz5poHHh6rRuMt21kaab";
+
+  const signed_message = "0x6aa0ee41fa9cf65f90c06e5db8fa2834399b59b37974b21f2e405955630d472a";
+
+  const key = await lighthouse.fetchEncryptionKey(
+    cid,
+    publicKey,
+    signed_message
+  );
+  
+  expect(key).toBe(null);
 }, 60000);
 
 test("getEncryptionKeyPair Invalid Auth", async () => {
   const publicKey = "0xA3C960B3BA29367ecBCAf1430452C6cd7516F588";
   const keyPair = await lighthouse.getEncryptionKeyPair(publicKey, "apiKey");
+
   expect(keyPair).toBe(null);
 }, 20000);
 
-test("decryptPassword main", async () => {
-  const fileKey = await lighthouse.decryptPassword(
-    "zLSYKVmS/lYdoTnO3u1QL96MXGKCFwoY+47CQK/hnqfENIErZh9GLUwP0IltWkfjHmq5Kg==",
-    "rCOizyihaAdmGuzrQdpacQVboV4AE6vB",
-    "CFiNS1j2myN4pI3R48CSlc6bXs3DwYF7yJJ6O7KcNQ8=",
-    "6AGWK9dVbckocGcSkh4l5INkHKIDrmeRL2I9Wl9sWKM="
+test("getAuthMessage main", async () => {
+  const message = await lighthouse.getAuthMessage(
+    "0x1Ec09D4B3Cb565b7CCe2eEAf71CC90c9b46c5c26"
   );
-  expect(typeof fileKey).toBe("string");
+
+  expect(typeof message).toBe("string");
 }, 20000);
 
 test("Share main", async () => {
-  const publicKey = "0xA3C960B3BA29367ecBCAf1430452C6cd7516F588";
-  const verificationMessage = (
-    await axios.get(
-      lighthouseConfig.lighthouseAPI +
-        `/api/auth/get_message?publicKey=${publicKey}`
-    )
-  ).data;
-  const provider = new ethers.getDefaultProvider();
-  const signer = new ethers.Wallet(
-    "0x6aa0ee41fa9cf65f90c06e5db8fa2834399b59b37974b21f2e405955630d472a",
-    provider
-  );
-  const signedMessage = await signer.signMessage(verificationMessage);
-  const apiKey = await lighthouse.getApiKey(publicKey, signedMessage);
-  const postData = {
-    cid: "QmW5F7WqyDzd6zmC1ex8ooyC7aYjnvcv2eGbZ43n19WgnJ",
-    publicKey: "0xA3C960B3BA29367ecBCAf1430452C6cd7516F588",
-    fromPublicKey: "0xA3C960B3BA29367ecBCAf1430452C6cd7516F588",
-    fileName: "test.jpg",
-    nonce: "QwLx0+0cme3qUt3PRQCmsQBbnadC/14L",
-    fileSizeInBytes: 82958,
-    fileEncryptionKey: "YFpVJ0YMpi9y3DJdNqU/noTB7ktf9lFF9HIobDhp99vgCtgEGkgcHSS4h7KbvKLFEFGJsg==",
-    sharedFrom: "7x89ojvqRuzvSeK0A3/0KWRVUh36eIHWPadAeFDkIT8=",
-    sharedTo: "7x89ojvqRuzvSeK0A3/0KWRVUh36eIHWPadAeFDkIT8="
-  };
-  
-  const response = await axios.post(
-    lighthouseConfig.lighthouseAPI + "/api/encryption/save_file_encryption_key",
-    postData,
-    {headers: { Authorization: `Bearer ${apiKey}` }}
+  const publicKey = "0xa3c960b3ba29367ecbcaf1430452c6cd7516f588";
+  const cid = "QmQF7wqkWUERTqrAE8nBW65si6Cz5poHHh6rRuMt21kaab";
+  const key = "6afaa3e3ef6d40be8cc07156aae00e188b3082938ed34565b99a41e47a5d4ebb";
+  const signed_message = await sign_auth_message(publicKey, "0x6aa0ee41fa9cf65f90c06e5db8fa2834399b59b37974b21f2e405955630d472a");
+
+  const response = await lighthouse.shareFile(
+    publicKey,
+    "0x201Bcc3217E5AA8e803B41d1F5B6695fFEbD5CeD",
+    cid,
+    key,
+    signed_message
   );
 
-  expect(response.status).toBe(200);
+  expect(response).toBe("Shared");
 }, 60000);
 
-test("EncryptKey Main Case", async () => {
-  const encryptedKey = await lighthouse.encryptKey("random string", "5G6SIQkcpBYAY0xJpT6I1/JVe+s2zDdM4RXtqDhqbUU=", "zirVOldhZIs6SY9sk6wpEuZuB+YWlPvg2w8ik3+KaD8=");
-  expect(typeof encryptedKey.encryptedFileEncryptionKey).toBe("string");
-}, 20000);
