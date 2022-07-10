@@ -44,7 +44,7 @@ module.exports = async (e, publicKey, accessToken) => {
     e.persist();
     let mimeType = null;
     if(e.target.files.length === 1){
-      mimeType = e.target.files[i].type;
+      mimeType = e.target.files[0].type;
     }
     const endpoint = lighthouseConfig.lighthouseNode + "/api/v0/add";
     const token = "Bearer " + accessToken;

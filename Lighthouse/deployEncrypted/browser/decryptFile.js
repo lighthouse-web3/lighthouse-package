@@ -3,7 +3,7 @@ const axios = require("axios");
 const { decryptFile } = require("./encryptionBrowser");
 const lighthouseConfig = require("../../../lighthouse.config");
 
-module.exports = async (cid, fileEncryptionKey) => {
+module.exports = async (cid, fileEncryptionKey, mimeType=null) => {
   const result = await axios.post(
     lighthouseConfig.lighthouseNode + "/api/v0/cat/" + cid,
     null,
@@ -20,7 +20,11 @@ module.exports = async (cid, fileEncryptionKey) => {
   );
 
   if (decrypted) {
-    return new Blob([decrypted]);
+    if(mimeType){
+      return new Blob([decrypted], { type: mimeType });
+    } else{
+      return new Blob([decrypted]);
+    }
   } else {
     return null;
   }

@@ -8,7 +8,7 @@ module.exports = async (e, accessToken) => {
     e.persist();
     let mimeType = null;
     if(e.target.files.length === 1){
-      mimeType = e.target.files[i].type;
+      mimeType = e.target.files[0].type;
     }
 
     const formData = new FormData();
