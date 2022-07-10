@@ -1,15 +1,23 @@
 /* istanbul ignore file */
 const addCid = require("./addCid");
+const status = require("./status");
 const getApiKey = require("./getApiKey");
-const createWallet = require("./createWallet");
 const getBalance = require("./getBalance");
 const getUploads = require("./getUploads");
+const createWallet = require("./createWallet");
+
+// Get Contract Address
 const getContractAddress = require("./getContractAddress");
+
+// Encryption BLS
+const shareFile = require("./encryption/shareFile");
+const getAuthMessage = require("./encryption/getAuthMessage");
+const fetchEncryptionKey = require("./encryption/fetchEncryptionKey");
+
+// Key pair gen
 const getEncryptionKeyPair = require("./encryption/getEncryptionKeyPair");
 const decryptPassword = require("./encryption/decryptPassword");
 const encryptKey = require("./encryption/encryptKey");
-const share = require("./encryption/decryptPassword");
-const status = require("./status");
 
 if (typeof window === "undefined") {
   const deploy = require("./deploy");
@@ -30,12 +38,14 @@ if (typeof window === "undefined") {
     getEncryptionKeyPair,
     decryptPassword,
     encryptKey,
-    share
+    fetchEncryptionKey,
+    getAuthMessage,
+    shareFile
   };
 } else {
   const deploy = require("./deploy/browser");
-  const uploadEncrypted = require("./deployEncrypted/browser");
   const decryptFile = require("./deployEncrypted/browser/decryptFile");
+  const uploadEncrypted = require("./deployEncrypted/browser/index.js");
 
   module.exports = {
     deploy,
@@ -50,6 +60,8 @@ if (typeof window === "undefined") {
     getEncryptionKeyPair,
     decryptPassword,
     encryptKey,
-    share
+    fetchEncryptionKey,
+    getAuthMessage,
+    shareFile
   };
 }

@@ -2,7 +2,6 @@ const Conf = require("conf");
 const chalk = require("chalk");
 const ethers = require("ethers");
 const { resolve } = require("path");
-const { v4: uuidv4 } = require("uuid");
 const Spinner = require("cli-spinner").Spinner;
 
 const bytesToSize = require("../Utils/byteToSize");
@@ -119,18 +118,17 @@ const transactionLog = (txObj, network) => {
   }
 };
 
-const deploy = async (path, signer, apiKey, network, fileEncryptionKey, encryptedFileEncryptionKey, nonce) => {
+const deploy = async (path, signer, apiKey, network) => {
   let spinner = new Spinner("Uploading...");
   spinner.start();
 
+  const messageRequested = await lighthouse.getAuthMessage(config.get("LIGHTHOUSE_GLOBAL_PUBLICKEY"))
+  const signedMessage = await signer.signMessage(messageRequested);
   const deployResponse = await lighthouse.uploadEncrypted(
     path,
     apiKey,
     config.get("LIGHTHOUSE_GLOBAL_PUBLICKEY"),
-    config.get("LIGHTHOUSE_GLOBAL_ENC_PUBLIC_KEY"),
-    fileEncryptionKey,
-    encryptedFileEncryptionKey,
-    nonce
+    signedMessage
   );
 
   spinner.stop();
@@ -152,6 +150,11 @@ const deploy = async (path, signer, apiKey, network, fileEncryptionKey, encrypte
           "https://gateway.lighthouse.storage/ipfs/" +
           deployResponse.Hash +
           "\n"
+      ) +
+      chalk.cyan(
+        Array(7).fill("\xa0").join("") +
+          "https://ipfs.io/ipfs/" +
+          deployResponse.Hash
       )
   );
 
@@ -205,7 +208,7 @@ const deploy = async (path, signer, apiKey, network, fileEncryptionKey, encrypte
 
 module.exports = {
   command: "deploy-encrypted <path>",
-  desc: "Deploy a file with encryption",
+  desc: "Deploy a file",
   handler: async function (argv) {
     if (argv.help) {
       console.log(
@@ -221,7 +224,6 @@ module.exports = {
       );
     } else {
       try {
-        // config.delete("LIGHTHOUSE_GLOBAL_ENC_SECRET_KEY")
         // Import nodejs specific library
         const path = resolve(process.cwd(), argv.path);
         console.log(path);
@@ -263,32 +265,6 @@ module.exports = {
             "File size larger than allowed limit. Please Recharge!!!"
           );
         }
-        
-        if (!config.get("LIGHTHOUSE_GLOBAL_ENC_SECRET_KEY")) {
-          console.log(
-            chalk.yellow("Looks like you have not created encryption key-pair.") + 
-            chalk.yellow("\nCreate one now? y/n")
-          );
-          const createKP = await readInput(options);
-          if(
-            createKP.trim()=== "y" ||
-            createKP.trim()=== "Y" ||
-            createKP.trim()=== "yes"
-          ) {
-            const kp = await lighthouse.getEncryptionKeyPair(config.get("LIGHTHOUSE_GLOBAL_PUBLICKEY"), config.get("LIGHTHOUSE_GLOBAL_API_KEY"));
-            if(!kp){
-              throw new Error("Key pair generation failed.");
-            }
-            console.log(chalk.yellow("You encryption public key is: ") + kp.publicKey + 
-              chalk.yellow("\nYour encryption secret key is:") + kp.secretKey +
-              chalk.yellow("\nKeep the secret key safe with you.\n")
-            );
-            config.set("LIGHTHOUSE_GLOBAL_ENC_PUBLIC_KEY", kp.publicKey);
-            config.set("LIGHTHOUSE_GLOBAL_ENC_SECRET_KEY", kp.secretKey);
-          } else{
-            throw new Error("You need to generate encryption key pair first.");
-          }
-        }
 
         options = {
           prompt: "Enter your password: ",
@@ -310,11 +286,7 @@ module.exports = {
         );
         const signer = new ethers.Wallet(decryptedWallet.privateKey, provider);
         const apiKey = config.get("LIGHTHOUSE_GLOBAL_API_KEY");
-
-        const fileEncryptionKey = uuidv4().toString();
-        const encryptedKey = lighthouse.encryptKey(fileEncryptionKey, config.get("LIGHTHOUSE_GLOBAL_ENC_PUBLIC_KEY"), config.get("LIGHTHOUSE_GLOBAL_ENC_SECRET_KEY"));
-
-        await deploy(path, signer, apiKey, network, fileEncryptionKey, encryptedKey.encryptedFileEncryptionKey, encryptedKey.nonce);
+        await deploy(path, signer, apiKey, network);
       } catch (error) {
         console.log(chalk.red(error.message));
       }

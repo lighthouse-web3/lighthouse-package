@@ -1,9 +1,9 @@
 /* istanbul ignore file */
 const axios = require("axios");
-const { decryptFile } = require("./encryptionBrowser");
+const { decryptFile } = require("./encryptionNode");
 const lighthouseConfig = require("../../../lighthouse.config");
 
-module.exports = async (cid, fileEncryptionKey, mimeType=null) => {
+module.exports = async (cid, fileEncryptionKey) => {
   const result = await axios.post(
     lighthouseConfig.lighthouseNode + "/api/v0/cat/" + cid,
     null,
@@ -20,11 +20,7 @@ module.exports = async (cid, fileEncryptionKey, mimeType=null) => {
   );
 
   if (decrypted) {
-    if(mimeType){
-      return new Blob([decrypted], { type: mimeType });
-    } else{
-      return new Blob([decrypted]);
-    }
+    return decrypted
   } else {
     return null;
   }

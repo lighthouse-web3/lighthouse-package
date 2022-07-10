@@ -1,9 +1,12 @@
 /* istanbul ignore file */
 const axios = require("axios");
+const ethers = require("ethers");
 const { v4: uuidv4 } = require("uuid");
 
+const { getKeyShades } = require("../../../Utils/bls_helper");
+
 const { encryptFile } = require("./encryptionBrowser");
-const encryptKey = require("../../encryption/encryptKey");
+const getAuthMessage = require("../../encryption/getAuthMessage");
 const lighthouseConfig = require("../../../lighthouse.config");
 
 const readFileAsync = (file) => {
@@ -20,33 +23,29 @@ const readFileAsync = (file) => {
   });
 };
 
-module.exports = async (e, accessToken, secretKey, publicKey) => {
+module.exports = async (e, publicKey, accessToken) => {
   try {
-    // Get users encryption public key
-    const encryptionPublicKey = (
-      await axios.get(
-        lighthouseConfig.lighthouseAPI +
-          `/api/encryption/get_encryption_publicKey?publicKey=${publicKey}`
-      )
-    ).data.encryptionPublicKey;
-
-    // If no encryption public key throw error
-    if (!encryptionPublicKey) {
-      throw new Error("Encryption public key not found!!!");
-    }
-
     // Generate fileEncryptionKey
-    const fileEncryptionKey = uuidv4().toString();
-
-    // Encrypt fileEncryptionKey
-    const encryptedKey = encryptKey(fileEncryptionKey, encryptionPublicKey, secretKey);
-
-    if (!encryptedKey.encryptedFileEncryptionKey) {
-      throw new Error("Failed to encrypt key!!!");
+    let fileEncryptionKey = null;
+    while (fileEncryptionKey === null) {
+      try {
+        fileEncryptionKey =
+          uuidv4().split("-").join("") + uuidv4().split("-").join("");
+        let { idData, keyShades } = await getKeyShades(fileEncryptionKey);
+      } catch {
+        fileEncryptionKey = null;
+      }
     }
+
+    // shade encryption key
+    const { idData, keyShades } = await getKeyShades(fileEncryptionKey);
 
     // Upload file
     e.persist();
+    let mimeType = null;
+    if(e.target.files.length === 1){
+      mimeType = e.target.files[0].type;
+    }
     const endpoint = lighthouseConfig.lighthouseNode + "/api/v0/add";
     const token = "Bearer " + accessToken;
 
@@ -79,27 +78,39 @@ module.exports = async (e, accessToken, secretKey, publicKey) => {
       maxBodyLength: "Infinity",
       headers: {
         "Content-type": `multipart/form-data; boundary= ${formData._boundary}`,
+        "Encryption": true,
+        "Mime-Type": mimeType,
         Authorization: token,
       },
     });
 
-    // Save encrypted fileEncryptionKey
-    const data = {
-      publicKey: publicKey.toLowerCase(),
-      cid: response.data.Hash,
-      nonce: encryptedKey.nonce,
-      fileEncryptionKey: encryptedKey.encryptedFileEncryptionKey,
-      fileName: response.data.Name,
-      fileSizeInBytes: response.data.Size,
-      sharedFrom: encryptionPublicKey,
-      sharedTo: encryptionPublicKey,
-    };
+    // sign message
+    const messageRequested = await getAuthMessage(publicKey);
 
-    const _ = await axios.post(
-      lighthouseConfig.lighthouseAPI +
-        "/api/encryption/save_file_encryption_key",
-      data,
-      { headers: { Authorization: token } }
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = provider.getSigner();
+    const signed_message = await signer.signMessage(messageRequested);
+
+    // send encryption key
+    const _ = await Promise.all(
+      lighthouseConfig.lighthouseBLSNodes.map((url, index) => {
+        return axios
+          .post(
+            url,
+            {
+              address: publicKey.toLowerCase(),
+              cid: response.data.Hash,
+              index: idData[index],
+              key: keyShades[index],
+            },
+            {
+              headers: {
+                Authorization: "Bearer " + signed_message,
+              },
+            }
+          )
+          .then((res) => res.data);
+      })
     );
 
     // return response
