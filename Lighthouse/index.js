@@ -11,6 +11,7 @@ const getContractAddress = require("./getContractAddress");
 
 // Encryption BLS
 const shareFile = require("./encryption/shareFile");
+const accessCondition = require("./encryption/accessConditionFile");
 const getAuthMessage = require("./encryption/getAuthMessage");
 const fetchEncryptionKey = require("./encryption/fetchEncryptionKey");
 
@@ -40,7 +41,8 @@ if (typeof window === "undefined") {
     encryptKey,
     fetchEncryptionKey,
     getAuthMessage,
-    shareFile
+    shareFile,
+    accessCondition
   };
 } else {
   const deploy = require("./deploy/browser");
@@ -62,6 +64,7 @@ if (typeof window === "undefined") {
     encryptKey,
     fetchEncryptionKey,
     getAuthMessage,
-    shareFile
+    shareFile,
+    accessCondition
   };
 }

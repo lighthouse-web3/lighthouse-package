@@ -3,12 +3,12 @@ const axios = require("axios");
 const lighthouseConfig = require("../../lighthouse.config");
 const { recoverKey, randSelect } = require("../../Utils/bls_helper");
 
-module.exports = async (cid, publicKey, signedMessage) => {
+module.exports = async (cid, publicKey, signedMessage,directAccessMode=true) => {
   try {
     const nodeIndexSelected = randSelect(3, 5);
     let nodeUrl = await Promise.all(
       nodeIndexSelected.map(
-        (elem) => lighthouseConfig.lighthouseBLSNodesRetrieval[elem]
+        (elem) => directAccessMode? lighthouseConfig.lighthouseBLSNodesRetrieval[elem]: lighthouseConfig.lighthouseBLSNodesRetrievalAccessControl[elem]
       )
     );
 
