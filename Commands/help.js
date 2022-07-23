@@ -37,6 +37,9 @@ const showHelp = () => {
     "\ndeploy-encrypted" +
     Array(21).fill("\xa0").join("") +
     "Deploy a file with encryption" +
+    "\ndecrypt-file" +
+    Array(25).fill("\xa0").join("") +
+    "Decrypt and download the file" +
     "\nstatus" +
     Array(31).fill("\xa0").join("") +
     "Get metadata around the storage per CID" +
