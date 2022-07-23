@@ -10,18 +10,14 @@ module.exports = async (cid, fileEncryptionKey) => {
     {
       "Content-Type": "application/json",
       Accept: "application/octet-stream",
-      responseType: "blob",
+      responseType: "arraybuffer",
     }
   );
-
+  
   const decrypted = await decryptFile(
-    await result.data.arrayBuffer(),
+    result.data,
     fileEncryptionKey
   );
 
-  if (decrypted) {
-    return decrypted
-  } else {
-    return null;
-  }
+  return decrypted;
 };
