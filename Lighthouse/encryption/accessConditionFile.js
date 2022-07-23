@@ -13,10 +13,16 @@ module.exports = async (
   try {
     // shade encryption key
     const { idData, keyShades } = await getKeyShades(fileEncryptionKey);
-
+    
+    const nodeId = [1, 2, 3, 4, 5];
+    const nodeUrl = nodeId.map(
+      (elem) => 
+      lighthouseConfig.lighthouseBLSNode + "/api/fileAccessConditions/" + elem
+    );
+    
     // send encryption key
     const _ = await Promise.all(
-      lighthouseConfig.lighthouseBLSNodesAccessControl.map((url, index) => {
+      nodeUrl.map((url, index) => {
         return axios.post(
           url,
           {
