@@ -10,13 +10,13 @@ const lighthouse = require("../Lighthouse");
 const readInput = require("../Utils/readInput");
 const lighthouseConfig = require("../lighthouse.config");
 
-const sign_auth_message = async(publicKey, privateKey) =>{
+const sign_auth_message = async (publicKey, privateKey) => {
   const provider = new ethers.providers.JsonRpcProvider();
   const signer = new ethers.Wallet(privateKey, provider);
   const messageRequested = await lighthouse.getAuthMessage(publicKey);
   const signedMessage = await signer.signMessage(messageRequested);
-  return(signedMessage)
-}
+  return signedMessage;
+};
 
 module.exports = {
   command: "decrypt-file <cid>",
@@ -33,13 +33,17 @@ module.exports = {
         if (!config.get("LIGHTHOUSE_GLOBAL_PUBLICKEY")) {
           throw new Error("Please import wallet first!");
         }
-        
+
         // get file details
-        const fileDetails = (await axios.get(lighthouseConfig.lighthouseAPI + "/api/lighthouse/file_info?cid=" + argv.cid)).data;
-        if(!fileDetails){
-          throw new Error(
-            "Unable to get CID details."
-          );
+        const fileDetails = (
+          await axios.get(
+            lighthouseConfig.lighthouseAPI +
+              "/api/lighthouse/file_info?cid=" +
+              argv.cid
+          )
+        ).data;
+        if (!fileDetails) {
+          throw new Error("Unable to get CID details.");
         }
 
         // Get key
@@ -57,25 +61,33 @@ module.exports = {
         if (!decryptedWallet) {
           throw new Error("Incorrect password!");
         }
-        
-        const signedMessage = await sign_auth_message(config.get("LIGHTHOUSE_GLOBAL_PUBLICKEY"), decryptedWallet.privateKey);
+
+        const signedMessage = await sign_auth_message(
+          config.get("LIGHTHOUSE_GLOBAL_PUBLICKEY"),
+          decryptedWallet.privateKey
+        );
         const fileEncryptionKey = await lighthouse.fetchEncryptionKey(
           argv.cid,
           config.get("LIGHTHOUSE_GLOBAL_PUBLICKEY"),
           signedMessage
         );
-        
-        if(!fileEncryptionKey){
+
+        if (!fileEncryptionKey) {
           throw new Error(
             "Failed to decrypt. Check if you have access to the file."
           );
         }
 
         // Decrypt
-        const decryptedFile = await lighthouse.decryptFile(argv.cid, fileEncryptionKey)
+        const decryptedFile = await lighthouse.decryptFile(
+          argv.cid,
+          fileEncryptionKey
+        );
 
         // save file
-        fs.createWriteStream(fileDetails.fileName).write(Buffer.from(decryptedFile));
+        fs.createWriteStream(fileDetails.fileName).write(
+          Buffer.from(decryptedFile)
+        );
       } catch (error) {
         console.log(chalk.red(error.message));
       }

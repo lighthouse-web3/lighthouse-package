@@ -141,8 +141,7 @@ module.exports = {
         );
         if (version !== response.version) {
           console.log(
-            chalk.yellow("To update run  : ") +
-              "npm i -g @lighthouse-web3/sdk"
+            chalk.yellow("To update run  : ") + "npm i -g @lighthouse-web3/sdk"
           );
         }
       }
