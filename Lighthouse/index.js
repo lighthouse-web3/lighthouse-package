@@ -23,6 +23,7 @@ const encryptKey = require("./encryption/encryptKey");
 if (typeof window === "undefined") {
   const deploy = require("./deploy");
   const getQuote = require("./getQuote");
+  const decryptFile = require("./deployEncrypted/node/decryptFile");
   const uploadEncrypted = require("./deployEncrypted/node");
 
   module.exports = {
@@ -36,6 +37,7 @@ if (typeof window === "undefined") {
     status,
     getContractAddress,
     uploadEncrypted,
+    decryptFile,
     getEncryptionKeyPair,
     decryptPassword,
     encryptKey,
