@@ -1,10 +1,12 @@
-const { subtle, getRandomValues } = require("crypto").webcrypto;
+const { Crypto } = require("@peculiar/webcrypto");
+
+const crypto = new Crypto();
 
 const importKeyFromBytes = async (keyBytes) =>
-  subtle.importKey("raw", keyBytes, "PBKDF2", false, ["deriveKey"]);
+  crypto.subtle.importKey("raw", keyBytes, "PBKDF2", false, ["deriveKey"]);
 
 const deriveKey = async (sourceKey, keyUsage, keyDerivationParams) =>
-  subtle.deriveKey(
+  crypto.subtle.deriveKey(
     keyDerivationParams,
     sourceKey,
     { name: "AES-GCM", length: 256 },
@@ -17,8 +19,8 @@ const encryptFile = async (fileArrayBuffer, password) => {
     const plainTextBytes = new Uint8Array(fileArrayBuffer);
     const passwordBytes = new TextEncoder().encode(password);
 
-    const salt = getRandomValues(new Uint8Array(16));
-    const iv = getRandomValues(new Uint8Array(12));
+    const salt = crypto.getRandomValues(new Uint8Array(16));
+    const iv = crypto.getRandomValues(new Uint8Array(12));
 
     const passwordKey = await importKeyFromBytes(passwordBytes);
 
@@ -28,7 +30,7 @@ const encryptFile = async (fileArrayBuffer, password) => {
       iterations: 250000,
       hash: "SHA-256",
     });
-    const cipherBytes = await subtle.encrypt(
+    const cipherBytes = await crypto.subtle.encrypt(
       { name: "AES-GCM", iv: iv },
       aesKey,
       plainTextBytes
@@ -66,7 +68,7 @@ const decryptFile = async (cipher, password) => {
       hash: "SHA-256",
     });
 
-    const decryptedContent = await subtle.decrypt(
+    const decryptedContent = await crypto.subtle.decrypt(
       {
         name: "AES-GCM",
         iv: iv,

@@ -4,22 +4,7 @@
 const defaultConfig = {
   lighthouseAPI: "https://api.lighthouse.storage",
   lighthouseNode: "https://node.lighthouse.storage",
-  lighthouseBLSAuthNode:
-    "http://ec2-13-232-52-9.ap-south-1.compute.amazonaws.com:8080",
-  lighthouseBLSNodes: [
-    "http://ec2-13-232-52-9.ap-south-1.compute.amazonaws.com:80/api/setSharedKey/1",
-    "http://ec2-13-232-52-9.ap-south-1.compute.amazonaws.com:80/api/setSharedKey/2",
-    "http://ec2-13-232-52-9.ap-south-1.compute.amazonaws.com:80/api/setSharedKey/3",
-    "http://ec2-13-232-52-9.ap-south-1.compute.amazonaws.com:80/api/setSharedKey/4",
-    "http://ec2-13-232-52-9.ap-south-1.compute.amazonaws.com:80/api/setSharedKey/5",
-  ],
-  lighthouseBLSNodesRetrieval: [
-    "http://ec2-13-232-52-9.ap-south-1.compute.amazonaws.com:80/api/retrieveSharedKey/1",
-    "http://ec2-13-232-52-9.ap-south-1.compute.amazonaws.com:80/api/retrieveSharedKey/2",
-    "http://ec2-13-232-52-9.ap-south-1.compute.amazonaws.com:80/api/retrieveSharedKey/3",
-    "http://ec2-13-232-52-9.ap-south-1.compute.amazonaws.com:80/api/retrieveSharedKey/4",
-    "http://ec2-13-232-52-9.ap-south-1.compute.amazonaws.com:80/api/retrieveSharedKey/5",
-  ],
+  lighthouseBLSNode: "https://encryption.lighthouse.storage",
   network: "polygon",
   gbInBytes: 1073741824,
   costPerGB: 5,

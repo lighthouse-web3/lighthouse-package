@@ -37,6 +37,9 @@ const showHelp = () => {
     "\ndeploy-encrypted" +
     Array(21).fill("\xa0").join("") +
     "Deploy a file with encryption" +
+    "\ndecrypt-file" +
+    Array(25).fill("\xa0").join("") +
+    "Decrypt and download the file" +
     "\nstatus" +
     Array(31).fill("\xa0").join("") +
     "Get metadata around the storage per CID" +
@@ -138,8 +141,7 @@ module.exports = {
         );
         if (version !== response.version) {
           console.log(
-            chalk.yellow("To update run  : ") +
-              "npm i -g @lighthouse-web3/sdk"
+            chalk.yellow("To update run  : ") + "npm i -g @lighthouse-web3/sdk"
           );
         }
       }
