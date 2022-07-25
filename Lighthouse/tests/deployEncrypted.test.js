@@ -16,7 +16,7 @@ const signAuthMessage = async (publicKey, privateKey) => {
 test("deploy Encrypted Main Case File", async () => {
   const path = resolve(process.cwd(), "Utils/testImages/testImage1.svg");
 
-  const publicKey = "0x1Ec09D4B3Cb565b7CCe2eEAf71CC90c9b46c5c26";
+  const publicKey = "0x4f544A7a285E8B9cc948884acB9Cac4b267bBfc7";
 
   const verificationMessage = (
     await axios.get(
@@ -26,7 +26,7 @@ test("deploy Encrypted Main Case File", async () => {
   ).data;
   const provider = new ethers.getDefaultProvider();
   const signer = new ethers.Wallet(
-    "0xd7f1e7ccf6e3620327d3b29c57018d076305148eec487c57d8121beac0067895",
+    "0x8488d2c632da07a93647d7cf701ab6728a884467b1595f3c94007977a20b3539",
     provider
   );
   const signedMessage = await signer.signMessage(verificationMessage);
@@ -34,7 +34,7 @@ test("deploy Encrypted Main Case File", async () => {
 
   const signedMessageEncryption = await signAuthMessage(
     publicKey,
-    "0xd7f1e7ccf6e3620327d3b29c57018d076305148eec487c57d8121beac0067895"
+    "0x8488d2c632da07a93647d7cf701ab6728a884467b1595f3c94007977a20b3539"
   );
   const deployResponse = await lighthouse.deploy(path, apiKey, publicKey, signedMessageEncryption);
 
