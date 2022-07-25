@@ -1,6 +1,6 @@
 /* istanbul ignore file */
 const axios = require("axios");
-const { decryptFile } = require("./encryptionNode");
+const { decryptFile } = eval("require")("./encryptionNode");
 const lighthouseConfig = require("../../../lighthouse.config");
 
 module.exports = async (cid, fileEncryptionKey) => {
@@ -10,18 +10,11 @@ module.exports = async (cid, fileEncryptionKey) => {
     {
       "Content-Type": "application/json",
       Accept: "application/octet-stream",
-      responseType: "blob",
+      responseType: "arraybuffer",
     }
   );
 
-  const decrypted = await decryptFile(
-    await result.data.arrayBuffer(),
-    fileEncryptionKey
-  );
+  const decrypted = await decryptFile(result.data, fileEncryptionKey);
 
-  if (decrypted) {
-    return decrypted
-  } else {
-    return null;
-  }
+  return decrypted;
 };

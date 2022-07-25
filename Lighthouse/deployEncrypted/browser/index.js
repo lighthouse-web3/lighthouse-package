@@ -91,9 +91,15 @@ module.exports = async (e, publicKey, accessToken) => {
     const signer = provider.getSigner();
     const signed_message = await signer.signMessage(messageRequested);
 
+    const nodeId = [1, 2, 3, 4, 5];
+    const nodeUrl = nodeId.map(
+      (elem) => 
+      lighthouseConfig.lighthouseBLSNode + "/api/setSharedKey/" + elem
+    );
+
     // send encryption key
     const _ = await Promise.all(
-      lighthouseConfig.lighthouseBLSNodes.map((url, index) => {
+      nodeUrl.map((url, index) => {
         return axios
           .post(
             url,

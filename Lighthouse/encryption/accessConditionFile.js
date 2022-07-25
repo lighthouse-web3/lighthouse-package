@@ -4,10 +4,11 @@ const lighthouseConfig = require("../../lighthouse.config");
 
 module.exports = async (
   publicKey,
-  shareTo,
   cid,
   fileEncryptionKey,
-  signedMessage
+  signedMessage,
+  conditions,
+  aggregator = null
 ) => {
   try {
     // shade encryption key
@@ -15,7 +16,8 @@ module.exports = async (
 
     const nodeId = [1, 2, 3, 4, 5];
     const nodeUrl = nodeId.map(
-      (elem) => lighthouseConfig.lighthouseBLSNode + "/api/setSharedKey/" + elem
+      (elem) =>
+        lighthouseConfig.lighthouseBLSNode + "/api/fileAccessConditions/" + elem
     );
 
     // send encryption key
@@ -28,7 +30,8 @@ module.exports = async (
             cid: cid,
             index: idData[index],
             key: keyShades[index],
-            sharedTo: [shareTo.toLowerCase()],
+            conditions,
+            aggregator,
           },
           {
             headers: {

@@ -87,7 +87,7 @@ module.exports.randSelect = (k, n) => {
   let prev = -1;
   for (let i = 0; i < k; i++) {
     let v = randRange(prev + 1, n - (k - i) + 1);
-    a.push(v);
+    a.push(v + 1);
     prev = v;
   }
   return a;
