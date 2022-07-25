@@ -8,18 +8,18 @@ module.exports = async (
   fileEncryptionKey,
   signedMessage,
   conditions,
-  aggregator=null
+  aggregator = null
 ) => {
   try {
     // shade encryption key
     const { idData, keyShades } = await getKeyShades(fileEncryptionKey);
-    
+
     const nodeId = [1, 2, 3, 4, 5];
     const nodeUrl = nodeId.map(
-      (elem) => 
-      lighthouseConfig.lighthouseBLSNode + "/api/fileAccessConditions/" + elem
+      (elem) =>
+        lighthouseConfig.lighthouseBLSNode + "/api/fileAccessConditions/" + elem
     );
-    
+
     // send encryption key
     const _ = await Promise.all(
       nodeUrl.map((url, index) => {
@@ -31,7 +31,7 @@ module.exports = async (
             index: idData[index],
             key: keyShades[index],
             conditions,
-            aggregator
+            aggregator,
           },
           {
             headers: {

@@ -3,15 +3,20 @@ const axios = require("axios");
 const lighthouseConfig = require("../../lighthouse.config");
 const { recoverKey, randSelect } = require("../../Utils/bls_helper");
 
-module.exports = async (cid, publicKey, signedMessage, directAccessMode=true) => {
+module.exports = async (
+  cid,
+  publicKey,
+  signedMessage,
+  directAccessMode = true
+) => {
   try {
     const nodeIndexSelected = randSelect(3, 5);
-    const nodeUrl = nodeIndexSelected.map(
-      (elem) => 
-      directAccessMode? 
-        lighthouseConfig.lighthouseBLSNode + "/api/retrieveSharedKey/" + elem
-        :
-        lighthouseConfig.lighthouseBLSNode + "/api/fileAccessConditions/get/" + elem
+    const nodeUrl = nodeIndexSelected.map((elem) =>
+      directAccessMode
+        ? lighthouseConfig.lighthouseBLSNode + "/api/retrieveSharedKey/" + elem
+        : lighthouseConfig.lighthouseBLSNode +
+          "/api/fileAccessConditions/get/" +
+          elem
     );
 
     // send encryption key

@@ -6,7 +6,7 @@ const lighthouseConfig = require("../../../lighthouse.config");
 module.exports = async (sourcePath, apiKey, publicKey, signed_message) => {
   try {
     const fs = eval("require")("fs");
-    const mime = eval("require")('mime-types');
+    const mime = eval("require")("mime-types");
     const NodeFormData = eval("require")("form-data");
     const { encryptFile } = eval("require")("./encryptionNode");
     const { getKeyShades } = eval("require")("../../../Utils/bls_helper");
@@ -49,7 +49,7 @@ module.exports = async (sourcePath, apiKey, publicKey, signed_message) => {
         maxBodyLength: "Infinity",
         headers: {
           "Content-type": `multipart/form-data; boundary= ${formDdata._boundary}`,
-          "Encryption": true,
+          Encryption: true,
           "Mime-Type": mimeType,
           Authorization: token,
         },
@@ -57,8 +57,8 @@ module.exports = async (sourcePath, apiKey, publicKey, signed_message) => {
 
       const nodeId = [1, 2, 3, 4, 5];
       const nodeUrl = nodeId.map(
-        (elem) => 
-        lighthouseConfig.lighthouseBLSNode + "/api/setSharedKey/" + elem
+        (elem) =>
+          lighthouseConfig.lighthouseBLSNode + "/api/setSharedKey/" + elem
       );
 
       // send encryption key

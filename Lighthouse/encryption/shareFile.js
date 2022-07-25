@@ -15,8 +15,7 @@ module.exports = async (
 
     const nodeId = [1, 2, 3, 4, 5];
     const nodeUrl = nodeId.map(
-      (elem) => 
-      lighthouseConfig.lighthouseBLSNode + "/api/setSharedKey/" + elem
+      (elem) => lighthouseConfig.lighthouseBLSNode + "/api/setSharedKey/" + elem
     );
 
     // send encryption key
