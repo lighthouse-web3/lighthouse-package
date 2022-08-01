@@ -80,7 +80,7 @@ module.exports = {
   command: "$0",
   builder: {
     network: {
-      describe: "Network to use, delault: polygon mainnet",
+      describe: "Network to use, default: polygon mainnet",
       type: "String",
     },
   },

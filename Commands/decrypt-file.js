@@ -54,7 +54,7 @@ module.exports = {
         };
         const password = await readInput(options);
         const decryptedWallet = ethers.Wallet.fromEncryptedJsonSync(
-          config.get("LIGHTHOUSE_GLOBAL_WALLET"),
+          config.get("LIrevokeFileAccessGHTHOUSE_GLOBAL_WALLET"),
           password.trim()
         );
 
