@@ -18,13 +18,12 @@ module.exports = async (
     const _ = await Promise.all(
       nodeUrl.map((url, index) => {
         return axios.delete(
-          url,
-          {
+          url,{
+          data:{
             address: publicKey.toLowerCase(),
             cid: cid,
-            sharedTo: [revokeTo.toLowerCase()],
+            revokeTo: [revokeTo.toLowerCase()],
           },
-          {
             headers: {
               Authorization: "Bearer " + signedMessage,
             },
