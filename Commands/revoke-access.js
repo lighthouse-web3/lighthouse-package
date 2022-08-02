@@ -46,6 +46,10 @@ module.exports = {
           throw new Error("Unable to get CID details.");
         }
 
+        if (!ethers.utils.isAddress(argv.address)) {
+          throw new Error("Kindly Provide a valid address");
+        }
+
         // Get key
         options = {
           prompt: "Enter your password: ",
@@ -66,6 +70,7 @@ module.exports = {
           config.get("LIGHTHOUSE_GLOBAL_PUBLICKEY"),
           decryptedWallet.privateKey
         );
+
         const data = await lighthouse.revokeFileAccess(
           config.get("LIGHTHOUSE_GLOBAL_PUBLICKEY"),
           argv.address,

@@ -34,6 +34,6 @@ module.exports = async (
 
     return "Revoked";
   } catch (error) {
-    return error.message;
+    return null;
   }
 };
