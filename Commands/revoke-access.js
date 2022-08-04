@@ -24,30 +24,14 @@ module.exports = {
   handler: async function (argv) {
     if (argv.help) {
       console.log(
-        "\nlighthouse-web3 revoke-access <cid> <address>\n" +
+        "\r\nlighthouse-web3 revoke-access <cid> <address>\r\n" +
           chalk.green("Description: ") +
-          "Revoke Access on a file\n"
+          "Revoke Access on a file\r\n"
       );
     } else {
       try {
         if (!config.get("LIGHTHOUSE_GLOBAL_PUBLICKEY")) {
           throw new Error("Please import wallet first!");
-        }
-
-        // get file details
-        const fileDetails = (
-          await axios.get(
-            lighthouseConfig.lighthouseAPI +
-              "/api/lighthouse/file_info?cid=" +
-              argv.cid
-          )
-        ).data;
-        if (!fileDetails) {
-          throw new Error("Unable to get CID details.");
-        }
-
-        if (!ethers.utils.isAddress(argv.address)) {
-          throw new Error("Kindly Provide a valid address");
         }
 
         // Get key
@@ -71,13 +55,14 @@ module.exports = {
           decryptedWallet.privateKey
         );
 
-        const data = await lighthouse.revokeFileAccess(
+        const revokeResponse = await lighthouse.revokeFileAccess(
           config.get("LIGHTHOUSE_GLOBAL_PUBLICKEY"),
           argv.address,
           argv.cid,
           signedMessage
         );
-        console.log(chalk.white(data));
+
+        console.log(chalk.white(revokeResponse));
       } catch (error) {
         console.log(chalk.red(error.message));
       }
