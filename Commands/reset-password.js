@@ -11,7 +11,7 @@ module.exports = {
   handler: async function (argv) {
     if (argv.help) {
       console.log(
-        "lighthouse-web3 reset-password\n" +
+        "lighthouse-web3 reset-password\r\n" +
           chalk.green("Description: ") +
           "Change password of your wallet"
       );
@@ -50,7 +50,7 @@ module.exports = {
 
         console.log(
           chalk.cyan("Public Key: " + decryptedWallet.address) +
-            chalk.green("\nPassword reset successful")
+            chalk.green("\r\nPassword reset successful")
         );
       } catch (error) {
         console.log(chalk.red(error.message));
