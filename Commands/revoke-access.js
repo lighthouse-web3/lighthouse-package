@@ -1,14 +1,11 @@
 const Conf = require("conf");
 const chalk = require("chalk");
 
-const fs = require("fs");
 const ethers = require("ethers");
-const { default: axios } = require("axios");
 
 const config = new Conf();
 const lighthouse = require("../Lighthouse");
 const readInput = require("../Utils/readInput");
-const lighthouseConfig = require("../lighthouse.config");
 
 const sign_auth_message = async (publicKey, privateKey) => {
   const provider = new ethers.providers.JsonRpcProvider();
