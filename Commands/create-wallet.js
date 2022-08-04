@@ -14,12 +14,12 @@ module.exports = {
   handler: async function (argv) {
     if (argv.help) {
       console.log(
-        "\nlighthouse-web3 create-wallet\n" +
+        "\r\nlighthouse-web3 create-wallet\r\n" +
           chalk.green("Description: ") +
-          "Creates a new wallet\n" +
+          "Creates a new wallet\r\n" +
           chalk.magenta("Example:") +
           Array(5).fill("\xa0").join("") +
-          "lighthouse-web3 create-wallet\n"
+          "lighthouse-web3 create-wallet\r\n"
       );
     } else {
       try {
@@ -58,7 +58,7 @@ module.exports = {
 
               console.log(
                 chalk.cyan("Public Key: " + publicKey) +
-                  chalk.green("\nWallet Created!")
+                  chalk.green("\r\nWallet Created!")
               );
             }
           }

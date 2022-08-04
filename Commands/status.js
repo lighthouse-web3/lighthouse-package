@@ -5,19 +5,19 @@ const lighthouse = require("../Lighthouse");
 
 const showResponse = (status) => {
   console.log(
-    chalk.yellow("\nCID:") +
+    chalk.yellow("\r\nCID:") +
       Array(9).fill("\xa0").join("") +
       status[0]["content"]["cid"] +
-      chalk.yellow("\nName:") +
+      chalk.yellow("\r\nName:") +
       Array(8).fill("\xa0").join("") +
       status[0]["content"]["name"] +
-      chalk.yellow("\nSize:") +
+      chalk.yellow("\r\nSize:") +
       Array(8).fill("\xa0").join("") +
       bytesToSize(status[0]["content"]["size"]) +
-      chalk.yellow("\nReplication:") +
+      chalk.yellow("\r\nReplication:") +
       Array(1).fill("\xa0").join("") +
       status[0]["content"]["replication"] +
-      "\n"
+      "\r\n"
   );
 
   for (let i = 0; i < status.length; i++) {
@@ -51,8 +51,8 @@ module.exports = {
   handler: async function (argv) {
     if (argv.help) {
       console.log(
-        "lighthouse-web3 status <cid>\n" +
-          chalk.green("\nDescription: ") +
+        "lighthouse-web3 status <cid>\r\n" +
+          chalk.green("\r\nDescription: ") +
           "Get storage status of a CID"
       );
     } else {

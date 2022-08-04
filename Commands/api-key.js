@@ -15,27 +15,27 @@ module.exports = {
   handler: async function (argv) {
     if (argv.help) {
       console.log(
-        "lighthouse-web3 api-key\n" +
+        "lighthouse-web3 api-key\r\n" +
           chalk.green("Description: ") +
-          "Get a new api key\n" +
-          chalk.green("Options: \n") +
+          "Get a new api key\r\n" +
+          chalk.green("Options: \r\n") +
           Array(3).fill("\xa0").join("") +
-          "-- new: To create new api key\n" +
+          "-- new: To create new api key\r\n" +
           Array(3).fill("\xa0").join("") +
-          "- import: To import existing api-key\n" +
-          chalk.magenta("Example: \n") +
+          "-- import: To import existing api-key\r\n" +
+          chalk.magenta("Example: \r\n") +
           Array(5).fill("\xa0").join("") +
-          "lighthouse-web3 api-key --import 937b68b8-3768-45d1-950b-30c3836785d1\n"
+          "lighthouse-web3 api-key --import 937b68b8-3768-45d1-950b-30c3836785d1\r\n"
       );
     } else {
       if (argv.import) {
         config.set("LIGHTHOUSE_GLOBAL_API_KEY", argv.import);
-        console.log(chalk.green("\nApi Key imported!!"));
+        console.log(chalk.green("\r\nApi Key imported!!"));
       } else {
         try {
           if (config.get("LIGHTHOUSE_GLOBAL_API_KEY") && !argv.new) {
             console.log(
-              chalk.yellow("\nApi Key: ") +
+              chalk.yellow("\r\nApi Key: ") +
                 config.get("LIGHTHOUSE_GLOBAL_API_KEY")
             );
           } else {
@@ -70,7 +70,7 @@ module.exports = {
             );
 
             config.set("LIGHTHOUSE_GLOBAL_API_KEY", apiKey);
-            console.log(chalk.yellow("\nApi Key: ") + apiKey);
+            console.log(chalk.yellow("\r\nApi Key: ") + apiKey);
           }
         } catch (error) {
           console.log(chalk.red(error.message));

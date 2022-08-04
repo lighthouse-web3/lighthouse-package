@@ -16,9 +16,9 @@ module.exports = {
   handler: async function (argv) {
     if (argv.help) {
       console.log(
-        "lighthouse-web3 balance\n" +
+        "lighthouse-web3 balance\r\n" +
           chalk.green("Description: ") +
-          "Get data limit and usage of your account.\n"
+          "Get data limit and usage of your account.\r\n"
       );
     } else {
       try {
@@ -41,13 +41,13 @@ module.exports = {
         }
 
         console.log(
-          chalk.yellow("\nData Limit: ") +
+          chalk.yellow("\r\nData Limit: ") +
             Array(4).fill("\xa0").join("") +
             byteToSize(parseInt(balance.dataLimit)) +
-            chalk.yellow("\nData Used: ") +
+            chalk.yellow("\r\nData Used: ") +
             Array(5).fill("\xa0").join("") +
             byteToSize(parseInt(balance.dataUsed)) +
-            chalk.yellow("\nData Remaining: ") +
+            chalk.yellow("\r\nData Remaining: ") +
             byteToSize(parseInt(balance.dataLimit) - parseInt(balance.dataUsed))
         );
 
@@ -81,7 +81,7 @@ module.exports = {
             provider
           );
           console.log(
-            chalk.yellow("\nUSDT Balance: ") +
+            chalk.yellow("\r\nUSDT Balance: ") +
               Array(2).fill("\xa0").join("") +
               ethers.utils.formatUnits(
                 await contractUSDT.balanceOf(

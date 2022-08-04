@@ -14,12 +14,12 @@ module.exports = {
   handler: async function (argv) {
     if (argv.help) {
       console.log(
-        "\nlighthouse-web3 import-wallet\n" +
+        "\r\nlighthouse-web3 import-wallet\r\n" +
           chalk.green("Description: ") +
-          "Import an existing wallet\n" +
-          chalk.magenta("Example: \n") +
+          "Import an existing wallet\r\n" +
+          chalk.magenta("Example: \r\n") +
           Array(5).fill("\xa0").join("") +
-          "lighthouse-web3 import-wallet --key 0xlkjhcf1721e6e1828a15c72c1d2aa80c633e45574cb60f5e821681999f3d1700\n"
+          "lighthouse-web3 import-wallet --key 0xlkjhcf1721e6e1828a15c72c1d2aa80c633e45574cb60f5e821681999f3d1700\r\n"
       );
     } else {
       try {
@@ -46,7 +46,7 @@ module.exports = {
 
         console.log(
           chalk.cyan("Public Key: " + wallet.address) +
-            chalk.green("\nWallet Imported!")
+            chalk.green("\r\nWallet Imported!")
         );
       } catch (error) {
         console.log(chalk.red(error.message));

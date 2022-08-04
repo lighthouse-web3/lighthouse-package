@@ -24,9 +24,9 @@ module.exports = {
   handler: async function (argv) {
     if (argv.help) {
       console.log(
-        "\nlighthouse-web3 decrypt-file <cid>\n" +
+        "\r\nlighthouse-web3 decrypt-file <cid>\r\n" +
           chalk.green("Description: ") +
-          "Decrypt and download a file\n"
+          "Decrypt and download a file\r\n"
       );
     } else {
       try {

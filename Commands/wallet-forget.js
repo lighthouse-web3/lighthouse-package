@@ -9,9 +9,9 @@ module.exports = {
   handler: async function (argv) {
     if (argv.help) {
       console.log(
-        "\nlighthouse-web3 wallet-forget\n" +
+        "\r\nlighthouse-web3 wallet-forget\r\n" +
           chalk.green("Description: ") +
-          "Removes previously saved wallet\n"
+          "Removes previously saved wallet\r\n"
       );
     } else {
       config.delete("LIGHTHOUSE_GLOBAL_WALLET");
