@@ -40,6 +40,9 @@ const showHelp = () => {
     "\r\ndecrypt-file" +
     Array(25).fill("\xa0").join("") +
     "Decrypt and download the file" +
+    "\r\nrevoke-access" +
+    Array(24).fill("\xa0").join("") +
+    "Revoke direct access the file" +
     "\r\nstatus" +
     Array(31).fill("\xa0").join("") +
     "Get metadata around the storage per CID" +

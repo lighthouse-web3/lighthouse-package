@@ -16,7 +16,7 @@ const sign_auth_message = async (publicKey, privateKey) => {
 };
 
 module.exports = {
-  command: "revoke-access <cid> <address>",
+  command: "revoke-access [cid] [address]",
   desc: "Revoke Access on a file",
   handler: async function (argv) {
     if (argv.help) {
@@ -64,5 +64,38 @@ module.exports = {
         console.log(chalk.red(error.message));
       }
     }
+  },
+  builder: function (yargs) {
+    yargs
+      .option("a", {
+        alias: "address",
+        demandOption: true,
+        describe: "user's Address",
+        type: "string",
+      })
+      .option("c", {
+        alias: "cid",
+        demandOption: true,
+        describe: "file CID",
+        type: "string",
+      })
+      .check((argv, options) => {
+        // check if valid Address
+        if (!ethers.utils.isAddress(argv.address)) {
+          console.log(chalk.red("Invalid Address"));
+          throw new Error("Invalid Address");
+        }
+        if (
+          argv.cid.startsWith("Qm") &&
+          !(/^[A-HJ-NP-Za-km-z1-9]*$/.test(argv.cid) && argv.cid.length == 46)
+        ) {
+          console.log(chalk.red("Invalid CID"));
+          throw new Error("Invalid CID");
+        } else if (argv.cid.length <= 50|| !argv.cid.startsWith("b")) {
+          console.log(chalk.red("Invalid CID"));
+          throw new Error("Invalid CID");
+        }
+        return true;
+      });
   },
 };
