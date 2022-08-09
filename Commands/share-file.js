@@ -1,6 +1,6 @@
 const Conf = require("conf");
 const chalk = require("chalk");
-
+const { isAddress, isCID } = require("../Utils/util");
 const ethers = require("ethers");
 
 const config = new Conf();
@@ -16,7 +16,7 @@ const sign_auth_message = async (publicKey, privateKey) => {
 };
 
 module.exports = {
-  command: "share-file <cid> <address>",
+  command: "share-file [cid] [address]",
   desc: "Share access to other user",
   handler: async function (argv) {
     if (argv.help) {
@@ -57,8 +57,8 @@ module.exports = {
           config.get("LIGHTHOUSE_GLOBAL_PUBLICKEY"),
           signedMessage1
         );
-        if(!fileEncryptionKey) {
-          throw new Error("Wallet address is not owner of file!!!")
+        if (!fileEncryptionKey) {
+          throw new Error("Wallet address is not owner of file!!!");
         }
 
         const signedMessage2 = await sign_auth_message(
@@ -79,5 +79,33 @@ module.exports = {
         console.log(chalk.red(error.message));
       }
     }
+  },
+  builder: function (yargs) {
+    yargs
+      .option("a", {
+        alias: "address",
+        demandOption: true,
+        describe: "user's Address",
+        type: "string",
+      })
+      .option("c", {
+        alias: "cid",
+        demandOption: true,
+        describe: "file CID",
+        type: "string",
+      })
+      .help()
+      .check((argv, options) => {
+        // check if valid Address
+        if (!isAddress(argv.address)) {
+          console.log(chalk.red("Invalid Address"));
+          throw new Error("Invalid Address");
+        }
+        if (!isCID(argv.cid)) {
+          console.log(chalk.red("Invalid CID"));
+          throw new Error("Invalid CID");
+        }
+        return true;
+      });
   },
 };

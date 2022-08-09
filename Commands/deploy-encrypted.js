@@ -122,7 +122,9 @@ const deploy = async (path, signer, apiKey, network) => {
   let spinner = new Spinner("Uploading...");
   spinner.start();
 
-  const messageRequested = await lighthouse.getAuthMessage(config.get("LIGHTHOUSE_GLOBAL_PUBLICKEY"))
+  const messageRequested = await lighthouse.getAuthMessage(
+    config.get("LIGHTHOUSE_GLOBAL_PUBLICKEY")
+  );
   const signedMessage = await signer.signMessage(messageRequested);
   const deployResponse = await lighthouse.uploadEncrypted(
     path,
@@ -207,7 +209,7 @@ const deploy = async (path, signer, apiKey, network) => {
 };
 
 module.exports = {
-  command: "deploy-encrypted <path>",
+  command: "deploy-encrypted [path]",
   desc: "Deploy a file",
   handler: async function (argv) {
     if (argv.help) {
@@ -291,5 +293,19 @@ module.exports = {
         console.log(chalk.red(error.message));
       }
     }
+  },
+  builder: function (yargs) {
+    yargs
+      .option("p", {
+        alias: "path",
+        demandOption: true,
+        describe: "path",
+        type: "string",
+      })
+      .help()
+      .check((argv, options) => {
+        // TODO: check if argv.path is valid
+        return true;
+      });
   },
 };

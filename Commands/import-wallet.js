@@ -2,6 +2,7 @@ const axios = require("axios");
 const Conf = require("conf");
 const chalk = require("chalk");
 const ethers = require("ethers");
+const { isPrivateKey } = require("../Utils/util");
 
 const readInput = require("../Utils/readInput");
 const lighthouseConfig = require("../lighthouse.config");
@@ -9,7 +10,7 @@ const lighthouseConfig = require("../lighthouse.config");
 const config = new Conf();
 
 module.exports = {
-  command: "import-wallet <privateKey>",
+  command: "import-wallet [privateKey]",
   desc: "Import an existing wallet",
   handler: async function (argv) {
     if (argv.help) {
@@ -52,5 +53,22 @@ module.exports = {
         console.log(chalk.red(error.message));
       }
     }
+  },
+  builder: function (yargs) {
+    yargs
+      .option("k", {
+        alias: ["privateKey", "key"],
+        demandOption: true,
+        describe: "account's private Key",
+        type: "string",
+      })
+      .help()
+      .check((argv, options) => {
+        console.log(argv);
+        if (!isPrivateKey(argv.privateKey.replace("0x", ""))) {
+          throw new Error("Invalid PrivateKey");
+        }
+        return true;
+      });
   },
 };

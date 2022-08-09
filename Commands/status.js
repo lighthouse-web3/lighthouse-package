@@ -1,5 +1,4 @@
 const chalk = require("chalk");
-
 const bytesToSize = require("../Utils/byteToSize");
 const lighthouse = require("../Lighthouse");
 

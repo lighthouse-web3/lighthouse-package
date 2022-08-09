@@ -19,7 +19,7 @@ const sign_auth_message = async (publicKey, privateKey) => {
 };
 
 module.exports = {
-  command: "decrypt-file <cid>",
+  command: "decrypt-file [cid]",
   desc: "Decrypt and download a file",
   handler: async function (argv) {
     if (argv.help) {
@@ -92,5 +92,22 @@ module.exports = {
         console.log(chalk.red(error.message));
       }
     }
+  },
+  builder: function (yargs) {
+    yargs
+      .option("c", {
+        alias: "cid",
+        demandOption: true,
+        describe: "file CID",
+        type: "string",
+      })
+      .help()
+      .check((argv, options) => {
+        if (!isCID(argv.cid)) {
+          console.log(chalk.red("Invalid CID"));
+          throw new Error("Invalid CID");
+        }
+        return true;
+      });
   },
 };

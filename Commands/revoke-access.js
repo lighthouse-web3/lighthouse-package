@@ -1,5 +1,6 @@
 const Conf = require("conf");
 const chalk = require("chalk");
+const { isAddress, isCID } = require("../Utils/util");
 
 const ethers = require("ethers");
 
@@ -79,19 +80,14 @@ module.exports = {
         describe: "file CID",
         type: "string",
       })
+      .help()
       .check((argv, options) => {
         // check if valid Address
-        if (!ethers.utils.isAddress(argv.address)) {
+        if (!isAddress(argv.address)) {
           console.log(chalk.red("Invalid Address"));
           throw new Error("Invalid Address");
         }
-        if (
-          argv.cid.startsWith("Qm") &&
-          !(/^[A-HJ-NP-Za-km-z1-9]*$/.test(argv.cid) && argv.cid.length == 46)
-        ) {
-          console.log(chalk.red("Invalid CID"));
-          throw new Error("Invalid CID");
-        } else if (argv.cid.length <= 50|| !argv.cid.startsWith("b")) {
+        if (!isCID(argv.cid)) {
           console.log(chalk.red("Invalid CID"));
           throw new Error("Invalid CID");
         }
