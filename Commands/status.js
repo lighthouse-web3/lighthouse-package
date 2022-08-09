@@ -1,6 +1,7 @@
 const chalk = require("chalk");
 const bytesToSize = require("../Utils/byteToSize");
 const lighthouse = require("../Lighthouse");
+const { isCID } = require("../Utils/util");
 
 const showResponse = (status) => {
   console.log(
@@ -45,7 +46,7 @@ const showResponse = (status) => {
 };
 
 module.exports = {
-  command: "status <cid>",
+  command: "status [cid]",
   desc: "Get storage status of a CID",
   handler: async function (argv) {
     if (argv.help) {
@@ -66,5 +67,22 @@ module.exports = {
         console.log(chalk.red(error.message));
       }
     }
+  },
+  builder: function (yargs) {
+    yargs
+      .option("c", {
+        alias: "cid",
+        demandOption: true,
+        describe: "file CID",
+        type: "string",
+      })
+      .help()
+      .check((argv, options) => {
+        if (!isCID(argv.cid)) {
+          console.log(chalk.red("Invalid CID"));
+          throw new Error("Invalid CID");
+        }
+        return true;
+      });
   },
 };

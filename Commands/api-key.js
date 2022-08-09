@@ -78,4 +78,24 @@ module.exports = {
       }
     }
   },
+  builder: function (yargs) {
+    yargs
+      .option("n", {
+        alias: ["new", "newKey"],
+        describe: "request new key",
+        type: "boolean",
+      })
+      .option("i", {
+        alias: ["import", "importKey"],
+        describe: "import Key",
+        type: "string",
+      })
+      .check((argv, options) => {
+        if (!argv.new && argv.i.length < 8) {
+          throw new Error("Invalid API key");
+        }
+        return true;
+      })
+      .help("h");
+  },
 };

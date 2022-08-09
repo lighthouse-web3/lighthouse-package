@@ -285,4 +285,18 @@ module.exports = {
       }
     }
   },
+  builder: function (yargs) {
+    yargs
+      .option("p", {
+        alias: "path",
+        demandOption: true,
+        describe: "path",
+        type: "string",
+      })
+      .help()
+      .check((argv, options) => {
+        // TODO: check if argv.path is valid
+        return true;
+      });
+  },
 };

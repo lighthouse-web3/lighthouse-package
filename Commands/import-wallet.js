@@ -64,7 +64,6 @@ module.exports = {
       })
       .help()
       .check((argv, options) => {
-        console.log(argv);
         if (!isPrivateKey(argv.privateKey.replace("0x", ""))) {
           throw new Error("Invalid PrivateKey");
         }

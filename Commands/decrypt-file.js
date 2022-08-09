@@ -1,5 +1,6 @@
 const Conf = require("conf");
 const chalk = require("chalk");
+const { isCID } = require("../Utils/util");
 
 const fs = require("fs");
 const ethers = require("ethers");
@@ -24,7 +25,7 @@ module.exports = {
   handler: async function (argv) {
     if (argv.help) {
       console.log(
-        "\r\nlighthouse-web3 decrypt-file <cid>\r\n" +
+        "\r\nlighthouse-web3 decrypt-file [cid]\r\n" +
           chalk.green("Description: ") +
           "Decrypt and download a file\r\n"
       );
