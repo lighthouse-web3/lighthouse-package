@@ -2,10 +2,9 @@ const ethers = require("ethers");
 
 const isCID = (cid) => {
   if (
-    cid.startsWith("Qm") &&
-    !(/^[A-HJ-NP-Za-km-z1-9]*$/.test(cid) && cid.length == 46)
+    cid.startsWith("Qm")
   ) {
-    return false;
+    return (/^[A-HJ-NP-Za-km-z1-9]*$/.test(cid) && cid.length == 46);
   } else if (cid.length <= 50 || !cid.startsWith("b")) {
     return false;
   }
