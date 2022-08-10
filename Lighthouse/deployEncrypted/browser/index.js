@@ -1,12 +1,10 @@
 /* istanbul ignore file */
 const axios = require("axios");
-const ethers = require("ethers");
 const { v4: uuidv4 } = require("uuid");
 
 const { getKeyShades } = require("../../../Utils/bls_helper");
 
 const { encryptFile } = require("./encryptionBrowser");
-const getAuthMessage = require("../../encryption/getAuthMessage");
 const lighthouseConfig = require("../../../lighthouse.config");
 
 const readFileAsync = (file) => {
@@ -23,7 +21,7 @@ const readFileAsync = (file) => {
   });
 };
 
-module.exports = async (e, publicKey, accessToken) => {
+module.exports = async (e, publicKey, accessToken, signedMessage) => {
   try {
     // Generate fileEncryptionKey
     let fileEncryptionKey = null;
@@ -84,13 +82,6 @@ module.exports = async (e, publicKey, accessToken) => {
       },
     });
 
-    // sign message
-    const messageRequested = await getAuthMessage(publicKey);
-
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-    const signer = provider.getSigner();
-    const signed_message = await signer.signMessage(messageRequested);
-
     const nodeId = [1, 2, 3, 4, 5];
     const nodeUrl = nodeId.map(
       (elem) => 
@@ -111,7 +102,7 @@ module.exports = async (e, publicKey, accessToken) => {
             },
             {
               headers: {
-                Authorization: "Bearer " + signed_message,
+                Authorization: "Bearer " + signedMessage,
               },
             }
           )
