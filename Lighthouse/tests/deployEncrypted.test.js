@@ -36,8 +36,8 @@ test("deploy Encrypted Main Case File", async () => {
     publicKey,
     "0x8488d2c632da07a93647d7cf701ab6728a884467b1595f3c94007977a20b3539"
   );
-  const deployResponse = await lighthouse.deploy(path, apiKey, publicKey, signedMessageEncryption);
-
+  const deployResponse = await lighthouse.uploadEncrypted(path, apiKey, publicKey, signedMessageEncryption);
+    console.log(deployResponse)
   expect(deployResponse).toHaveProperty("Name");
   expect(typeof deployResponse["Name"]).toBe("string");
 
@@ -46,17 +46,5 @@ test("deploy Encrypted Main Case File", async () => {
 
   expect(deployResponse).toHaveProperty("Size");
   expect(typeof deployResponse["Size"]).toBe("string");
-}, 60000);
-
-test("deploy Error Case Wrong Path", async () => {
-  const path = resolve(process.cwd(), "Utils/testImages/testImage2.svg");
-  const deployResponse = await lighthouse.deploy(path, "apiKey");
-  expect(typeof deployResponse).toBe("string");
-}, 60000);
-
-test("deploy Error Case Wrong Api Key File", async () => {
-  const path = resolve(process.cwd(), "Utils/testImages/testImage1.svg");
-  const deployResponse = await lighthouse.deploy(path, "apiKey");
-  expect(deployResponse).toBe("Request failed with status code 500");
 }, 60000);
 
