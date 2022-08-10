@@ -49,7 +49,7 @@ module.exports = async (sourcePath, apiKey, publicKey, signed_message) => {
         maxBodyLength: "Infinity",
         headers: {
           "Content-type": `multipart/form-data; boundary= ${formDdata._boundary}`,
-          Encryption: true,
+          "Encryption": true,
           "Mime-Type": mimeType,
           Authorization: token,
         },
