@@ -12,9 +12,9 @@ module.exports = {
   handler: async function (argv) {
     if (argv.help) {
       console.log(
-        "\nlighthouse-web3 get-uploads\n" +
+        "\r\nlighthouse-web3 get-uploads\r\n" +
           chalk.green("Description: ") +
-          "Get details of file uploaded\n"
+          "Get details of file uploaded\r\n"
       );
     } else {
       try {
@@ -30,7 +30,7 @@ module.exports = {
         }
 
         console.log(
-          "\n" +
+          "\r\n" +
             Array(4).fill("\xa0").join("") +
             chalk.yellow("CID") +
             Array(47).fill("\xa0").join("") +
@@ -46,7 +46,7 @@ module.exports = {
               response[i]["fileName"].substring(0, 10) +
               Array(4).fill("\xa0").join("") +
               bytesToSize(response[i]["fileSizeInBytes"]) +
-              "\n"
+              "\r\n"
           );
         }
       } catch (error) {

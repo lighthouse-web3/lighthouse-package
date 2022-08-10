@@ -11,7 +11,7 @@ const signAuthMessage = async (publicKey, privateKey) => {
 
 test("fetchEncryptionKey Main Case File", async () => {
   const publicKey = "0xa3c960b3ba29367ecbcaf1430452c6cd7516f588";
-  const cid = "QmQA5LfUpoyBGcc6E4doYDU7YeWEar4bppfjZ6mB2by7mK";
+  const cid = "QmVkHgHnYVUfvTXsaJisHRgc89zsrgVL6ATh9mSiegRYrX";
 
   const signed_message = await signAuthMessage(
     publicKey,
@@ -23,7 +23,7 @@ test("fetchEncryptionKey Main Case File", async () => {
     publicKey,
     signed_message
   );
-
+    console.log(key)
   expect(typeof key).toBe("string");
 }, 60000);
 
@@ -59,12 +59,12 @@ test("getAuthMessage main", async () => {
 }, 20000);
 
 test("Share main", async () => {
-  const publicKey = "0xa3c960b3ba29367ecbcaf1430452c6cd7516f588";
-  const cid = "QmQA5LfUpoyBGcc6E4doYDU7YeWEar4bppfjZ6mB2by7mK";
+  const publicKey = "0x969e19A952A9aeF004e4F711eE481D72A59470B1";
+  const cid = "QmeYAMQLG7n4y2XNVwTexkzxNSzP4FQZyXdYM2U6cJhx8S";
 
   const signed_message1 = await signAuthMessage(
     publicKey,
-    "0x6aa0ee41fa9cf65f90c06e5db8fa2834399b59b37974b21f2e405955630d472a"
+    "0xa74ba0e4cc2e9f0be6776509cdb1495d76ac8fdc727a8b93f60772d73893fe2e"
   );
 
   const fileEncryptionKey = await lighthouse.fetchEncryptionKey(
@@ -72,10 +72,10 @@ test("Share main", async () => {
     publicKey,
     signed_message1
   );
-
+    console.log(fileEncryptionKey)
   const signed_message2 = await signAuthMessage(
     publicKey,
-    "0x6aa0ee41fa9cf65f90c06e5db8fa2834399b59b37974b21f2e405955630d472a"
+    "0xa74ba0e4cc2e9f0be6776509cdb1495d76ac8fdc727a8b93f60772d73893fe2e"
   );
 
   const response = await lighthouse.shareFile(
@@ -85,14 +85,14 @@ test("Share main", async () => {
     fileEncryptionKey,
     signed_message2
   );
-
+    console.log(response)
   expect(response).toBe("Shared");
 }, 60000);
 
 test("Access Control", async () => {
-  const publicKey = "0x4f544A7a285E8B9cc948884acB9Cac4b267bBfc7";
-  const cid = "QmS3hKWQRCFHgCQoNFbH6aLi3wSKw4fYqXwJSnG21q94Ar";
-  const signedMessage1 = await signAuthMessage(publicKey, "0x8488d2c632da07a93647d7cf701ab6728a884467b1595f3c94007977a20b3539");
+  const publicKey = "0x969e19A952A9aeF004e4F711eE481D72A59470B1";
+  const cid = "QmeYAMQLG7n4y2XNVwTexkzxNSzP4FQZyXdYM2U6cJhx8S";
+  const signedMessage1 = await signAuthMessage(publicKey, "0xa74ba0e4cc2e9f0be6776509cdb1495d76ac8fdc727a8b93f60772d73893fe2e");
   
   // Get File Encryption Key
   const fileEncryptionKey = await lighthouse.fetchEncryptionKey(
@@ -127,7 +127,7 @@ test("Access Control", async () => {
 
   const aggregator = "([1] and [2])";
 
-  const signedMessage2 = await signAuthMessage(publicKey, "0x8488d2c632da07a93647d7cf701ab6728a884467b1595f3c94007977a20b3539");
+  const signedMessage2 = await signAuthMessage(publicKey, "0xa74ba0e4cc2e9f0be6776509cdb1495d76ac8fdc727a8b93f60772d73893fe2e");
   const response = await lighthouse.accessCondition(
     publicKey,
     cid,
@@ -137,7 +137,22 @@ test("Access Control", async () => {
     aggregator
   );
 
-  // Display response
   expect(response).toBe("Shared");
-
 }, 60000);
+
+test("Revoke Access", async () => {
+  const publicKey = "0xa3c960b3ba29367ecbcaf1430452c6cd7516f588";
+  const cid = "QmVkHgHnYVUfvTXsaJisHRgc89zsrgVL6ATh9mSiegRYrX";
+  const revokeTo = "0x969e19A952A9aeF004e4F711eE481D72A59470B1";
+  const signedMessage = await signAuthMessage(publicKey, "0x6aa0ee41fa9cf65f90c06e5db8fa2834399b59b37974b21f2e405955630d472a");
+  
+  // Get File Encryption Key
+  const response = await lighthouse.revokeFileAccess(
+    publicKey,
+    revokeTo,
+    cid,
+    signedMessage
+  );
+
+  expect(response).toBe("Revoked");
+}, 20000);

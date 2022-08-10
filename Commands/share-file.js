@@ -1,15 +1,11 @@
 const Conf = require("conf");
 const chalk = require("chalk");
-const { isCID } = require("../Utils/util");
-
-const fs = require("fs");
+const { isAddress, isCID } = require("../Utils/util");
 const ethers = require("ethers");
-const { default: axios } = require("axios");
 
 const config = new Conf();
 const lighthouse = require("../Lighthouse");
 const readInput = require("../Utils/readInput");
-const lighthouseConfig = require("../lighthouse.config");
 
 const sign_auth_message = async (publicKey, privateKey) => {
   const provider = new ethers.providers.JsonRpcProvider();
@@ -20,31 +16,19 @@ const sign_auth_message = async (publicKey, privateKey) => {
 };
 
 module.exports = {
-  command: "decrypt-file [cid]",
-  desc: "Decrypt and download a file",
+  command: "share-file [cid] [address]",
+  desc: "Share access to other user",
   handler: async function (argv) {
     if (argv.help) {
       console.log(
-        "\r\nlighthouse-web3 decrypt-file [cid]\r\n" +
+        "\r\nlighthouse-web3 share-file <cid> <address>\r\n" +
           chalk.green("Description: ") +
-          "Decrypt and download a file\r\n"
+          "Share access to other user\r\n"
       );
     } else {
       try {
         if (!config.get("LIGHTHOUSE_GLOBAL_PUBLICKEY")) {
           throw new Error("Please import wallet first!");
-        }
-
-        // get file details
-        const fileDetails = (
-          await axios.get(
-            lighthouseConfig.lighthouseAPI +
-              "/api/lighthouse/file_info?cid=" +
-              argv.cid
-          )
-        ).data;
-        if (!fileDetails) {
-          throw new Error("Unable to get CID details.");
         }
 
         // Get key
@@ -63,32 +47,34 @@ module.exports = {
           throw new Error("Incorrect password!");
         }
 
-        const signedMessage = await sign_auth_message(
+        const signedMessage1 = await sign_auth_message(
           config.get("LIGHTHOUSE_GLOBAL_PUBLICKEY"),
           decryptedWallet.privateKey
         );
+
         const fileEncryptionKey = await lighthouse.fetchEncryptionKey(
           argv.cid,
           config.get("LIGHTHOUSE_GLOBAL_PUBLICKEY"),
-          signedMessage
+          signedMessage1
         );
-
         if (!fileEncryptionKey) {
-          throw new Error(
-            "Failed to decrypt. Check if you have access to the file."
-          );
+          throw new Error("Wallet address is not owner of file!!!");
         }
 
-        // Decrypt
-        const decryptedFile = await lighthouse.decryptFile(
-          argv.cid,
-          fileEncryptionKey
+        const signedMessage2 = await sign_auth_message(
+          config.get("LIGHTHOUSE_GLOBAL_PUBLICKEY"),
+          decryptedWallet.privateKey
         );
 
-        // save file
-        fs.createWriteStream(fileDetails.fileName).write(
-          Buffer.from(decryptedFile)
+        const shareResponse = await lighthouse.shareFile(
+          config.get("LIGHTHOUSE_GLOBAL_PUBLICKEY"),
+          argv.address,
+          argv.cid,
+          fileEncryptionKey,
+          signedMessage2
         );
+
+        console.log(chalk.white(shareResponse));
       } catch (error) {
         console.log(chalk.red(error.message));
       }
@@ -96,6 +82,12 @@ module.exports = {
   },
   builder: function (yargs) {
     yargs
+      .option("a", {
+        alias: "address",
+        demandOption: true,
+        describe: "user's Address",
+        type: "string",
+      })
       .option("c", {
         alias: "cid",
         demandOption: true,
@@ -104,6 +96,11 @@ module.exports = {
       })
       .help()
       .check((argv, options) => {
+        // check if valid Address
+        if (!isAddress(argv.address)) {
+          console.log(chalk.red("Invalid Address"));
+          throw new Error("Invalid Address");
+        }
         if (!isCID(argv.cid)) {
           console.log(chalk.red("Invalid CID"));
           throw new Error("Invalid CID");

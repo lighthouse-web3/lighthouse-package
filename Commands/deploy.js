@@ -73,18 +73,18 @@ const getQuote = async (path, publicKey, Spinner) => {
   }
 
   console.log(
-    "\n" +
+    "\r\n" +
       chalk.cyan("Summary") +
-      "\nTotal Size: " +
+      "\r\nTotal Size: " +
       bytesToSize(quoteResponse.totalSize)
   );
 
   console.log(
     "Data Limit: " +
       bytesToSize(parseInt(quoteResponse.dataLimit)) +
-      "\nData Used : " +
+      "\r\nData Used : " +
       bytesToSize(parseInt(quoteResponse.dataUsed)) +
-      "\nAfter Deploy: " +
+      "\r\nAfter Deploy: " +
       bytesToSize(
         parseInt(quoteResponse.dataLimit) -
           (parseInt(quoteResponse.dataUsed) + quoteResponse.totalSize)
@@ -137,12 +137,12 @@ const deploy = async (path, signer, apiKey, network) => {
   }
 
   console.log(
-    chalk.green("File Deployed, visit following url to view content!\n") +
+    chalk.green("File Deployed, visit following url to view content!\r\n") +
       chalk.cyan(
         "Visit: " +
           "https://gateway.lighthouse.storage/ipfs/" +
           deployResponse.Hash +
-          "\n"
+          "\r\n"
       ) +
       chalk.cyan(
         Array(7).fill("\xa0").join("") +
@@ -159,10 +159,10 @@ const deploy = async (path, signer, apiKey, network) => {
     ) +
       " Y/n" +
       chalk.yellow(
-        "\nNote: this feature is currently available on fantom testnet. "
+        "\r\nNote: this feature is currently available on fantom testnet. "
       ) +
       chalk.yellow(
-        "\nPlease wait for the next patch update for optimism, polygon and binance support."
+        "\r\nPlease wait for the next patch update for optimism, polygon and binance support."
       )
   );
 
@@ -205,15 +205,15 @@ module.exports = {
   handler: async function (argv) {
     if (argv.help) {
       console.log(
-        "lighthouse-web3 deploy <path>\n\n" +
+        "lighthouse-web3 deploy <path>\r\n\r\n" +
           chalk.green("Description: ") +
-          "Deploy a file\n\n" +
-          chalk.cyan("Options:\n") +
+          "Deploy a file\r\n\r\n" +
+          chalk.cyan("Options:\r\n") +
           Array(3).fill("\xa0").join("") +
-          "--path: Required, path to file\n\n" +
+          "--path: Required, path to file\r\n\r\n" +
           chalk.magenta("Example:") +
           Array(3).fill("\xa0").join("") +
-          "lighthouse-web3 deploy /home/cosmos/Desktop/ILoveAnime.jpg\n"
+          "lighthouse-web3 deploy /home/cosmos/Desktop/ILoveAnime.jpg\r\n"
       );
     } else {
       try {
@@ -284,5 +284,19 @@ module.exports = {
         console.log(chalk.red(error.message));
       }
     }
+  },
+  builder: function (yargs) {
+    yargs
+      .option("p", {
+        alias: "path",
+        demandOption: true,
+        describe: "path",
+        type: "string",
+      })
+      .help()
+      .check((argv, options) => {
+        // TODO: check if argv.path is valid
+        return true;
+      });
   },
 };

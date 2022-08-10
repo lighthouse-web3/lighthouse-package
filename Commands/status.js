@@ -1,23 +1,23 @@
 const chalk = require("chalk");
-
 const bytesToSize = require("../Utils/byteToSize");
 const lighthouse = require("../Lighthouse");
+const { isCID } = require("../Utils/util");
 
 const showResponse = (status) => {
   console.log(
-    chalk.yellow("\nCID:") +
+    chalk.yellow("\r\nCID:") +
       Array(9).fill("\xa0").join("") +
       status[0]["content"]["cid"] +
-      chalk.yellow("\nName:") +
+      chalk.yellow("\r\nName:") +
       Array(8).fill("\xa0").join("") +
       status[0]["content"]["name"] +
-      chalk.yellow("\nSize:") +
+      chalk.yellow("\r\nSize:") +
       Array(8).fill("\xa0").join("") +
       bytesToSize(status[0]["content"]["size"]) +
-      chalk.yellow("\nReplication:") +
+      chalk.yellow("\r\nReplication:") +
       Array(1).fill("\xa0").join("") +
       status[0]["content"]["replication"] +
-      "\n"
+      "\r\n"
   );
 
   for (let i = 0; i < status.length; i++) {
@@ -46,13 +46,13 @@ const showResponse = (status) => {
 };
 
 module.exports = {
-  command: "status <cid>",
+  command: "status [cid]",
   desc: "Get storage status of a CID",
   handler: async function (argv) {
     if (argv.help) {
       console.log(
-        "lighthouse-web3 status <cid>\n" +
-          chalk.green("\nDescription: ") +
+        "lighthouse-web3 status <cid>\r\n" +
+          chalk.green("\r\nDescription: ") +
           "Get storage status of a CID"
       );
     } else {
@@ -67,5 +67,22 @@ module.exports = {
         console.log(chalk.red(error.message));
       }
     }
+  },
+  builder: function (yargs) {
+    yargs
+      .option("c", {
+        alias: "cid",
+        demandOption: true,
+        describe: "file CID",
+        type: "string",
+      })
+      .help()
+      .check((argv, options) => {
+        if (!isCID(argv.cid)) {
+          console.log(chalk.red("Invalid CID"));
+          throw new Error("Invalid CID");
+        }
+        return true;
+      });
   },
 };

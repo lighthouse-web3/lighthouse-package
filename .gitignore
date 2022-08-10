@@ -28,3 +28,4 @@ wallet.json
 # Exclude coverage from being pushed
 coverage/*
 Lighthouse/tests/coverage
+yarn.lock

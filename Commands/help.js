@@ -7,72 +7,78 @@ const config = new Conf();
 
 const showHelp = () => {
   return (
-    chalk.yellow("Welcome to lighthouse-web3\n\n") +
+    chalk.yellow("Welcome to lighthouse-web3\r\n\r\n") +
     "Usage: lighthouse-web3" +
     chalk.cyan(" [command] ") +
-    chalk.green("[options]\n\n") +
+    chalk.green("[options]\r\n\r\n") +
     chalk.green("Commands (alias)") +
     chalk.grey(Array(21).fill("\xa0").join("") + "Description") +
-    "\nwallet" +
+    "\r\nwallet" +
     Array(31).fill("\xa0").join("") +
     "Returns wallet public address" +
-    "\ncreate-wallet" +
+    "\r\ncreate-wallet" +
     Array(24).fill("\xa0").join("") +
     "Creates a new wallet" +
-    "\nimport-wallet" +
+    "\r\nimport-wallet" +
     Array(24).fill("\xa0").join("") +
     "Import an existing wallet" +
-    "\nwallet-forget" +
+    "\r\nwallet-forget" +
     Array(24).fill("\xa0").join("") +
     "Remove previously saved wallet" +
-    "\nreset-password" +
+    "\r\nreset-password" +
     Array(23).fill("\xa0").join("") +
     "Change your password" +
-    "\nbalance" +
+    "\r\nbalance" +
     Array(30).fill("\xa0").join("") +
     "Get your data usage" +
-    "\ndeploy" +
+    "\r\ndeploy" +
     Array(31).fill("\xa0").join("") +
     "Deploy a file" +
-    "\ndeploy-encrypted" +
+    "\r\ndeploy-encrypted" +
     Array(21).fill("\xa0").join("") +
     "Deploy a file with encryption" +
-    "\ndecrypt-file" +
+    "\r\ndecrypt-file" +
     Array(25).fill("\xa0").join("") +
     "Decrypt and download the file" +
-    "\nstatus" +
+    "\r\nshare-file" +
+    Array(27).fill("\xa0").join("") +
+    "Share direct access to the file" +
+    "\r\nrevoke-access" +
+    Array(24).fill("\xa0").join("") +
+    "Revoke direct access to the file" +
+    "\r\nstatus" +
     Array(31).fill("\xa0").join("") +
     "Get metadata around the storage per CID" +
-    "\nget-uploads" +
+    "\r\nget-uploads" +
     Array(26).fill("\xa0").join("") +
     "Get details of file uploaded" +
-    "\napi-key" +
+    "\r\napi-key" +
     Array(30).fill("\xa0").join("") +
-    "Get new api key\n" +
-    chalk.cyan("\nOptions") +
-    "\n--network" +
+    "Get new api key\r\n" +
+    chalk.cyan("\r\nOptions") +
+    "\r\n--network" +
     Array(28).fill("\xa0").join("") +
-    "Set network\n" +
+    "Set network\r\n" +
     "--help" +
     Array(31).fill("\xa0").join("") +
-    "Help for a specific command command\n" +
-    chalk.magenta("\nExample") +
-    "\nNew api-key" +
+    "Help for a specific command command\r\n" +
+    chalk.magenta("\r\nExample") +
+    "\r\nNew api-key" +
     Array(7).fill("\xa0").join("") +
-    "lighthouse-web3 api-key --new\n" +
-    "\nChange Network" +
+    "lighthouse-web3 api-key --new\r\n" +
+    "\r\nChange Network" +
     Array(4).fill("\xa0").join("") +
-    "lighthouse-web3 --network polygon\n" +
+    "lighthouse-web3 --network polygon\r\n" +
     Array(18).fill("\xa0").join("") +
-    "lighthouse-web3 --network fantom-testnet\n" +
+    "lighthouse-web3 --network fantom-testnet\r\n" +
     Array(18).fill("\xa0").join("") +
-    "lighthouse-web3 --network binance-mainnet\n" +
-    "\nCreate wallet" +
+    "lighthouse-web3 --network binance-mainnet\r\n" +
+    "\r\nCreate wallet" +
     Array(5).fill("\xa0").join("") +
-    "lighthouse-web3 create-wallet\n" +
-    "\nImport wallet" +
+    "lighthouse-web3 create-wallet\r\n" +
+    "\r\nImport wallet" +
     Array(5).fill("\xa0").join("") +
-    "lighthouse-web3 import-wallet --path wallet.json\n"
+    "lighthouse-web3 import-wallet --path wallet.json\r\n"
   );
 };
 
@@ -80,7 +86,7 @@ module.exports = {
   command: "$0",
   builder: {
     network: {
-      describe: "Network to use, delault: polygon mainnet",
+      describe: "Network to use, default: polygon mainnet",
       type: "String",
     },
   },
@@ -135,7 +141,7 @@ module.exports = {
         console.log(
           chalk.yellow("Current Version: ") +
             version +
-            "\n" +
+            "\r\n" +
             chalk.yellow("Latest Version : ") +
             response.version
         );
