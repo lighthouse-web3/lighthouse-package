@@ -11,9 +11,9 @@ module.exports = {
   handler: async function (argv) {
     if (argv.help) {
       console.log(
-        "\nlighthouse-web3 wallet\n" +
+        "\r\nlighthouse-web3 wallet\r\n" +
           chalk.green("Description: ") +
-          "Returns wallet public address and current network\n"
+          "Returns wallet public address and current network\r\n"
       );
     } else {
       try {

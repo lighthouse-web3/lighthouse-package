@@ -14,6 +14,7 @@ const shareFile = require("./encryption/shareFile");
 const accessCondition = require("./encryption/accessConditionFile");
 const getAuthMessage = require("./encryption/getAuthMessage");
 const fetchEncryptionKey = require("./encryption/fetchEncryptionKey");
+const revokeFileAccess = require("./encryption/revokeFileAccess");
 
 // Key pair gen
 const getEncryptionKeyPair = require("./encryption/getEncryptionKeyPair");
@@ -44,7 +45,8 @@ if (typeof window === "undefined") {
     fetchEncryptionKey,
     getAuthMessage,
     shareFile,
-    accessCondition
+    accessCondition,
+    revokeFileAccess
   };
 } else {
   const deploy = require("./deploy/browser");
@@ -67,6 +69,7 @@ if (typeof window === "undefined") {
     fetchEncryptionKey,
     getAuthMessage,
     shareFile,
-    accessCondition
+    accessCondition,
+    revokeFileAccess
   };
 }

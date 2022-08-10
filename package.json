@@ -1,6 +1,6 @@
 {
   "name": "@lighthouse-web3/sdk",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "NPM package and CLI tool to interact with lighthouse protocol",
   "main": "index.js",
   "scripts": {
@@ -15,7 +15,8 @@
   "keywords": [
     "lighthouse",
     "lighthouse-cli",
-    "lighthouse npm package"
+    "lighthouse npm package",
+    "web3 storage"
   ],
   "repository": {
     "type": "git",
