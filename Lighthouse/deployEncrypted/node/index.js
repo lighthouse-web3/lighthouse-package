@@ -1,4 +1,3 @@
-/* istanbul ignore file */
 const axios = require("axios");
 const { v4: uuidv4 } = require("uuid");
 const lighthouseConfig = require("../../../lighthouse.config");
@@ -70,8 +69,10 @@ module.exports = async (sourcePath, apiKey, publicKey, signed_message) => {
               {
                 address: publicKey.toLowerCase(),
                 cid: response.data.Hash,
-                index: idData[index],
-                key: keyShades[index],
+                payload: {
+                  index: idData[index],
+                  key: keyShades[index]
+                }
               },
               {
                 headers: {

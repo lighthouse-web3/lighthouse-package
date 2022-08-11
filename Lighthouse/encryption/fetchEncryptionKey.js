@@ -6,17 +6,12 @@ const { recoverKey, randSelect } = require("../../Utils/bls_helper");
 module.exports = async (
   cid,
   publicKey,
-  signedMessage,
-  directAccessMode = true
+  signedMessage
 ) => {
   try {
     const nodeIndexSelected = randSelect(3, 5);
     const nodeUrl = nodeIndexSelected.map((elem) =>
-      directAccessMode
-        ? lighthouseConfig.lighthouseBLSNode + "/api/retrieveSharedKey/" + elem
-        : lighthouseConfig.lighthouseBLSNode +
-          "/api/fileAccessConditions/get/" +
-          elem
+      lighthouseConfig.lighthouseBLSNode + "/api/retrieveSharedKey/" + elem
     );
 
     // send encryption key
@@ -36,7 +31,7 @@ module.exports = async (
             }
           )
           .then((res) => {
-            return res.data;
+            return res.data.payload;
           });
       })
     );
