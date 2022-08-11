@@ -23,7 +23,7 @@ test("fetchEncryptionKey Main Case File", async () => {
     publicKey,
     signed_message
   );
-    console.log(key)
+  
   expect(typeof key).toBe("string");
 }, 60000);
 
@@ -72,7 +72,7 @@ test("Share main", async () => {
     publicKey,
     signed_message1
   );
-    console.log(fileEncryptionKey)
+  
   const signed_message2 = await signAuthMessage(
     publicKey,
     "0xa74ba0e4cc2e9f0be6776509cdb1495d76ac8fdc727a8b93f60772d73893fe2e"
@@ -85,7 +85,7 @@ test("Share main", async () => {
     fileEncryptionKey,
     signed_message2
   );
-    console.log(response)
+  
   expect(response).toBe("Shared");
 }, 60000);
 
