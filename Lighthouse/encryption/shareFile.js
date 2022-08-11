@@ -26,8 +26,10 @@ module.exports = async (
           {
             address: publicKey.toLowerCase(),
             cid: cid,
-            index: idData[index],
-            key: keyShades[index],
+            payload: {
+              index: idData[index],
+              key: keyShades[index]
+            },
             sharedTo: [shareTo.toLowerCase()],
           },
           {

@@ -97,8 +97,10 @@ module.exports = async (e, publicKey, accessToken, signedMessage) => {
             {
               address: publicKey.toLowerCase(),
               cid: response.data.Hash,
-              index: idData[index],
-              key: keyShades[index],
+              payload: {
+                index: idData[index],
+                key: keyShades[index]
+              }
             },
             {
               headers: {
