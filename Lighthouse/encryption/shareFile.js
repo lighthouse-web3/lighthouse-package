@@ -28,7 +28,7 @@ module.exports = async (
             cid: cid,
             payload: {
               index: idData[index],
-              key: keyShades[index]
+              key: keyShades[index],
             },
             sharedTo: [shareTo.toLowerCase()],
           },
@@ -41,7 +41,7 @@ module.exports = async (
       })
     );
 
-    return "Shared";
+    return { data: { shareTo, cid } };
   } catch (error) {
     return error.message;
   }

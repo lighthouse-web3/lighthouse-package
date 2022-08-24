@@ -30,7 +30,7 @@ module.exports = async (
             cid: cid,
             payload: {
               index: idData[index],
-              key: keyShades[index]
+              key: keyShades[index],
             },
             conditions,
             aggregator,
@@ -44,7 +44,7 @@ module.exports = async (
       })
     );
 
-    return "Shared";
+    return { data: { cid, conditions, aggregator } };
   } catch (error) {
     return error.message;
   }

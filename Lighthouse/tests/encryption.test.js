@@ -23,7 +23,7 @@ test("fetchEncryptionKey Main Case File", async () => {
     publicKey,
     signed_message
   );
-  
+
   expect(typeof key).toBe("string");
 }, 60000);
 
@@ -72,7 +72,7 @@ test("Share main", async () => {
     publicKey,
     signed_message1
   );
-  
+
   const signed_message2 = await signAuthMessage(
     publicKey,
     "0xa74ba0e4cc2e9f0be6776509cdb1495d76ac8fdc727a8b93f60772d73893fe2e"
@@ -85,22 +85,26 @@ test("Share main", async () => {
     fileEncryptionKey,
     signed_message2
   );
-  
-  expect(response).toBe("Shared");
+
+  expect(typeof response).toBe("object");
+  expect(response?.data?.cid).toBe(cid);
 }, 60000);
 
 test("Access Control", async () => {
   const publicKey = "0x969e19A952A9aeF004e4F711eE481D72A59470B1";
   const cid = "QmeYAMQLG7n4y2XNVwTexkzxNSzP4FQZyXdYM2U6cJhx8S";
-  const signedMessage1 = await signAuthMessage(publicKey, "0xa74ba0e4cc2e9f0be6776509cdb1495d76ac8fdc727a8b93f60772d73893fe2e");
-  
+  const signedMessage1 = await signAuthMessage(
+    publicKey,
+    "0xa74ba0e4cc2e9f0be6776509cdb1495d76ac8fdc727a8b93f60772d73893fe2e"
+  );
+
   // Get File Encryption Key
   const fileEncryptionKey = await lighthouse.fetchEncryptionKey(
     cid,
     publicKey,
     signedMessage1
   );
-  
+
   expect(typeof fileEncryptionKey).toBe("string");
 
   // Conditions to add
@@ -127,7 +131,10 @@ test("Access Control", async () => {
 
   const aggregator = "([1] and [2])";
 
-  const signedMessage2 = await signAuthMessage(publicKey, "0xa74ba0e4cc2e9f0be6776509cdb1495d76ac8fdc727a8b93f60772d73893fe2e");
+  const signedMessage2 = await signAuthMessage(
+    publicKey,
+    "0xa74ba0e4cc2e9f0be6776509cdb1495d76ac8fdc727a8b93f60772d73893fe2e"
+  );
   const response = await lighthouse.accessCondition(
     publicKey,
     cid,
@@ -137,15 +144,19 @@ test("Access Control", async () => {
     aggregator
   );
 
-  expect(response).toBe("Shared");
+  expect(typeof response?.data).toBe("object");
+  expect(response?.data?.cid).toBe(cid);
 }, 60000);
 
 test("Revoke Access", async () => {
   const publicKey = "0xa3c960b3ba29367ecbcaf1430452c6cd7516f588";
   const cid = "QmVkHgHnYVUfvTXsaJisHRgc89zsrgVL6ATh9mSiegRYrX";
   const revokeTo = "0x969e19A952A9aeF004e4F711eE481D72A59470B1";
-  const signedMessage = await signAuthMessage(publicKey, "0x6aa0ee41fa9cf65f90c06e5db8fa2834399b59b37974b21f2e405955630d472a");
-  
+  const signedMessage = await signAuthMessage(
+    publicKey,
+    "0x6aa0ee41fa9cf65f90c06e5db8fa2834399b59b37974b21f2e405955630d472a"
+  );
+
   // Get File Encryption Key
   const response = await lighthouse.revokeFileAccess(
     publicKey,
@@ -154,5 +165,7 @@ test("Revoke Access", async () => {
     signedMessage
   );
 
-  expect(response).toBe("Revoked");
+  expect(typeof response?.data).toBe("object");
+  expect(response?.data?.cid).toBe(cid);
+  expect(response?.data.revokeTo).toBe(revokeTo);
 }, 20000);
