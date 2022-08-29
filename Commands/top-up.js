@@ -193,7 +193,7 @@ module.exports = {
         tx = await tx.wait();
         spinner.stop();
 
-        spinner = new Spinner(`request top-up for  $${String(argv.amount)}`);
+        spinner = new Spinner(`Request top-up for  $${String(argv.amount)}`);
         spinner.start();
         tx = await contractDeposit.addDeposit(
           lighthouseConfig[network]["usdc_contract_address"],
@@ -208,7 +208,7 @@ module.exports = {
 
         console.log(
           "\n" +
-            chalk.yellow("successful: ") +
+            chalk.green("successful: ") +
             lighthouseConfig[network].scan +
             tx.transactionHash
         );
