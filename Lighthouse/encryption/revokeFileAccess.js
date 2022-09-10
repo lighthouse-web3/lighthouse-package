@@ -8,14 +8,16 @@ module.exports = async (publicKey, revokeTo, cid, signedMessage) => {
       (elem) => lighthouseConfig.lighthouseBLSNode + "/api/setSharedKey/" + elem
     );
 
+    const _revokeTo = Array.isArray(revokeTo) ? revokeTo : [revokeTo];
+
     // send encryption key
     const _ = await Promise.all(
       nodeUrl.map((url, index) => {
         return axios.delete(url, {
           data: {
-            address: publicKey.toLowerCase(),
+            address: publicKey,
             cid: cid,
-            revokeTo: [revokeTo.toLowerCase()],
+            revokeTo: _revokeTo,
           },
           headers: {
             Authorization: "Bearer " + signedMessage,

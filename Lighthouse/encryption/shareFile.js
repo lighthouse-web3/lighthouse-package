@@ -1,7 +1,7 @@
 const axios = require("axios");
 const { getKeyShades } = require("../../Utils/bls_helper");
 const lighthouseConfig = require("../../lighthouse.config");
-
+const { addressValidator } = require("../../Utils/util");
 module.exports = async (
   publicKey,
   shareTo,
@@ -18,19 +18,21 @@ module.exports = async (
       (elem) => lighthouseConfig.lighthouseBLSNode + "/api/setSharedKey/" + elem
     );
 
+    const sharedTo = Array.isArray(shareTo) ? shareTo : [shareTo];
+
     // send encryption key
     const _ = await Promise.all(
       nodeUrl.map((url, index) => {
         return axios.post(
           url,
           {
-            address: publicKey.toLowerCase(),
+            address: publicKey,
             cid: cid,
             payload: {
               index: idData[index],
               key: keyShades[index],
             },
-            sharedTo: [shareTo.toLowerCase()],
+            sharedTo,
           },
           {
             headers: {

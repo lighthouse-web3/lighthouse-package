@@ -41,7 +41,7 @@ module.exports = async (e, publicKey, accessToken, signedMessage) => {
     // Upload file
     e.persist();
     let mimeType = null;
-    if(e.target.files.length === 1){
+    if (e.target.files.length === 1) {
       mimeType = e.target.files[0].type;
     }
     const endpoint = lighthouseConfig.lighthouseNode + "/api/v0/add";
@@ -76,16 +76,21 @@ module.exports = async (e, publicKey, accessToken, signedMessage) => {
       maxBodyLength: "Infinity",
       headers: {
         "Content-type": `multipart/form-data; boundary= ${formData._boundary}`,
-        "Encryption": true,
+        Encryption: true,
         "Mime-Type": mimeType,
         Authorization: token,
+      },
+      onUploadProgress: function (progressEvent) {
+        const _progress = Math.round(
+          progressEvent.loaded / progressEvent.total
+        );
+        console.log(_progress, progressEvent);
       },
     });
 
     const nodeId = [1, 2, 3, 4, 5];
     const nodeUrl = nodeId.map(
-      (elem) => 
-      lighthouseConfig.lighthouseBLSNode + "/api/setSharedKey/" + elem
+      (elem) => lighthouseConfig.lighthouseBLSNode + "/api/setSharedKey/" + elem
     );
 
     // send encryption key
@@ -95,12 +100,12 @@ module.exports = async (e, publicKey, accessToken, signedMessage) => {
           .post(
             url,
             {
-              address: publicKey.toLowerCase(),
+              address: publicKey,
               cid: response.data.Hash,
               payload: {
                 index: idData[index],
-                key: keyShades[index]
-              }
+                key: keyShades[index],
+              },
             },
             {
               headers: {

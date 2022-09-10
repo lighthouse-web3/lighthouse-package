@@ -26,7 +26,7 @@ module.exports = async (
         return axios.post(
           url,
           {
-            address: publicKey.toLowerCase(),
+            address: publicKey,
             cid: cid,
             payload: {
               index: idData[index],

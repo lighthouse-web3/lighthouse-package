@@ -29,3 +29,4 @@ wallet.json
 coverage/*
 Lighthouse/tests/coverage
 yarn.lock
+*.mp4

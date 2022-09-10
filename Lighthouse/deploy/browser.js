@@ -7,7 +7,7 @@ module.exports = async (e, accessToken) => {
     const endpoint = lighthouseConfig.lighthouseNode + "/api/v0/add";
     e.persist();
     let mimeType = null;
-    if(e.target.files.length === 1){
+    if (e.target.files.length === 1) {
       mimeType = e.target.files[0].type;
     }
 
@@ -23,7 +23,7 @@ module.exports = async (e, accessToken) => {
       maxBodyLength: "Infinity",
       headers: {
         "Content-type": `multipart/form-data; boundary= ${formData._boundary}`,
-        "Encryption": false,
+        Encryption: false,
         "Mime-Type": mimeType,
         Authorization: token,
       },

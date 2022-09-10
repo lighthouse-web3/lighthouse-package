@@ -21,7 +21,7 @@ module.exports = async (
           .post(
             url,
             {
-              address: publicKey.toLowerCase(),
+              address: publicKey,
               cid: cid,
             },
             {

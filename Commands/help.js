@@ -92,7 +92,7 @@ module.exports = {
   },
   handler: async function (argv) {
     if (argv.network) {
-      switch (argv.network.toString().toLowerCase()) {
+      switch (argv.network.toString()) {
         case "polygon":
         case "polygon-mainnet":
           config.set("LIGHTHOUSE_GLOBAL_NETWORK", "polygon");

@@ -62,7 +62,7 @@ module.exports = async (text, apiKey, publicKey, signed_message) => {
           .post(
             url,
             {
-              address: publicKey.toLowerCase(),
+              address: publicKey,
               cid: response.data.Hash,
               payload: {
                 index: idData[index],

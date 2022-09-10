@@ -1,10 +1,12 @@
 const ethers = require("ethers");
+const { addressValidator } = require("../../Utils/util");
 const lighthouse = require("..");
 
 const signAuthMessage = async (publicKey, privateKey) => {
   const provider = new ethers.providers.JsonRpcProvider();
   const signer = new ethers.Wallet(privateKey, provider);
-  const messageRequested = await lighthouse.getAuthMessage(publicKey);
+  const address = addressValidator(publicKey);
+  const messageRequested = await lighthouse.getAuthMessage(address);
   const signedMessage = await signer.signMessage(messageRequested);
   return signedMessage;
 };
