@@ -5,5 +5,5 @@ test("getContractAddress Main Case", async () => {
     "polygon"
   );
 
-  expect(typeof contractAddress).toBe("string");
+  expect(typeof contractAddress.data).toBe("string");
 }, 2000);

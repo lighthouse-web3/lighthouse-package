@@ -18,14 +18,16 @@ test("getApiKey Main Case", async () => {
   );
   const signedMessage = await signer.signMessage(verificationMessage);
 
-  const apiKey = await lighthouse.getApiKey(publicKey, signedMessage);
+  const response = await lighthouse.getApiKey(publicKey, signedMessage);
 
-  expect(typeof apiKey).toBe("string");
+  expect(typeof response.data.apiKey).toBe("string");
 }, 60000);
 
 test("getApiKey Null Case", async () => {
-  const publicKey = "0xEaF4E24ffC1A2f53c07839a74966A6611b8Cb8A1";
-  const apiKey = await lighthouse.getApiKey(publicKey, "signedMessage");
-
-  expect(apiKey).toBe(null);
+  try{
+    const publicKey = "0xEaF4E24ffC1A2f53c07839a74966A6611b8Cb8A1";
+    const apiKey = await lighthouse.getApiKey(publicKey, "signedMessage");
+  } catch (error){
+    expect(typeof error.message).toBe("string");
+  }
 }, 60000);
