@@ -1,0 +1,32 @@
+# Dependency directories
+node_modules/
+
+# TypeScript v1 declaration files
+typings/
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Output of 'npm pack'
+*.tgz
+
+# Yarn Integrity file
+.yarn-integrity
+
+# dotenv environment variables file
+.env
+.env.test
+
+wallet.json
+
+# Exclude coverage from being pushed
+coverage/*
+Lighthouse/tests/coverage
+yarn.lock
+*.mp4
