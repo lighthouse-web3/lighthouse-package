@@ -85,11 +85,20 @@ module.exports = async (sourcePath, apiKey, publicKey, signed_message) => {
       );
 
       // return response
-      return response.data;
+      /*
+        {
+          data: {
+            Name: 'flow1.png',
+            Hash: 'QmUHDKv3NNL1mrg4NTW4WwJqetzwZbGNitdjr2G6Z5Xe6s',
+            Size: '31735'
+          }
+        }
+      */
+      return {data: response.data};
     } else {
       throw new Error("Directory currently not supported!!!");
     }
   } catch (error) {
-    return error.message;
+    throw new Error(error.message);
   }
 };
