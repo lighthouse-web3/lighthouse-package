@@ -64,13 +64,13 @@ module.exports = {
               verificationMessage
             );
 
-            const apiKey = await lighthouse.getApiKey(
+            const response = await lighthouse.getApiKey(
               decryptedWallet.address,
               signedMessage
             );
 
-            config.set("LIGHTHOUSE_GLOBAL_API_KEY", apiKey);
-            console.log(chalk.yellow("\r\nApi Key: ") + apiKey);
+            config.set("LIGHTHOUSE_GLOBAL_API_KEY", response.data.apiKey);
+            console.log(chalk.yellow("\r\nApi Key: ") + response.data.apiKey);
           }
         } catch (error) {
           console.log(chalk.red(error.message));

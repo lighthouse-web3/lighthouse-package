@@ -10,7 +10,7 @@ const readInput = require("../Utils/readInput");
 const sign_auth_message = async (publicKey, privateKey) => {
   const provider = new ethers.providers.JsonRpcProvider();
   const signer = new ethers.Wallet(privateKey, provider);
-  const messageRequested = await lighthouse.getAuthMessage(publicKey);
+  const messageRequested = (await lighthouse.getAuthMessage(publicKey)).data.message;
   const signedMessage = await signer.signMessage(messageRequested);
   return signedMessage;
 };
@@ -42,25 +42,18 @@ module.exports = {
           config.get("LIGHTHOUSE_GLOBAL_WALLET"),
           password.trim()
         );
-
-        if (!decryptedWallet) {
-          throw new Error("Incorrect password!");
-        }
-
+        
         const signedMessage1 = await sign_auth_message(
           config.get("LIGHTHOUSE_GLOBAL_PUBLICKEY"),
           decryptedWallet.privateKey
         );
-
+        
         const fileEncryptionKey = await lighthouse.fetchEncryptionKey(
           argv.cid,
           config.get("LIGHTHOUSE_GLOBAL_PUBLICKEY"),
           signedMessage1
         );
-        if (!fileEncryptionKey) {
-          throw new Error("Wallet address is not owner of file!!!");
-        }
-
+        
         const signedMessage2 = await sign_auth_message(
           config.get("LIGHTHOUSE_GLOBAL_PUBLICKEY"),
           decryptedWallet.privateKey
@@ -68,13 +61,18 @@ module.exports = {
 
         const shareResponse = await lighthouse.shareFile(
           config.get("LIGHTHOUSE_GLOBAL_PUBLICKEY"),
-          argv.address,
+          [argv.address],
           argv.cid,
-          fileEncryptionKey,
+          fileEncryptionKey.data.key,
           signedMessage2
         );
 
-        console.log(chalk.white(shareResponse));
+        console.log(
+          chalk.yellow("sharedTo: ") +
+          chalk.white(shareResponse.data.shareTo) + "\r\n" + 
+          chalk.yellow("cid: ") +
+          chalk.white(shareResponse.data.cid)
+        );
       } catch (error) {
         console.log(chalk.red(error.message));
       }

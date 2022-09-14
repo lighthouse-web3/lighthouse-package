@@ -78,7 +78,7 @@ const showHelp = () => {
     "lighthouse-web3 create-wallet\r\n" +
     "\r\nImport wallet" +
     Array(5).fill("\xa0").join("") +
-    "lighthouse-web3 import-wallet --path wallet.json\r\n"
+    "lighthouse-web3 import-wallet 0x7e9fd9a0311f69e842a05a2531f1038e2b543293a9c3dd46902dbc6107da8600\r\n"
   );
 };
 

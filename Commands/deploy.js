@@ -35,7 +35,7 @@ const getQuote = async (path, publicKey, Spinner) => {
   const spinner = new Spinner("Getting Quote...");
   spinner.start();
 
-  const quoteResponse = await lighthouse.getQuote(path, publicKey);
+  const quoteResponse = (await lighthouse.getQuote(path, publicKey)).data;
 
   spinner.stop();
   process.stdout.clearLine();
@@ -122,7 +122,7 @@ const deploy = async (path, signer, apiKey, network) => {
   let spinner = new Spinner("Uploading...");
   spinner.start();
 
-  const deployResponse = await lighthouse.deploy(path, apiKey);
+  const deployResponse = (await lighthouse.deploy(path, apiKey)).data;
 
   spinner.stop();
   process.stdout.clearLine();
