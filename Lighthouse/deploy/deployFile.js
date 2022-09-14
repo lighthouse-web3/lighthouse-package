@@ -4,8 +4,7 @@ const lighthouseConfig = require("../../lighthouse.config");
   This function is used to deploy a file to the Lighthouse server.
   It takes the following parameters:
   @param {string} sourcePath - The path of file/folder.
-  @param {string} publicKey - The public key of the user.
-  @param {string} signedMessage - The signed message for verification.
+  @param {string} apiKey - The api key of the user.
 */
 
 module.exports = async (sourcePath, apiKey) => {
@@ -76,7 +75,6 @@ module.exports = async (sourcePath, apiKey) => {
       return {data: response.data};
     }
   } catch (error) {
-    console.error(error)
     throw new Error(error.message);
   }
 };
