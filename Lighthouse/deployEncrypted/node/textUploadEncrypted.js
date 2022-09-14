@@ -79,8 +79,8 @@ module.exports = async (text, apiKey, publicKey, signed_message) => {
       })
     );
 
-    return response.data;
+    return {data: response.data};
   } catch (error) {
-    return error.message;
+    throw new Error(error.message);
   }
 };

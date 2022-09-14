@@ -6,7 +6,7 @@ const getCosting = async (path, publicKey) => {
   const mime = eval("require")("mime-types");
   const recursive = eval("require")("recursive-fs");
   // Get users data usage
-  const user_data_usage = await getBalance(publicKey);
+  const user_data_usage = (await getBalance(publicKey)).data;
   if (fs.lstatSync(path).isDirectory()) {
     // Get metadata and cid for all files
     const sources = (await recursive.readdirr(path)).files;
@@ -30,10 +30,12 @@ const getCosting = async (path, publicKey) => {
 
     // Return data
     return {
-      metaData: metaData,
-      dataLimit: user_data_usage.dataLimit,
-      dataUsed: user_data_usage.dataUsed,
-      totalSize: totalSize,
+      data: {
+        metaData: metaData,
+        dataLimit: user_data_usage.dataLimit,
+        dataUsed: user_data_usage.dataUsed,
+        totalSize: totalSize,
+      }
     };
   } else {
     const stats = fs.statSync(path);
@@ -50,10 +52,12 @@ const getCosting = async (path, publicKey) => {
       },
     ];
     return {
-      metaData: metaData,
-      dataLimit: user_data_usage.dataLimit,
-      dataUsed: user_data_usage.dataUsed,
-      totalSize: fileSizeInBytes,
+      data: {
+        metaData: metaData,
+        dataLimit: user_data_usage.dataLimit,
+        dataUsed: user_data_usage.dataUsed,
+        totalSize: fileSizeInBytes,
+      }
     };
   }
 };
@@ -61,7 +65,7 @@ const getCosting = async (path, publicKey) => {
 module.exports = async (path, publicKey) => {
   try {
     return await getCosting(path, publicKey);
-  } catch (err) {
-    return null;
+  } catch (error) {
+    throw new Error(error.message);
   }
 };

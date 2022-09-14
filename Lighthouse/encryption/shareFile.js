@@ -1,7 +1,7 @@
 const axios = require("axios");
 const { getKeyShades } = require("../../Utils/bls_helper");
 const lighthouseConfig = require("../../lighthouse.config");
-const { addressValidator } = require("../../Utils/util");
+
 module.exports = async (
   publicKey,
   shareTo,
@@ -42,9 +42,17 @@ module.exports = async (
         );
       })
     );
-
+    
+    /*
+      {
+        data: {
+          shareTo: [ '0x487fc2fE07c593EAb555729c3DD6dF85020B5160' ],
+          cid: 'QmUHDKv3NNL1mrg4NTW4WwJqetzwZbGNitdjr2G6Z5Xe6s'
+        }
+      }
+    */
     return { data: { shareTo, cid } };
   } catch (error) {
-    return error.message;
+    throw new Error(error.message);
   }
 };

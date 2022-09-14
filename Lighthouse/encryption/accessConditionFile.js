@@ -46,6 +46,6 @@ module.exports = async (
 
     return { data: { cid, conditions, aggregator } };
   } catch (error) {
-    return error.message;
+    throw new Error(error.message);
   }
 };

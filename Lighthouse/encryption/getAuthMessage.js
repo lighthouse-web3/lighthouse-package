@@ -8,9 +8,12 @@ module.exports = async (publicKey) => {
     const messageRequested = await axios.post(
       lighthouseConfig.lighthouseBLSNode + `/api/message/${address}`
     );
-
-    return messageRequested.data[0]["message"];
+    /*
+      return:
+        { data: { message: '809a3a85-642b-484c-9565-031ef2f183ec' } }
+    */
+    return { data: { message: messageRequested.data[0]["message"] } };
   } catch (error) {
-    return null;
+    throw new Error(error.message);
   }
 };

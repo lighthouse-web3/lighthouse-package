@@ -25,9 +25,16 @@ module.exports = async (publicKey, revokeTo, cid, signedMessage) => {
         });
       })
     );
-
+    /*
+      {
+        data: {
+          cid: 'QmUHDKv3NNL1mrg4NTW4WwJqetzwZbGNitdjr2G6Z5Xe6s',
+          revokeTo: '0x487fc2fE07c593EAb555729c3DD6dF85020B5160'
+        }
+      }
+    */
     return { data: { cid, revokeTo } };
   } catch (error) {
-    return null;
+    throw new Error(error.message);
   }
 };
