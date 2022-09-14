@@ -1,6 +1,6 @@
 {
   "name": "@lighthouse-web3/sdk",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "NPM package and CLI tool to interact with lighthouse protocol",
   "main": "index.js",
   "scripts": {
@@ -48,7 +48,6 @@
     "tweetnacl": "^1.0.3",
     "tweetnacl-util": "^0.15.1",
     "uuid": "^8.3.2",
-    "web3": "^1.7.5",
     "yargs": "^17.2.1"
   },
   "devDependencies": {
