@@ -168,10 +168,7 @@ const deploy = async (path, signer, apiKey, network) => {
     ) +
       " Y/n" +
       chalk.yellow(
-        "\r\nNote: this feature is currently available on fantom testnet. "
-      ) +
-      chalk.yellow(
-        "\r\nPlease wait for the next patch update for optimism, polygon and binance support."
+        "\r\nNote: this feature is currently available on polygon mumbai testnet. "
       )
   );
 
@@ -181,7 +178,7 @@ const deploy = async (path, signer, apiKey, network) => {
 
   const selected = await readInput(options);
 
-  if (network !== "fantom-testnet") {
+  if (network !== "polygon-testnet") {
     return;
   }
 
