@@ -1,5 +1,4 @@
 const ethers = require("ethers");
-const web3 = require("web3");
 const SolanaWeb3 = require("@solana/web3.js");
 
 const isCID = (cid) => {
@@ -20,13 +19,18 @@ const isPrivateKey = (key) => {
 };
 
 const addressValidator = (value) => {
-  if (web3.utils.isAddress(value?.toLowerCase())) {
-    return value.toLowerCase();
-  }
-
-  const pub = new SolanaWeb3.PublicKey(value);
-  if (SolanaWeb3.PublicKey.isOnCurve(pub)) {
-    return value;
+  try {
+    // Validate for EVM
+    if (ethers.utils.isAddress(value?.toLowerCase())) {
+      return value.toLowerCase();
+    }
+    // Validate for solana
+    const pub = new SolanaWeb3.PublicKey(value);
+    if (SolanaWeb3.PublicKey.isOnCurve(pub)) {
+      return value;
+    }
+  } catch (error) {
+    return false;
   }
 };
 
