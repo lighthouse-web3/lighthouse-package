@@ -36,7 +36,7 @@ test("deploy Encrypted Main Case File", async () => {
     publicKey,
     "0x8488d2c632da07a93647d7cf701ab6728a884467b1595f3c94007977a20b3539"
   );
-  const deployResponse = (await lighthouse.uploadEncrypted(path, apiKey, publicKey, signedMessageEncryption)).data;
+  const deployResponse = (await lighthouse.uploadEncrypted(path, apiKey.data.apiKey, publicKey, signedMessageEncryption)).data;
   
   expect(deployResponse).toHaveProperty("Name");
   expect(typeof deployResponse["Name"]).toBe("string");

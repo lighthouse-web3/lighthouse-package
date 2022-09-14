@@ -7,7 +7,6 @@ const lighthouseConfig = require("../../lighthouse.config");
 
 test("deploy Main Case File", async () => {
   const path = resolve(process.cwd(), "Utils/testImages/testImage1.svg");
-
   const publicKey = "0x1Ec09D4B3Cb565b7CCe2eEAf71CC90c9b46c5c26";
   const verificationMessage = (
     await axios.get(
@@ -23,7 +22,7 @@ test("deploy Main Case File", async () => {
   const signedMessage = await signer.signMessage(verificationMessage);
   const apiKey = await lighthouse.getApiKey(publicKey, signedMessage);
 
-  const deployResponse = (await lighthouse.deploy(path, apiKey)).data;
+  const deployResponse = (await lighthouse.deploy(path, apiKey.data.apiKey)).data;
 
   expect(deployResponse).toHaveProperty("Name");
   expect(typeof deployResponse["Name"]).toBe("string");
@@ -53,7 +52,7 @@ test("deploy Main Case Folder", async () => {
   const signedMessage = await signer.signMessage(verificationMessage);
   const apiKey = await lighthouse.getApiKey(publicKey, signedMessage);
 
-  const deployResponse = (await lighthouse.deploy(path, apiKey)).data;
+  const deployResponse = (await lighthouse.deploy(path, apiKey.data.apiKey)).data;
 
   expect(deployResponse).toHaveProperty("Name");
   expect(typeof deployResponse["Name"]).toBe("string");
