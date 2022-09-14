@@ -21,7 +21,7 @@ const readFileAsync = (file) => {
   });
 };
 
-module.exports = async (e, publicKey, accessToken, signedMessage) => {
+module.exports = async (e, publicKey, accessToken, signedMessage, uploadProgressCallback=null) => {
   try {
     // Generate fileEncryptionKey
     let fileEncryptionKey = null;
@@ -82,9 +82,14 @@ module.exports = async (e, publicKey, accessToken, signedMessage) => {
       },
       onUploadProgress: function (progressEvent) {
         const _progress = Math.round(
-          progressEvent.loaded / progressEvent.total
+           progressEvent.loaded / progressEvent.total
         );
         console.log(_progress, progressEvent);
+        uploadProgressCallback({
+          "progress": _progress,
+          "total": progressEvent.total,
+          "uploaded": progressEvent.loaded
+        })
       },
     });
 
@@ -118,6 +123,15 @@ module.exports = async (e, publicKey, accessToken, signedMessage) => {
     );
 
     // return response
+    /*
+      {
+        data: {
+          Name: 'flow1.png',
+          Hash: 'QmUHDKv3NNL1mrg4NTW4WwJqetzwZbGNitdjr2G6Z5Xe6s',
+          Size: '31735'
+        }
+      }
+    */
     return response.data;
   } catch (error) {
     return error.message;
