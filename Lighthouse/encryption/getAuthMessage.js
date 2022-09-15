@@ -10,7 +10,7 @@ module.exports = async (publicKey) => {
     );
     /*
       return:
-        { data: { message: '809a3a85-642b-484c-9565-031ef2f183ec' } }
+        { data: { message: 'Please sign this message to prove you are owner of this account: 269e5d45-caf7-474d-8167-ab6b140e0249' } }
     */
     return { data: { message: messageRequested.data[0]["message"] } };
   } catch (error) {
