@@ -31,7 +31,6 @@ module.exports = async (e, accessToken, uploadProgressCallback=null) => {
         const _progress = Math.round(
            progressEvent.loaded / progressEvent.total
         );
-        console.log(_progress, progressEvent);
         uploadProgressCallback({
           "progress": _progress,
           "total": progressEvent.total,
