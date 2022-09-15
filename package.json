@@ -28,7 +28,6 @@
   "license": "MIT",
   "dependencies": {
     "@peculiar/webcrypto": "^1.4.0",
-    "@solana/web3.js": "^1.59.1",
     "axios": "^0.24.0",
     "base-path-converter": "^1.0.2",
     "bls-eth-wasm": "^1.0.4",
