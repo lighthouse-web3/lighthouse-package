@@ -1,6 +1,6 @@
 const Conf = require("conf");
 const chalk = require("chalk");
-const { isAddress, isCID } = require("../Utils/util");
+const { addressValidator, isCID } = require("../Utils/util");
 
 const ethers = require("ethers");
 
@@ -88,7 +88,7 @@ module.exports = {
       .help()
       .check((argv, options) => {
         // check if valid Address
-        if (!isAddress(argv.address)) {
+        if (!addressValidator(argv.address)) {
           console.log(chalk.red("Invalid Address"));
           throw new Error("Invalid Address");
         }
