@@ -9,9 +9,8 @@ module.exports = async (cid) => {
           `/api/lighthouse/cid_status/?cid=${cid}`
       )
     ).data;
-
-    return status;
-  } catch {
-    return null;
+    return {data: { status }};
+  } catch (error) {
+    throw new Error(error.message);
   }
 };

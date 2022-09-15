@@ -15,7 +15,7 @@ const sign_auth_message = async (publicKey, privateKey) => {
   const provider = new ethers.providers.JsonRpcProvider();
   const signer = new ethers.Wallet(privateKey, provider);
   const messageRequested = await lighthouse.getAuthMessage(publicKey);
-  const signedMessage = await signer.signMessage(messageRequested);
+  const signedMessage = await signer.signMessage(messageRequested.data.message);
   return signedMessage;
 };
 
@@ -59,10 +59,6 @@ module.exports = {
           password.trim()
         );
 
-        if (!decryptedWallet) {
-          throw new Error("Incorrect password!");
-        }
-
         const signedMessage = await sign_auth_message(
           config.get("LIGHTHOUSE_GLOBAL_PUBLICKEY"),
           decryptedWallet.privateKey
@@ -73,16 +69,10 @@ module.exports = {
           signedMessage
         );
 
-        if (!fileEncryptionKey) {
-          throw new Error(
-            "Failed to decrypt. Check if you have access to the file."
-          );
-        }
-
         // Decrypt
         const decryptedFile = await lighthouse.decryptFile(
           argv.cid,
-          fileEncryptionKey
+          fileEncryptionKey.data.key
         );
 
         // save file

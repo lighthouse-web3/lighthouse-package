@@ -35,7 +35,7 @@ const getQuote = async (path, publicKey, Spinner) => {
   const spinner = new Spinner("Getting Quote...");
   spinner.start();
 
-  const quoteResponse = await lighthouse.getQuote(path, publicKey);
+  const quoteResponse = (await lighthouse.getQuote(path, publicKey)).data;
 
   spinner.stop();
   process.stdout.clearLine();
@@ -122,7 +122,7 @@ const deploy = async (path, signer, apiKey, network) => {
   let spinner = new Spinner("Uploading...");
   spinner.start();
 
-  const deployResponse = await lighthouse.deploy(path, apiKey);
+  const deployResponse = (await lighthouse.deploy(path, apiKey)).data;
 
   spinner.stop();
   process.stdout.clearLine();
@@ -159,10 +159,7 @@ const deploy = async (path, signer, apiKey, network) => {
     ) +
       " Y/n" +
       chalk.yellow(
-        "\r\nNote: this feature is currently available on fantom testnet. "
-      ) +
-      chalk.yellow(
-        "\r\nPlease wait for the next patch update for optimism, polygon and binance support."
+        "\r\nNote: this feature is currently available on polygon mumbai testnet. "
       )
   );
 
@@ -172,7 +169,7 @@ const deploy = async (path, signer, apiKey, network) => {
 
   const selected = await readInput(options);
 
-  if (network !== "fantom-testnet") {
+  if (network !== "polygon-testnet") {
     return;
   }
 

@@ -13,8 +13,12 @@ module.exports = async (publicKey, signedMessage) => {
         }
       )
     ).data;
-    return apiKey;
+    /*
+      return:
+        { data: { apiKey: '489a497e-4e0c-4cb5-9522-ca07740f6dfb' } }
+    */
+    return {data: { apiKey } };
   } catch (error) {
-    return null;
+    throw new Error(error.response.data);
   }
 };

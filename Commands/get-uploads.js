@@ -22,12 +22,9 @@ module.exports = {
           throw new Error("Wallet not created/imported");
         }
 
-        const response = await lighthouse.getUploads(
+        const response = (await lighthouse.getUploads(
           config.get("LIGHTHOUSE_GLOBAL_PUBLICKEY")
-        );
-        if (!response) {
-          throw new Error("Error Getting Uploads!!!");
-        }
+        )).data.uploads;
 
         console.log(
           "\r\n" +

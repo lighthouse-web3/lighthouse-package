@@ -29,7 +29,7 @@ module.exports = {
         };
 
         const password = await readInput(options);
-        const encryptedWallet = await lighthouse.createWallet(password.trim());
+        const encryptedWallet = (await lighthouse.createWallet(password.trim())).data.encryptedWallet;
         const decryptedWallet = ethers.Wallet.fromEncryptedJsonSync(
           encryptedWallet,
           password.trim()

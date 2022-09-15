@@ -21,7 +21,7 @@ module.exports = async (
           .post(
             url,
             {
-              address: publicKey.toLowerCase(),
+              address: publicKey,
               cid: cid,
             },
             {
@@ -40,8 +40,16 @@ module.exports = async (
     const indexes = sentShades.map((elem) => elem?.index);
 
     const key = await recoverKey(keys, indexes);
-    return key;
-  } catch {
-    return null;
+    /*
+      return:
+        {
+          data: {
+            key: '519862401c52447c87eb4d41ea5e99f4c6b82a5914cf4086a61f25ef3128122d'
+          }
+        }
+    */
+    return {data:{key: key}};
+  } catch (error) {
+      throw new Error(error.message);
   }
 };

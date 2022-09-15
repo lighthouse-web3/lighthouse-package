@@ -1,6 +1,6 @@
 const Conf = require("conf");
 const chalk = require("chalk");
-const { isAddress, isCID } = require("../Utils/util");
+const { addressValidator, isCID } = require("../Utils/util");
 
 const ethers = require("ethers");
 
@@ -11,7 +11,7 @@ const readInput = require("../Utils/readInput");
 const sign_auth_message = async (publicKey, privateKey) => {
   const provider = new ethers.providers.JsonRpcProvider();
   const signer = new ethers.Wallet(privateKey, provider);
-  const messageRequested = await lighthouse.getAuthMessage(publicKey);
+  const messageRequested = (await lighthouse.getAuthMessage(publicKey)).data.message;
   const signedMessage = await signer.signMessage(messageRequested);
   return signedMessage;
 };
@@ -60,7 +60,12 @@ module.exports = {
           signedMessage
         );
 
-        console.log(chalk.white(revokeResponse));
+        console.log(
+          chalk.yellow("revokeTo: ") +
+          chalk.white(revokeResponse.data.revokeTo) + "\r\n" + 
+          chalk.yellow("cid: ") +
+          chalk.white(revokeResponse.data.cid)
+        );
       } catch (error) {
         console.log(chalk.red(error.message));
       }
@@ -83,7 +88,7 @@ module.exports = {
       .help()
       .check((argv, options) => {
         // check if valid Address
-        if (!isAddress(argv.address)) {
+        if (!addressValidator(argv.address)) {
           console.log(chalk.red("Invalid Address"));
           throw new Error("Invalid Address");
         }

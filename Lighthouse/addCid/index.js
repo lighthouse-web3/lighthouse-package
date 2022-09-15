@@ -12,9 +12,9 @@ module.exports = async (fileName, cid) => {
         }
       )
     ).data;
-
-    return response;
+    
+    return {data: response};
   } catch (error) {
-    return null;
+    throw new Error(error.message);
   }
 };

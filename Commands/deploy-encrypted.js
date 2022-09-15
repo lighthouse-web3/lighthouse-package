@@ -56,19 +56,19 @@ const getQuote = async (path, publicKey, Spinner) => {
       Array(20).fill("\xa0").join("")
   );
 
-  for (let i = 0; i < quoteResponse.metaData.length; i++) {
+  for (let i = 0; i < quoteResponse.data.metaData.length; i++) {
     console.log(
-      quoteResponse.metaData[i].fileName +
-        Array(34 - quoteResponse.metaData[i].fileName.length)
+      quoteResponse.data.metaData[i].fileName +
+        Array(34 - quoteResponse.data.metaData[i].fileName.length)
           .fill("\xa0")
           .join("") +
-        bytesToSize(quoteResponse.metaData[i].fileSize) +
+        bytesToSize(quoteResponse.data.metaData[i].fileSize) +
         Array(
-          12 - bytesToSize(quoteResponse.metaData[i].fileSize).toString().length
+          12 - bytesToSize(quoteResponse.data.metaData[i].fileSize).toString().length
         )
           .fill("\xa0")
           .join("") +
-        quoteResponse.metaData[i].mimeType
+        quoteResponse.data.metaData[i].mimeType
     );
   }
 
@@ -76,30 +76,30 @@ const getQuote = async (path, publicKey, Spinner) => {
     "\r\n" +
       chalk.cyan("Summary") +
       "\r\nTotal Size: " +
-      bytesToSize(quoteResponse.totalSize)
+      bytesToSize(quoteResponse.data.totalSize)
   );
-
+    
   console.log(
     "Data Limit: " +
-      bytesToSize(parseInt(quoteResponse.dataLimit)) +
+      bytesToSize(parseInt(quoteResponse.data.dataLimit)) +
       "\r\nData Used : " +
-      bytesToSize(parseInt(quoteResponse.dataUsed)) +
+      bytesToSize(parseInt(quoteResponse.data.dataUsed)) +
       "\r\nAfter Deploy: " +
       bytesToSize(
-        parseInt(quoteResponse.dataLimit) -
-          (parseInt(quoteResponse.dataUsed) + quoteResponse.totalSize)
+        parseInt(quoteResponse.data.dataLimit) -
+          (parseInt(quoteResponse.data.dataUsed) + quoteResponse.data.totalSize)
       )
   );
 
   const remainingAfterUpload =
-    parseInt(quoteResponse.dataLimit) -
-    (parseInt(quoteResponse.dataUsed) + quoteResponse.totalSize);
+    parseInt(quoteResponse.data.dataLimit) -
+    (parseInt(quoteResponse.data.dataUsed) + quoteResponse.data.totalSize);
 
   return {
-    fileName: quoteResponse.metaData[0].fileName,
-    fileSize: quoteResponse.metaData[0].fileSize,
-    cost: quoteResponse.totalCost,
-    type: quoteResponse.type,
+    fileName: quoteResponse.data.metaData[0].fileName,
+    fileSize: quoteResponse.data.metaData[0].fileSize,
+    cost: quoteResponse.data.totalCost,
+    type: quoteResponse.data.type,
     remainingAfterUpload: remainingAfterUpload,
   };
 };
@@ -122,16 +122,16 @@ const deploy = async (path, signer, apiKey, network) => {
   let spinner = new Spinner("Uploading...");
   spinner.start();
 
-  const messageRequested = await lighthouse.getAuthMessage(
+  const messageRequested = (await lighthouse.getAuthMessage(
     config.get("LIGHTHOUSE_GLOBAL_PUBLICKEY")
-  );
+  )).data.message;
   const signedMessage = await signer.signMessage(messageRequested);
-  const deployResponse = await lighthouse.uploadEncrypted(
+  const deployResponse = (await lighthouse.uploadEncrypted(
     path,
     apiKey,
     config.get("LIGHTHOUSE_GLOBAL_PUBLICKEY"),
     signedMessage
-  );
+  )).data;
 
   spinner.stop();
   process.stdout.clearLine();
@@ -168,10 +168,7 @@ const deploy = async (path, signer, apiKey, network) => {
     ) +
       " Y/n" +
       chalk.yellow(
-        "\r\nNote: this feature is currently available on fantom testnet. "
-      ) +
-      chalk.yellow(
-        "\r\nPlease wait for the next patch update for optimism, polygon and binance support."
+        "\r\nNote: this feature is currently available on polygon mumbai testnet. "
       )
   );
 
@@ -181,7 +178,7 @@ const deploy = async (path, signer, apiKey, network) => {
 
   const selected = await readInput(options);
 
-  if (network !== "fantom-testnet") {
+  if (network !== "polygon-testnet") {
     return;
   }
 
@@ -228,7 +225,6 @@ module.exports = {
       try {
         // Import nodejs specific library
         const path = resolve(process.cwd(), argv.path);
-        console.log(path);
         const network = getNetwork();
 
         // Display Quote
@@ -278,10 +274,6 @@ module.exports = {
           config.get("LIGHTHOUSE_GLOBAL_WALLET"),
           password.trim()
         );
-
-        if (!decryptedWallet) {
-          throw new Error("Incorrect password!");
-        }
 
         const provider = new ethers.providers.JsonRpcProvider(
           lighthouseConfig[network]["rpc"]

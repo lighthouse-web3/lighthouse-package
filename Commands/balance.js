@@ -28,7 +28,7 @@ module.exports = {
         const spinner = new Spinner("");
         spinner.start();
 
-        const balance = await lighthouse.getBalance(
+        const response = await lighthouse.getBalance(
           config.get("LIGHTHOUSE_GLOBAL_PUBLICKEY")
         );
 
@@ -36,19 +36,15 @@ module.exports = {
         process.stdout.clearLine();
         process.stdout.cursorTo(0);
 
-        if (!balance) {
-          throw new Error("Error fetching balance!");
-        }
-
         console.log(
           chalk.yellow("\r\nData Limit: ") +
             Array(4).fill("\xa0").join("") +
-            byteToSize(parseInt(balance.dataLimit)) +
+            byteToSize(parseInt(response.data.dataLimit)) +
             chalk.yellow("\r\nData Used: ") +
             Array(5).fill("\xa0").join("") +
-            byteToSize(parseInt(balance.dataUsed)) +
+            byteToSize(parseInt(response.data.dataUsed)) +
             chalk.yellow("\r\nData Remaining: ") +
-            byteToSize(parseInt(balance.dataLimit) - parseInt(balance.dataUsed))
+            byteToSize(parseInt(response.data.dataLimit) - parseInt(response.data.dataUsed))
         );
 
         const network = getNetwork();
@@ -138,6 +134,7 @@ module.exports = {
         }
       } catch (error) {
         console.log(chalk.red(error.message));
+        process.exit(0);
       }
     }
   },

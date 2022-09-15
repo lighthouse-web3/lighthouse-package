@@ -65,10 +65,13 @@ const defaultConfig = {
   },
   "polygon-testnet": {
     symbol: "MATIC",
-    rpc: "https://rpc-mumbai.matic.today",
+    rpc: "https://rpc-mumbai.maticvigil.com/",
     scan: "https://mumbai.polygonscan.com/tx/",
     chain_id: "80001",
-    lighthouse_contract_address: "0xEe24a604d86fC158798031c70C4Cf9EB291aDdad",
+    lighthouse_contract_address: "0x90c5ab8d2418a3855dBAFd8131bf0274f6Ea431F",
+    deposit_contract_address: "0x0ff9092e55d9f6CCB0DD4C490754811bc0839866",
+    usdc_contract_address: "0x742DfA5Aa70a8212857966D491D67B09Ce7D6ec7",
+    usd_contract_decimal: 6,
   },
   "binance-testnet": {
     symbol: "BNB",

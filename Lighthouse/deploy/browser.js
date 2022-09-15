@@ -2,12 +2,12 @@
 const axios = require("axios");
 const lighthouseConfig = require("../../lighthouse.config");
 
-module.exports = async (e, accessToken) => {
+module.exports = async (e, accessToken, uploadProgressCallback=null) => {
   try {
     const endpoint = lighthouseConfig.lighthouseNode + "/api/v0/add";
     e.persist();
     let mimeType = null;
-    if(e.target.files.length === 1){
+    if (e.target.files.length === 1) {
       mimeType = e.target.files[0].type;
     }
 
@@ -23,14 +23,38 @@ module.exports = async (e, accessToken) => {
       maxBodyLength: "Infinity",
       headers: {
         "Content-type": `multipart/form-data; boundary= ${formData._boundary}`,
-        "Encryption": false,
+        Encryption: false,
         "Mime-Type": mimeType,
         Authorization: token,
       },
+      onUploadProgress: function (progressEvent) {
+        const _progress = Math.round(
+           progressEvent.loaded / progressEvent.total
+        );
+        uploadProgressCallback({
+          "progress": _progress,
+          "total": progressEvent.total,
+          "uploaded": progressEvent.loaded
+        })
+      },
     });
 
-    return response.data;
-  } catch {
-    return null;
+    if(typeof response.data === "string") {
+      const temp = response.data.split("\n");
+      response.data = JSON.parse(temp[temp.length - 2]);
+    }
+
+    /*
+      {
+        data: {
+          Name: 'flow1.png',
+          Hash: 'QmUHDKv3NNL1mrg4NTW4WwJqetzwZbGNitdjr2G6Z5Xe6s',
+          Size: '31735'
+        }
+      }
+    */
+    return {data: response.data};
+  } catch(error) {
+    throw new Error(error.message);
   }
 };

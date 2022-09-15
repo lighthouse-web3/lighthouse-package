@@ -57,11 +57,7 @@ module.exports = {
       );
     } else {
       try {
-        const status = await lighthouse.status(argv.cid);
-        if (!status) {
-          throw new Error("Error getting status");
-        }
-
+        const status = (await lighthouse.status(argv.cid)).data.status;
         showResponse(status);
       } catch (error) {
         console.log(chalk.red(error.message));
