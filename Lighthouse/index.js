@@ -27,6 +27,7 @@ if (typeof window === "undefined") {
   const getQuote = require("./getQuote");
   const decryptFile = require("./deployEncrypted/node/decryptFile");
   const uploadEncrypted = require("./deployEncrypted/node");
+  const textDeploy = require("./deploy/deployText");
   const textUploadEncrypted = require("./deployEncrypted/node/textUploadEncrypted");
 
   module.exports = {
@@ -50,7 +51,8 @@ if (typeof window === "undefined") {
     accessCondition,
     revokeFileAccess,
     textUploadEncrypted,
-    getAccessConditions
+    getAccessConditions,
+    textDeploy
   };
 } else {
   const deploy = require("./deploy/browser");
