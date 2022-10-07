@@ -6,7 +6,8 @@ module.exports = async (
   cid,
   signedMessage,
   conditions,
-  aggregator = null
+  aggregator = null,
+  chainType = "evm"
 ) => {
   try {
     const nodeId = [1, 2, 3, 4, 5];
@@ -18,13 +19,14 @@ module.exports = async (
     // send encryption key
     const _ = await Promise.all(
       nodeUrl.map((url, index) => {
-        return axios.post(
+        return axios.put(
           url,
           {
             address: publicKey,
             cid: cid,
             conditions,
             aggregator,
+            chainType: chainType
           },
           {
             headers: {
