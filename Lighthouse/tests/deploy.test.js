@@ -5,7 +5,7 @@ const ethers = require("ethers");
 const lighthouse = require("../");
 const lighthouseConfig = require("../../lighthouse.config");
 
-test("deploy Main Case File", async () => {
+test("upload Main Case File", async () => {
   const path = resolve(process.cwd(), "Utils/testImages/testImage1.svg");
   const publicKey = "0x1Ec09D4B3Cb565b7CCe2eEAf71CC90c9b46c5c26";
   const verificationMessage = (
@@ -22,7 +22,7 @@ test("deploy Main Case File", async () => {
   const signedMessage = await signer.signMessage(verificationMessage);
   const apiKey = await lighthouse.getApiKey(publicKey, signedMessage);
 
-  const deployResponse = (await lighthouse.deploy(path, apiKey.data.apiKey)).data;
+  const deployResponse = (await lighthouse.upload(path, apiKey.data.apiKey)).data;
 
   expect(deployResponse).toHaveProperty("Name");
   expect(typeof deployResponse["Name"]).toBe("string");
@@ -34,7 +34,7 @@ test("deploy Main Case File", async () => {
   expect(typeof deployResponse["Size"]).toBe("string");
 }, 60000);
 
-test("deploy Main Case Folder", async () => {
+test("upload Main Case Folder", async () => {
   const path = resolve(process.cwd(), "Utils/testImages");
 
   const publicKey = "0x1Ec09D4B3Cb565b7CCe2eEAf71CC90c9b46c5c26";
@@ -52,7 +52,7 @@ test("deploy Main Case Folder", async () => {
   const signedMessage = await signer.signMessage(verificationMessage);
   const apiKey = await lighthouse.getApiKey(publicKey, signedMessage);
 
-  const deployResponse = (await lighthouse.deploy(path, apiKey.data.apiKey)).data;
+  const deployResponse = (await lighthouse.upload(path, apiKey.data.apiKey)).data;
 
   expect(deployResponse).toHaveProperty("Name");
   expect(typeof deployResponse["Name"]).toBe("string");
@@ -64,28 +64,28 @@ test("deploy Main Case Folder", async () => {
   expect(typeof deployResponse["Size"]).toBe("string");
 }, 60000);
 
-test("deploy Error Case Wrong Path", async () => {
+test("upload Error Case Wrong Path", async () => {
   try{
     const path = resolve(process.cwd(), "Utils/testImages/testImage2.svg");
-    const deployResponse = await lighthouse.deploy(path, "apiKey");
+    const deployResponse = await lighthouse.upload(path, "apiKey");
   } catch(error) {
     expect(typeof error.message).toBe("string");
   }
 }, 60000);
 
-test("deploy Error Case Wrong Api Key File", async () => {
+test("upload Error Case Wrong Api Key File", async () => {
   try{
     const path = resolve(process.cwd(), "Utils/testImages/testImage1.svg");
-    const deployResponse = await lighthouse.deploy(path, "apiKey");
+    const deployResponse = await lighthouse.upload(path, "apiKey");
   } catch(error) {
     expect(typeof error.message).toBe("string");
   }
 }, 60000);
 
-test("deploy Error Case Wrong Api Key Folder", async () => {
+test("upload Error Case Wrong Api Key Folder", async () => {
   try{
     const path = resolve(process.cwd(), "Utils/testImages");
-    const deployResponse = await lighthouse.deploy(path, "apiKey");
+    const deployResponse = await lighthouse.upload(path, "apiKey");
   } catch(error) {
     expect(typeof error.message).toBe("string");
   }
