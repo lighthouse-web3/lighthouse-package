@@ -43,18 +43,7 @@ module.exports = {
           password.trim()
         );
         
-        const signedMessage1 = await sign_auth_message(
-          config.get("LIGHTHOUSE_GLOBAL_PUBLICKEY"),
-          decryptedWallet.privateKey
-        );
-        
-        const fileEncryptionKey = await lighthouse.fetchEncryptionKey(
-          argv.cid,
-          config.get("LIGHTHOUSE_GLOBAL_PUBLICKEY"),
-          signedMessage1
-        );
-        
-        const signedMessage2 = await sign_auth_message(
+        const signedMessage = await sign_auth_message(
           config.get("LIGHTHOUSE_GLOBAL_PUBLICKEY"),
           decryptedWallet.privateKey
         );
@@ -63,8 +52,7 @@ module.exports = {
           config.get("LIGHTHOUSE_GLOBAL_PUBLICKEY"),
           [argv.address],
           argv.cid,
-          fileEncryptionKey.data.key,
-          signedMessage2
+          signedMessage
         );
 
         console.log(

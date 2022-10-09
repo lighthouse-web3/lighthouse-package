@@ -11,26 +11,27 @@ const getContractAddress = require("./getContractAddress");
 
 // Encryption BLS
 const shareFile = require("./encryption/shareFile");
-const accessCondition = require("./encryption/accessConditionFile");
 const getAuthMessage = require("./encryption/getAuthMessage");
-const fetchEncryptionKey = require("./encryption/fetchEncryptionKey");
 const revokeFileAccess = require("./encryption/revokeFileAccess");
+const accessCondition = require("./encryption/accessConditionFile");
+const fetchEncryptionKey = require("./encryption/fetchEncryptionKey");
 const getAccessConditions = require("./encryption/getAccessConditions");
 
 // Key pair gen
-const getEncryptionKeyPair = require("./encryption/getEncryptionKeyPair");
-const decryptPassword = require("./encryption/decryptPassword");
 const encryptKey = require("./encryption/encryptKey");
+const decryptPassword = require("./encryption/decryptPassword");
+const getEncryptionKeyPair = require("./encryption/getEncryptionKeyPair");
 
 if (typeof window === "undefined") {
-  const deploy = require("./deploy");
+  const upload = require("./upload");
   const getQuote = require("./getQuote");
-  const decryptFile = require("./deployEncrypted/node/decryptFile");
-  const uploadEncrypted = require("./deployEncrypted/node");
-  const textUploadEncrypted = require("./deployEncrypted/node/textUploadEncrypted");
+  const uploadText = require("./upload/uploadText");
+  const uploadEncrypted = require("./uploadEncrypted/node");
+  const decryptFile = require("./uploadEncrypted/node/decryptFile");
+  const textUploadEncrypted = require("./uploadEncrypted/node/textUploadEncrypted");
 
   module.exports = {
-    deploy,
+    upload,
     addCid,
     getApiKey,
     createWallet,
@@ -50,15 +51,16 @@ if (typeof window === "undefined") {
     accessCondition,
     revokeFileAccess,
     textUploadEncrypted,
-    getAccessConditions
+    getAccessConditions,
+    uploadText
   };
 } else {
-  const deploy = require("./deploy/browser");
-  const decryptFile = require("./deployEncrypted/browser/decryptFile");
-  const uploadEncrypted = require("./deployEncrypted/browser/index.js");
+  const upload = require("./upload/browser");
+  const decryptFile = require("./uploadEncrypted/browser/decryptFile");
+  const uploadEncrypted = require("./uploadEncrypted/browser/index.js");
 
   module.exports = {
-    deploy,
+    upload,
     addCid,
     getApiKey,
     getBalance,

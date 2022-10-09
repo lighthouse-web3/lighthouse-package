@@ -84,7 +84,7 @@ const getQuote = async (path, publicKey, Spinner) => {
       bytesToSize(parseInt(quoteResponse.data.dataLimit)) +
       "\r\nData Used : " +
       bytesToSize(parseInt(quoteResponse.data.dataUsed)) +
-      "\r\nAfter Deploy: " +
+      "\r\nAfter Upload: " +
       bytesToSize(
         parseInt(quoteResponse.data.dataLimit) -
           (parseInt(quoteResponse.data.dataUsed) + quoteResponse.data.totalSize)
@@ -118,7 +118,7 @@ const transactionLog = (txObj, network) => {
   }
 };
 
-const deploy = async (path, signer, apiKey, network) => {
+const uploadFile = async (path, signer, apiKey, network) => {
   let spinner = new Spinner("Uploading...");
   spinner.start();
 
@@ -126,7 +126,7 @@ const deploy = async (path, signer, apiKey, network) => {
     config.get("LIGHTHOUSE_GLOBAL_PUBLICKEY")
   )).data.message;
   const signedMessage = await signer.signMessage(messageRequested);
-  const deployResponse = (await lighthouse.uploadEncrypted(
+  const uploadResponse = (await lighthouse.uploadEncrypted(
     path,
     apiKey,
     config.get("LIGHTHOUSE_GLOBAL_PUBLICKEY"),
@@ -137,8 +137,8 @@ const deploy = async (path, signer, apiKey, network) => {
   process.stdout.clearLine();
   process.stdout.cursorTo(0);
 
-  if (!deployResponse.Hash) {
-    console.log(chalk.red("Deploy failed!"));
+  if (!uploadResponse.Hash) {
+    console.log(chalk.red("Upload failed!"));
     console.log(
       chalk.yellow("Check if api key is correct or create a new key!")
     );
@@ -146,21 +146,21 @@ const deploy = async (path, signer, apiKey, network) => {
   }
 
   console.log(
-    chalk.green("File Deployed, visit following url to view content!\r\n") +
+    chalk.green("File Uploaded, visit following url to view content!\r\n") +
       chalk.cyan(
         "Visit: " +
           "https://gateway.lighthouse.storage/ipfs/" +
-          deployResponse.Hash +
+          uploadResponse.Hash +
           "\r\n"
       ) +
       chalk.cyan(
         Array(7).fill("\xa0").join("") +
           "https://ipfs.io/ipfs/" +
-          deployResponse.Hash
+          uploadResponse.Hash
       )
   );
 
-  console.log("CID: " + deployResponse.Hash);
+  console.log("CID: " + uploadResponse.Hash);
 
   console.log(
     chalk.green(
@@ -191,9 +191,9 @@ const deploy = async (path, signer, apiKey, network) => {
     spinner.start();
     const txObj = await pushCidToChain(
       signer,
-      deployResponse.Hash,
-      deployResponse.Name,
-      deployResponse.Size,
+      uploadResponse.Hash,
+      uploadResponse.Name,
+      uploadResponse.Size,
       network
     );
     spinner.stop();
@@ -206,20 +206,20 @@ const deploy = async (path, signer, apiKey, network) => {
 };
 
 module.exports = {
-  command: "deploy-encrypted [path]",
-  desc: "Deploy a file",
+  command: "upload-encrypted [path]",
+  desc: "Upload a file encrypted",
   handler: async function (argv) {
     if (argv.help) {
       console.log(
-        "lighthouse-web3 deploy <path>\r\n\r\n" +
+        "lighthouse-web3 upload-encrypted <path>\r\n\r\n" +
           chalk.green("Description: ") +
-          "Deploy a file\r\n\r\n" +
+          "Upload a file\r\n\r\n" +
           chalk.cyan("Options:\r\n") +
           Array(3).fill("\xa0").join("") +
           "--path: Required, path to file\r\n\r\n" +
           chalk.magenta("Example:") +
           Array(3).fill("\xa0").join("") +
-          "lighthouse-web3 deploy /home/cosmos/Desktop/ILoveAnime.jpg\r\n"
+          "lighthouse-web3 upload-encrypted /home/cosmos/Desktop/ILoveAnime.jpg\r\n"
       );
     } else {
       try {
@@ -234,7 +234,7 @@ module.exports = {
           Spinner
         );
 
-        // Deploy
+        // Upload
         console.log(
           chalk.green(
             "Carefully check the above details are correct, then confirm to complete this upload"
@@ -280,7 +280,7 @@ module.exports = {
         );
         const signer = new ethers.Wallet(decryptedWallet.privateKey, provider);
         const apiKey = config.get("LIGHTHOUSE_GLOBAL_API_KEY");
-        await deploy(path, signer, apiKey, network);
+        await uploadFile(path, signer, apiKey, network);
       } catch (error) {
         console.log(chalk.red(error.message));
       }

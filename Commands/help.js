@@ -31,12 +31,12 @@ const showHelp = () => {
     "\r\nbalance" +
     Array(30).fill("\xa0").join("") +
     "Get your data usage" +
-    "\r\ndeploy" +
+    "\r\nupload" +
     Array(31).fill("\xa0").join("") +
-    "Deploy a file" +
-    "\r\ndeploy-encrypted" +
+    "Upload a file" +
+    "\r\nupload-encrypted" +
     Array(21).fill("\xa0").join("") +
-    "Deploy a file with encryption" +
+    "Upload a file with encryption" +
     "\r\ndecrypt-file" +
     Array(25).fill("\xa0").join("") +
     "Decrypt and download the file" +
