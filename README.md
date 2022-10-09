@@ -26,8 +26,8 @@ lighthouse-web3 api-key --new
 # balance
 lighthouse-web3 balance
 
-# deploy
-lighthouse-web3 deploy <path>
+# upload
+lighthouse-web3 upload <path>
 
 # status
 lighthouse-web3 status <cid>
@@ -53,7 +53,7 @@ const wallet = await lighthouse.createWallet(
 const balance = await lighthouse.getBalance(publicKey);
 
 // Deploy File
-const deploy = await lighthouse.deploy('/home/cosmos/Desktop/wow.jpg', api-key);
+const uploadResponse = await lighthouse.upload('/home/cosmos/Desktop/animes.jpg', api-key);
 ```
 
 Refer [GitBook](https://lighthouse-storage.gitbook.io/lighthouse/)
