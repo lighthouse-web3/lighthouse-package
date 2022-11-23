@@ -1,4 +1,3 @@
-require("dotenv").config();
 const axios = require("axios");
 const { resolve } = require("path");
 const ethers = require("ethers");
