@@ -2,7 +2,7 @@ require("dotenv").config();
 const axios = require("axios");
 const { resolve } = require("path");
 const ethers = require("ethers");
-const lighthouse = require("../");
+const lighthouse = require("..");
 const lighthouseConfig = require("../../lighthouse.config");
 
 test("upload Main Case File", async () => {
