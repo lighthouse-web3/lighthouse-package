@@ -46,9 +46,9 @@ const showHelp = () => {
     "\r\nrevoke-access" +
     Array(24).fill("\xa0").join("") +
     "Revoke direct access to the file" +
-    "\r\nstatus" +
+    "\r\ndeal-status" +
     Array(31).fill("\xa0").join("") +
-    "Get metadata around the storage per CID" +
+    "Get storage filecoin deal status" +
     "\r\nget-uploads" +
     Array(26).fill("\xa0").join("") +
     "Get details of file uploaded" +

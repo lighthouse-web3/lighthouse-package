@@ -1,8 +1,7 @@
-require("dotenv").config();
 const axios = require("axios");
 const { resolve } = require("path");
 const ethers = require("ethers");
-const lighthouse = require("../");
+const lighthouse = require("..");
 const lighthouseConfig = require("../../lighthouse.config");
 
 const signAuthMessage = async (publicKey, privateKey) => {

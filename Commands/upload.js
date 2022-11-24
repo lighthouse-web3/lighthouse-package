@@ -216,7 +216,6 @@ module.exports = {
       try {
         // Import nodejs specific library
         const path = resolve(process.cwd(), argv.path);
-        console.log(path);
         const network = getNetwork();
 
         // Display Quote

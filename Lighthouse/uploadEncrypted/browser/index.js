@@ -131,7 +131,7 @@ module.exports = async (e, publicKey, accessToken, signedMessage, uploadProgress
         }
       }
     */
-    return response.data;
+    return {data: response.data};
   } catch (error) {
     return error.message;
   }

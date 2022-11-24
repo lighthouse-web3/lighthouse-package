@@ -1,6 +1,6 @@
 /* istanbul ignore file */
 const addCid = require("./addCid");
-const status = require("./status");
+const dealStatus = require("./dealStatus");
 const getApiKey = require("./getApiKey");
 const getBalance = require("./getBalance");
 const getUploads = require("./getUploads");
@@ -38,7 +38,7 @@ if (typeof window === "undefined") {
     getQuote,
     getBalance,
     getUploads,
-    status,
+    dealStatus,
     getContractAddress,
     uploadEncrypted,
     decryptFile,
@@ -65,7 +65,7 @@ if (typeof window === "undefined") {
     getApiKey,
     getBalance,
     getUploads,
-    status,
+    dealStatus,
     getContractAddress,
     uploadEncrypted,
     decryptFile,

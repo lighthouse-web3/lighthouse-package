@@ -1,6 +1,6 @@
 {
   "name": "@lighthouse-web3/sdk",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "description": "NPM package and CLI tool to interact with lighthouse protocol",
   "main": "index.js",
   "scripts": {
@@ -50,7 +50,6 @@
     "yargs": "^17.2.1"
   },
   "devDependencies": {
-    "dotenv": "^10.0.0",
-    "jest": "^27.4.5"
+    "jest": "^29.3.1"
   }
 }

@@ -1,12 +1,12 @@
 const axios = require("axios");
 const lighthouseConfig = require("../../lighthouse.config");
 
-module.exports = async (publicKey) => {
+module.exports = async (publicKey, pageNo=1) => {
   try {
     const uploads = (
       await axios.get(
         lighthouseConfig.lighthouseAPI +
-          `/api/user/get_uploads?publicKey=${publicKey}`
+          `/api/user/get_uploads?publicKey=${publicKey}&pageNo=${pageNo}`
       )
     ).data;
 
