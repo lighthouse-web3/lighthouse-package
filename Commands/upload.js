@@ -9,27 +9,8 @@ const getNetwork = require("../Utils/getNetwork");
 const lighthouseConfig = require("../lighthouse.config");
 const lighthouse = require("../Lighthouse");
 const readInput = require("../Utils/readInput");
-const { lighthouseAbi } = require("../Utils/contractAbi/lighthouseAbi");
 
 const config = new Conf();
-
-const pushCidToChain = async (signer, cid, name, size, network) => {
-  try {
-    const contract = new ethers.Contract(
-      lighthouseConfig[network]["lighthouse_contract_address"],
-      lighthouseAbi,
-      signer
-    );
-
-    const txResponse = await contract.store(cid, "", name, size);
-
-    const txReceipt = await txResponse.wait();
-    return txReceipt;
-  } catch (e) {
-    console.log(e.error);
-    return null;
-  }
-};
 
 const getQuote = async (path, publicKey, Spinner) => {
   const spinner = new Spinner("Getting Quote...");
@@ -104,20 +85,6 @@ const getQuote = async (path, publicKey, Spinner) => {
   };
 };
 
-const transactionLog = (txObj, network) => {
-  const networkConfig = lighthouseConfig[network];
-
-  if (!networkConfig) {
-    console.error(`No network found for ${network}`);
-  }
-
-  if (txObj) {
-    console.log("Transaction: " + networkConfig.scan + txObj.transactionHash);
-  } else {
-    console.log("Transaction failed");
-  }
-};
-
 const uploadFile = async (path, signer, apiKey, network) => {
   let spinner = new Spinner("Uploading...");
   spinner.start();
@@ -152,47 +119,6 @@ const uploadFile = async (path, signer, apiKey, network) => {
   );
 
   console.log("CID: " + uploadResponse.Hash);
-
-  console.log(
-    chalk.green(
-      "Push CID to blockchain network now(Y) or we will do it for you(N)"
-    ) +
-      " Y/n" +
-      chalk.yellow(
-        "\r\nNote: this feature is currently available on polygon mumbai testnet. "
-      )
-  );
-
-  const options = {
-    prompt: "",
-  };
-
-  const selected = await readInput(options);
-
-  if (network !== "polygon-testnet") {
-    return;
-  }
-
-  if (
-    selected.trim() === "Y" ||
-    selected.trim() === "y" ||
-    selected.trim() === "yes"
-  ) {
-    spinner = new Spinner("Executing transaction...");
-    spinner.start();
-    const txObj = await pushCidToChain(
-      signer,
-      uploadResponse.Hash,
-      uploadResponse.Name,
-      uploadResponse.Size,
-      network
-    );
-    spinner.stop();
-    process.stdout.clearLine();
-    process.stdout.cursorTo(0);
-    transactionLog(txObj, network);
-  }
-
   return;
 };
 
