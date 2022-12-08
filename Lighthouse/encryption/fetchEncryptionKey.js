@@ -1,45 +1,23 @@
 const axios = require("axios");
 
 const lighthouseConfig = require("../../lighthouse.config");
-const { recoverKey, randSelect } = require("../../Utils/bls_helper");
+const { recoverKey, recoverShards } = require("encryption-sdk");
 
-module.exports = async (
-  cid,
-  publicKey,
-  signedMessage
-) => {
+module.exports = async (cid, publicKey, signedMessage) => {
   try {
-    const nodeIndexSelected = randSelect(3, 5);
-    const nodeUrl = nodeIndexSelected.map((elem) =>
-      lighthouseConfig.lighthouseBLSNode + "/api/retrieveSharedKey/" + elem
+    const { error, shards } = await recoverShards(
+      publicKey,
+      cid,
+      signedMessage
     );
+    if (error) {
+      throw new Error(error);
+    }
+    const { masterKey: key, error: recoverError } = await recoverKey(shards);
 
-    // send encryption key
-    const sentShades = await Promise.all(
-      nodeUrl.map((url) => {
-        return axios
-          .post(
-            url,
-            {
-              address: publicKey,
-              cid: cid,
-            },
-            {
-              headers: {
-                Authorization: "Bearer " + signedMessage,
-              },
-            }
-          )
-          .then((res) => {
-            return res.data.payload;
-          });
-      })
-    );
-
-    const keys = sentShades.map((elem) => elem?.key);
-    const indexes = sentShades.map((elem) => elem?.index);
-
-    const key = await recoverKey(keys, indexes);
+    if (recoverError) {
+      throw new Error(recoverError);
+    }
     /*
       return:
         {
@@ -48,8 +26,9 @@ module.exports = async (
           }
         }
     */
-    return {data:{key: key}};
+    return { data: { key: key } };
   } catch (error) {
-      throw new Error(error.message);
+    console.log(error);
+    throw new Error(error.message);
   }
 };
