@@ -39,6 +39,7 @@ module.exports = async (text, apiKey, publicKey, signed_message) => {
     const { isSaved, error } = await saveShards(
       publicKey,
       response.data.Hash,
+      signed_message,
       keyShards
     );
 
