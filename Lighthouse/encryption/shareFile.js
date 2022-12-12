@@ -1,39 +1,20 @@
 const axios = require("axios");
 const lighthouseConfig = require("../../lighthouse.config");
+const { shareToAddress } = require("encryption-sdk");
 
-module.exports = async (
-  publicKey,
-  shareTo,
-  cid,
-  signedMessage
-) => {
+module.exports = async (publicKey, shareTo, cid, signedMessage) => {
   try {
-    const nodeId = [1, 2, 3, 4, 5];
-    const nodeUrl = nodeId.map(
-      (elem) => lighthouseConfig.lighthouseBLSNode + "/api/setSharedKey/" + elem
+    const { isSuccess, error } = await shareToAddress(
+      publicKey,
+      cid,
+      signedMessage,
+      shareTo
     );
 
-    const sharedTo = Array.isArray(shareTo) ? shareTo : [shareTo];
+    if (error) {
+      throw new Error(error);
+    }
 
-    // send encryption key
-    const _ = await Promise.all(
-      nodeUrl.map((url, index) => {
-        return axios.put(
-          url,
-          {
-            address: publicKey,
-            cid: cid,
-            shareTo: sharedTo,
-          },
-          {
-            headers: {
-              Authorization: "Bearer " + signedMessage,
-            },
-          }
-        );
-      })
-    );
-    
     /*
       {
         data: {
@@ -42,7 +23,7 @@ module.exports = async (
         }
       }
     */
-    return { data: { shareTo, cid } };
+    return { data: { shareTo, cid }, isSuccess };
   } catch (error) {
     throw new Error(error.message);
   }

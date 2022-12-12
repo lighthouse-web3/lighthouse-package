@@ -3,6 +3,7 @@
   "version": "0.1.10",
   "description": "NPM package and CLI tool to interact with lighthouse protocol",
   "main": "index.js",
+  "types": "./Lighthouse/index.d.ts",
   "scripts": {
     "start": "node index.js",
     "lint": "trunk check",

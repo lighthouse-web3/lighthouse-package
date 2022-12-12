@@ -1,5 +1,6 @@
 const axios = require("axios");
 const lighthouseConfig = require("../../lighthouse.config");
+const { revokeAccess } = require("encryption-sdk");
 
 module.exports = async (publicKey, revokeTo, cid, signedMessage) => {
   try {
@@ -11,19 +12,11 @@ module.exports = async (publicKey, revokeTo, cid, signedMessage) => {
     const _revokeTo = Array.isArray(revokeTo) ? revokeTo : [revokeTo];
 
     // send encryption key
-    const _ = await Promise.all(
-      nodeUrl.map((url, index) => {
-        return axios.delete(url, {
-          data: {
-            address: publicKey,
-            cid: cid,
-            revokeTo: _revokeTo,
-          },
-          headers: {
-            Authorization: "Bearer " + signedMessage,
-          },
-        });
-      })
+    const { error, revoked } = await revokeAccess(
+      publicKey,
+      cid,
+      signedMessage,
+      _revokeTo
     );
     /*
       {
@@ -33,7 +26,7 @@ module.exports = async (publicKey, revokeTo, cid, signedMessage) => {
         }
       }
     */
-    return { data: { cid, revokeTo } };
+    return { data: { cid, revokeTo }, error, revoked };
   } catch (error) {
     throw new Error(error.message);
   }
