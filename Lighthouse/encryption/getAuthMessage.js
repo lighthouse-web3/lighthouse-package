@@ -1,11 +1,12 @@
-const axios = require("axios");
-const lighthouseConfig = require("../../lighthouse.config");
 const { addressValidator } = require("../../Utils/util");
-const { getAuthMessage } = require("encryption-sdk");
+const { getAuthMessage } = require("@lighthouse-web3/kavach");
 
 module.exports = async (publicKey) => {
   try {
     const address = addressValidator(publicKey);
+    if(!address){
+      throw new Error("Invalid public Key");
+    }
     const { error, message } = await getAuthMessage(publicKey);
 
     if (error) {
@@ -17,6 +18,6 @@ module.exports = async (publicKey) => {
     */
     return { data: { message } };
   } catch (error) {
-    throw new Error(error.message);
+    throw new Error(error);
   }
 };

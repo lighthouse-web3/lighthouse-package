@@ -1,6 +1,4 @@
-const axios = require("axios");
-const lighthouseConfig = require("../../lighthouse.config");
-const { accessControl } = require("encryption-sdk");
+const { accessControl } = require("@lighthouse-web3/kavach");
 
 module.exports = async (
   publicKey,
@@ -24,8 +22,8 @@ module.exports = async (
     if (error) {
       throw new Error(error);
     }
-    return { data: { cid, conditions, aggregator }, isSuccess };
+    return { data: { cid: cid, status: "Success" } };
   } catch (error) {
-    throw new Error(error.message);
+    throw new Error(error);
   }
 };

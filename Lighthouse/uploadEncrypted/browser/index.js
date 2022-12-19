@@ -1,8 +1,7 @@
 /* istanbul ignore file */
 const axios = require("axios");
-const { v4: uuidv4 } = require("uuid");
 
-const { generate, saveShards } = require("encryption-sdk");
+const { generate, saveShards } = require("@lighthouse-web3/kavach");
 
 const { encryptFile } = require("./encryptionBrowser");
 const lighthouseConfig = require("../../../lighthouse.config");
@@ -87,11 +86,16 @@ module.exports = async (
     });
 
     
-    const { isSaved, error } = await saveShards(
+    const { isSuccess, error } = await saveShards(
       publicKey,
       response.data.Hash,
+      signedMessage,
       keyShards
     );
+    if(error){
+      throw new Error("Error encrypting file");
+    }
+    
     // return response
     /*
       {
@@ -102,7 +106,7 @@ module.exports = async (
         }
       }
     */
-    return { data: response.data, isSaved, error };
+    return { data: response.data };
   } catch (error) {
     return error.message;
   }

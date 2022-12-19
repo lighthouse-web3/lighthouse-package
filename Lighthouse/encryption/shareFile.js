@@ -1,6 +1,4 @@
-const axios = require("axios");
-const lighthouseConfig = require("../../lighthouse.config");
-const { shareToAddress } = require("encryption-sdk");
+const { shareToAddress } = require("@lighthouse-web3/kavach");
 
 module.exports = async (publicKey, shareTo, cid, signedMessage) => {
   try {
@@ -18,13 +16,14 @@ module.exports = async (publicKey, shareTo, cid, signedMessage) => {
     /*
       {
         data: {
+          cid: 'QmUHDKv3NNL1mrg4NTW4WwJqetzwZbGNitdjr2G6Z5Xe6s',
           shareTo: [ '0x487fc2fE07c593EAb555729c3DD6dF85020B5160' ],
-          cid: 'QmUHDKv3NNL1mrg4NTW4WwJqetzwZbGNitdjr2G6Z5Xe6s'
+          status: "Success"
         }
       }
     */
-    return { data: { shareTo, cid }, isSuccess };
+    return { data: { cid, shareTo, status: "Success" } };
   } catch (error) {
-    throw new Error(error.message);
+    throw new Error(error);
   }
 };

@@ -1,7 +1,4 @@
-const axios = require("axios");
-
-const lighthouseConfig = require("../../lighthouse.config");
-const { recoverKey, recoverShards } = require("encryption-sdk");
+const { recoverKey, recoverShards } = require("@lighthouse-web3/kavach");
 
 module.exports = async (cid, publicKey, signedMessage) => {
   try {
@@ -29,6 +26,6 @@ module.exports = async (cid, publicKey, signedMessage) => {
     return { data: { key: key } };
   } catch (error) {
     console.log(error);
-    throw new Error(error.message);
+    throw new Error(error);
   }
 };
