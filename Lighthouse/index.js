@@ -5,6 +5,7 @@ const getApiKey = require("./getApiKey");
 const getBalance = require("./getBalance");
 const getUploads = require("./getUploads");
 const createWallet = require("./createWallet");
+const getFileInfo = require("./getFileInfo");
 
 // Get Contract Address
 const getContractAddress = require("./getContractAddress");
@@ -17,10 +18,6 @@ const accessCondition = require("./encryption/accessConditionFile");
 const fetchEncryptionKey = require("./encryption/fetchEncryptionKey");
 const getAccessConditions = require("./encryption/getAccessConditions");
 
-// Key pair gen
-const encryptKey = require("./encryption/encryptKey");
-const decryptPassword = require("./encryption/decryptPassword");
-const getEncryptionKeyPair = require("./encryption/getEncryptionKeyPair");
 
 if (typeof window === "undefined") {
   const upload = require("./upload");
@@ -40,11 +37,9 @@ if (typeof window === "undefined") {
     getUploads,
     dealStatus,
     getContractAddress,
+    getFileInfo,
     uploadEncrypted,
     decryptFile,
-    getEncryptionKeyPair,
-    decryptPassword,
-    encryptKey,
     fetchEncryptionKey,
     getAuthMessage,
     shareFile,
@@ -67,11 +62,9 @@ if (typeof window === "undefined") {
     getUploads,
     dealStatus,
     getContractAddress,
+    getFileInfo,
     uploadEncrypted,
     decryptFile,
-    getEncryptionKeyPair,
-    decryptPassword,
-    encryptKey,
     fetchEncryptionKey,
     getAuthMessage,
     shareFile,
