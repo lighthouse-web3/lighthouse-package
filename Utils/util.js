@@ -1,12 +1,12 @@
 const ethers = require("ethers");
+const { CID } = require('multiformats/cid');
 
-const isCID = (cid) => {
-  if (cid.startsWith("Qm")) {
-    return /^[A-HJ-NP-Za-km-z1-9]*$/.test(cid) && cid.length == 46;
-  } else if (cid.startsWith("b")) {
-    return cid.length >= 50;
+const isCID = (hash) => {
+  try {
+    return Boolean(CID.parse(hash));
+  } catch {
+    return false;
   }
-  return true;
 };
 
 const isPrivateKey = (key) => {
