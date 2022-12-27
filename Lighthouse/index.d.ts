@@ -101,8 +101,8 @@ export function shareFile(
   data: {
     shareTo: Array<Address>;
     cid: string;
+    status: string;
   };
-  isSuccess: boolean;
 }>;
 
 export function getAuthMessage(publicKey: Address): Promise<{
@@ -122,14 +122,12 @@ export function revokeFileAccess(
   cid: string,
   signedMessage: string
 ): Promise<{
-  data: { cid: string; revokeTo: Array<Address> };
-  error: ErrorValue;
-  isSuccess: boolean;
+  data: { cid: string; revokeTo: Array<Address>; status: string };
 }>;
 
 export type ChainType = "EVM" | "evm" | "solana" | "SOLANA";
 
-export function accessControl(
+export function accessCondition(
   address: string,
   cid: string,
   signedMessage: string,
@@ -139,8 +137,44 @@ export function accessControl(
 ): Promise<{
   data: {
     cid: string;
-    conditions: { [key: string]: any };
-    aggregator: string | null;
+    status: string;
   };
-  isSuccess: boolean;
 }>;
+
+export type Base64encoded = string;
+
+export function encryptKey(
+  fileEncryptionKey: string,
+  encryptionPublicKey: string | Base64encoded,
+  secretKey: string | Base64encoded
+): { encryptedFileEncryptionKey: Base64encoded; nonce: Base64encoded };
+
+export function getAccessConditions(cid: string): Promise<{
+  data: object;
+}>;
+
+export function decryptPassword(
+  passwordEncrypted: Base64encoded,
+  nonce: Base64encoded,
+  encryptionPublicKey: Base64encoded | string,
+  secretKey: Base64encoded | string
+): string;
+
+export type ContractAddress = string;
+export type NetworkName =
+  | "fantom"
+  | "polygon"
+  | "binance"
+  | "optimism"
+  | "fantom-testnet"
+  | "polygon-testnet"
+  | "binance-testnet"
+  | "optimism-testnet"
+  | "wallaby-testnet";
+export function getContractAddress(network: NetworkName): {
+  data: ContractAddress;
+};
+
+export function dealStatus(cid: string): Promise<{ data: { dealStatus: any } }>;
+
+export function addCid(fileName: string, cid: string): Promise<{ data: any }>;
