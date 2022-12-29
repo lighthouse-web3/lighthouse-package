@@ -47,7 +47,7 @@ const showHelp = () => {
     Array(24).fill("\xa0").join("") +
     "Revoke direct access to the file" +
     "\r\ndeal-status" +
-    Array(31).fill("\xa0").join("") +
+    Array(26).fill("\xa0").join("") +
     "Get storage filecoin deal status" +
     "\r\nget-uploads" +
     Array(26).fill("\xa0").join("") +
