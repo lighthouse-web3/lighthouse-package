@@ -8,22 +8,18 @@ module.exports = async (
   aggregator = null,
   chainType = "evm"
 ) => {
-  try {
-    // send encryption key
-    const { isSuccess, error } = await accessControl(
-      publicKey,
-      cid,
-      signedMessage,
-      conditions,
-      aggregator,
-      chainType
-    );
+  // send encryption key
+  const { isSuccess, error } = await accessControl(
+    publicKey,
+    cid,
+    signedMessage,
+    conditions,
+    aggregator,
+    chainType
+  );
 
-    if (error) {
-      throw new Error(error);
-    }
-    return { data: { cid: cid, status: "Success" } };
-  } catch (error) {
-    throw new Error(error);
+  if (error) {
+    throw error;
   }
+  return { data: { cid: cid, status: "Success" } };
 };
