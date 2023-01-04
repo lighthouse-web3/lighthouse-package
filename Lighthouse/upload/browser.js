@@ -2,7 +2,7 @@
 const axios = require("axios");
 const lighthouseConfig = require("../../lighthouse.config");
 
-module.exports = async (e, accessToken, uploadProgressCallback=null) => {
+module.exports = async (e, accessToken, uploadProgressCallback=()=>{}) => {
   try {
     const endpoint = lighthouseConfig.lighthouseNode + "/api/v0/add";
     e.persist();

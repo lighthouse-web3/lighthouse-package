@@ -25,7 +25,7 @@ module.exports = async (
   publicKey,
   accessToken,
   signedMessage,
-  uploadProgressCallback = null
+  uploadProgressCallback = ()=>{}
 ) => {
   try {
     // Generate fileEncryptionKey
