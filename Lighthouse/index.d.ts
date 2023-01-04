@@ -125,6 +125,14 @@ export function revokeFileAccess(
   data: { cid: string; revokeTo: Array<Address>; status: string };
 }>;
 
+export function fetchEncryptionKey(
+  cid: string,
+  publicKey: Address,
+  signedMessage: string
+): Promise<{
+  data: { key: string };
+}>;
+
 export type ChainType = "EVM" | "evm" | "solana" | "SOLANA";
 
 export function accessCondition(
@@ -178,3 +186,5 @@ export function getContractAddress(network: NetworkName): {
 export function dealStatus(cid: string): Promise<{ data: { dealStatus: any } }>;
 
 export function addCid(fileName: string, cid: string): Promise<{ data: any }>;
+
+export function getFileInfo(cid: string): Promise<{ data: any }>;
