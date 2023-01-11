@@ -4,6 +4,7 @@
 const defaultConfig = {
   lighthouseAPI: "https://api.lighthouse.storage",
   lighthouseNode: "https://node.lighthouse.storage",
+  lighthouseGateway: "https://gateway.lighthouse.storage",
   lighthouseBLSNode: "https://encryption.lighthouse.storage",
   network: "polygon",
   gbInBytes: 1073741824,
