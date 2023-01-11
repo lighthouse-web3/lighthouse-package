@@ -6,7 +6,7 @@ const lighthouseConfig = require("../../../lighthouse.config");
 module.exports = async (cid, fileEncryptionKey) => {
   try{
     const result = await axios.post(
-      lighthouseConfig.lighthouseNode + "/api/v0/cat/" + cid,
+      lighthouseConfig.lighthouseGateway + "/api/v0/cat/" + cid,
       null,
       {
         "Content-Type": "application/json",
