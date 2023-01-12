@@ -22,7 +22,8 @@ export type GetQuota = {
 
 export function upload(
   path: string,
-  apiKey: string
+  apiKey: string,
+  uploadProgressCallback?: any
 ): Promise<{ data: IpfsFileResponse }>;
 
 export function uploadText(
@@ -34,7 +35,8 @@ export function uploadEncrypted(
   sourcePath: string,
   apiKey: string,
   publicKey: Address,
-  signed_message: string
+  signed_message: string,
+  uploadProgressCallback?: any
 ): Promise<{ data: IpfsFileResponse }>;
 
 export function getQuote(path: string, publicKey: Address): Promise<GetQuota>;
