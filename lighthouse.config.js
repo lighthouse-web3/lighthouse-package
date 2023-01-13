@@ -4,6 +4,7 @@
 const defaultConfig = {
   lighthouseAPI: "https://api.lighthouse.storage",
   lighthouseNode: "https://node.lighthouse.storage",
+  lighthouseGateway: "https://gateway.lighthouse.storage",
   lighthouseBLSNode: "https://encryption.lighthouse.storage",
   network: "polygon",
   gbInBytes: 1073741824,
@@ -86,6 +87,13 @@ const defaultConfig = {
     scan: "https://kovan-optimistic.etherscan.io/tx/",
     chain_id: "69",
     lighthouse_contract_address: "0x61e296fdc8c498ed183a2d19fd5927736e46e3b6",
+  },
+  "wallaby-testnet": {
+    symbol: "tFIL",
+    rpc: "https://wallaby.node.glif.io/rpc/v0",
+    scan: "https://explorer.glif.io/",
+    chain_id: "31415",
+    lighthouse_contract_address: "0x3C89b0a447A30b785CaF97791C9f9F60F7069C05",
   },
 };
 

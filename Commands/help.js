@@ -129,6 +129,10 @@ module.exports = {
           config.set("LIGHTHOUSE_GLOBAL_NETWORK", "optimism-testnet");
           console.log(chalk.green("Switched to optimism testnet"));
           break;
+        case "wallaby-testnet":
+          config.set("LIGHTHOUSE_GLOBAL_NETWORK", "wallaby-testnet");
+          console.log(chalk.green("Switched to wallaby testnet"));
+          break;
         default:
           config.set("LIGHTHOUSE_GLOBAL_NETWORK", "polygon");
           console.log(chalk.green("Switched to polygon mainnet"));

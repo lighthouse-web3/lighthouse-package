@@ -1,8 +1,9 @@
 {
   "name": "@lighthouse-web3/sdk",
-  "version": "0.1.9",
+  "version": "0.1.10",
   "description": "NPM package and CLI tool to interact with lighthouse protocol",
   "main": "index.js",
+  "types": "./Lighthouse/index.d.ts",
   "scripts": {
     "start": "node index.js",
     "lint": "trunk check",
@@ -23,10 +24,11 @@
     "url": "https://github.com/lighthouse-web3/lighthouse-package.git"
   },
   "publishConfig": {
-    "registry": "https://npm.pkg.github.com"
+    "registry": "https://registry.npmjs.org"
   },
   "license": "MIT",
   "dependencies": {
+    "@lighthouse-web3/kavach": "^0.1.0",
     "@peculiar/webcrypto": "^1.4.0",
     "axios": "^0.24.0",
     "base-path-converter": "^1.0.2",

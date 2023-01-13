@@ -1,5 +1,4 @@
-const axios = require("axios");
-const lighthouseConfig = require("../../lighthouse.config");
+const { accessControl } = require("@lighthouse-web3/kavach");
 
 module.exports = async (
   publicKey,
@@ -9,36 +8,18 @@ module.exports = async (
   aggregator = null,
   chainType = "evm"
 ) => {
-  try {
-    const nodeId = [1, 2, 3, 4, 5];
-    const nodeUrl = nodeId.map(
-      (elem) =>
-        lighthouseConfig.lighthouseBLSNode + "/api/fileAccessConditions/" + elem
-    );
+  // send encryption key
+  const { isSuccess, error } = await accessControl(
+    publicKey,
+    cid,
+    signedMessage,
+    conditions,
+    aggregator,
+    chainType
+  );
 
-    // send encryption key
-    const _ = await Promise.all(
-      nodeUrl.map((url, index) => {
-        return axios.put(
-          url,
-          {
-            address: publicKey,
-            cid: cid,
-            conditions,
-            aggregator,
-            chainType: chainType
-          },
-          {
-            headers: {
-              Authorization: "Bearer " + signedMessage,
-            },
-          }
-        );
-      })
-    );
-
-    return { data: { cid, conditions, aggregator } };
-  } catch (error) {
-    throw new Error(error.message);
+  if (error) {
+    throw error;
   }
+  return { data: { cid: cid, status: "Success" } };
 };

@@ -1,8 +1,7 @@
 /* istanbul ignore file */
 const axios = require("axios");
-const { v4: uuidv4 } = require("uuid");
 
-const { getKeyShades } = require("../../../Utils/bls_helper");
+const { generate, saveShards } = require("@lighthouse-web3/kavach");
 
 const { encryptFile } = require("./encryptionBrowser");
 const lighthouseConfig = require("../../../lighthouse.config");
@@ -21,22 +20,16 @@ const readFileAsync = (file) => {
   });
 };
 
-module.exports = async (e, publicKey, accessToken, signedMessage, uploadProgressCallback=null) => {
+module.exports = async (
+  e,
+  publicKey,
+  accessToken,
+  signedMessage,
+  uploadProgressCallback = ()=>{}
+) => {
   try {
     // Generate fileEncryptionKey
-    let fileEncryptionKey = null;
-    while (fileEncryptionKey === null) {
-      try {
-        fileEncryptionKey =
-          uuidv4().split("-").join("") + uuidv4().split("-").join("");
-        let { idData, keyShades } = await getKeyShades(fileEncryptionKey);
-      } catch {
-        fileEncryptionKey = null;
-      }
-    }
-
-    // shade encryption key
-    const { idData, keyShades } = await getKeyShades(fileEncryptionKey);
+    const { masterKey: fileEncryptionKey, keyShards } = await generate();
 
     // Upload file
     e.persist();
@@ -82,45 +75,27 @@ module.exports = async (e, publicKey, accessToken, signedMessage, uploadProgress
       },
       onUploadProgress: function (progressEvent) {
         const _progress = Math.round(
-           progressEvent.loaded / progressEvent.total
+          progressEvent.loaded / progressEvent.total
         );
         uploadProgressCallback({
-          "progress": _progress,
-          "total": progressEvent.total,
-          "uploaded": progressEvent.loaded
-        })
+          progress: _progress,
+          total: progressEvent.total,
+          uploaded: progressEvent.loaded,
+        });
       },
     });
 
-    const nodeId = [1, 2, 3, 4, 5];
-    const nodeUrl = nodeId.map(
-      (elem) => lighthouseConfig.lighthouseBLSNode + "/api/setSharedKey/" + elem
+    
+    const { isSuccess, error } = await saveShards(
+      publicKey,
+      response.data.Hash,
+      signedMessage,
+      keyShards
     );
-
-    // send encryption key
-    const _ = await Promise.all(
-      nodeUrl.map((url, index) => {
-        return axios
-          .post(
-            url,
-            {
-              address: publicKey,
-              cid: response.data.Hash,
-              payload: {
-                index: idData[index],
-                key: keyShades[index],
-              },
-            },
-            {
-              headers: {
-                Authorization: "Bearer " + signedMessage,
-              },
-            }
-          )
-          .then((res) => res.data);
-      })
-    );
-
+    if(error){
+      throw new Error("Error encrypting file");
+    }
+    
     // return response
     /*
       {
@@ -131,7 +106,7 @@ module.exports = async (e, publicKey, accessToken, signedMessage, uploadProgress
         }
       }
     */
-    return {data: response.data};
+    return { data: response.data };
   } catch (error) {
     return error.message;
   }

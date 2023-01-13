@@ -30,3 +30,5 @@ coverage/*
 Lighthouse/tests/coverage
 yarn.lock
 *.mp4
+*.tgz
+yarn-error.log

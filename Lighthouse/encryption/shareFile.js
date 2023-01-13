@@ -1,49 +1,25 @@
-const axios = require("axios");
-const lighthouseConfig = require("../../lighthouse.config");
+const { shareToAddress } = require("@lighthouse-web3/kavach");
 
-module.exports = async (
-  publicKey,
-  shareTo,
-  cid,
-  signedMessage
-) => {
-  try {
-    const nodeId = [1, 2, 3, 4, 5];
-    const nodeUrl = nodeId.map(
-      (elem) => lighthouseConfig.lighthouseBLSNode + "/api/setSharedKey/" + elem
-    );
+module.exports = async (publicKey, shareTo, cid, signedMessage) => {
+  const { isSuccess, error } = await shareToAddress(
+    publicKey,
+    cid,
+    signedMessage,
+    shareTo
+  );
 
-    const sharedTo = Array.isArray(shareTo) ? shareTo : [shareTo];
-
-    // send encryption key
-    const _ = await Promise.all(
-      nodeUrl.map((url, index) => {
-        return axios.put(
-          url,
-          {
-            address: publicKey,
-            cid: cid,
-            shareTo: sharedTo,
-          },
-          {
-            headers: {
-              Authorization: "Bearer " + signedMessage,
-            },
-          }
-        );
-      })
-    );
-    
-    /*
-      {
-        data: {
-          shareTo: [ '0x487fc2fE07c593EAb555729c3DD6dF85020B5160' ],
-          cid: 'QmUHDKv3NNL1mrg4NTW4WwJqetzwZbGNitdjr2G6Z5Xe6s'
-        }
-      }
-    */
-    return { data: { shareTo, cid } };
-  } catch (error) {
-    throw new Error(error.message);
+  if (error) {
+    throw error;
   }
+
+  /*
+    {
+      data: {
+        cid: 'QmUHDKv3NNL1mrg4NTW4WwJqetzwZbGNitdjr2G6Z5Xe6s',
+        shareTo: [ '0x487fc2fE07c593EAb555729c3DD6dF85020B5160' ],
+        status: "Success"
+      }
+    }
+  */
+  return { data: { cid, shareTo, status: "Success" } };
 };

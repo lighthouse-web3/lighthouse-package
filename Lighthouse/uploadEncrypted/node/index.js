@@ -1,5 +1,4 @@
 const axios = require("axios");
-const { v4: uuidv4 } = require("uuid");
 const lighthouseConfig = require("../../../lighthouse.config");
 
 module.exports = async (sourcePath, apiKey, publicKey, signed_message) => {
@@ -8,7 +7,7 @@ module.exports = async (sourcePath, apiKey, publicKey, signed_message) => {
     const mime = eval("require")("mime-types");
     const NodeFormData = eval("require")("form-data");
     const { encryptFile } = eval("require")("./encryptionNode");
-    const { getKeyShades } = eval("require")("../../../Utils/bls_helper");
+    const { generate, saveShards } = eval("require")("@lighthouse-web3/kavach");
 
     const token = "Bearer " + apiKey;
     const endpoint = lighthouseConfig.lighthouseNode + "/api/v0/add";
@@ -19,20 +18,7 @@ module.exports = async (sourcePath, apiKey, publicKey, signed_message) => {
       const formDdata = new NodeFormData();
       const mimeType = mime.lookup(sourcePath);
 
-      // Generate fileEncryptionKey
-      let fileEncryptionKey = null;
-      while (fileEncryptionKey === null) {
-        try {
-          fileEncryptionKey =
-            uuidv4().split("-").join("") + uuidv4().split("-").join("");
-          let { idData, keyShades } = await getKeyShades(fileEncryptionKey);
-        } catch {
-          fileEncryptionKey = null;
-        }
-      }
-
-      // shade encryption key
-      const { idData, keyShades } = await getKeyShades(fileEncryptionKey);
+      const { masterKey: fileEncryptionKey, keyShards } = await generate();
 
       const fileData = fs.readFileSync(sourcePath);
       const encryptedData = await encryptFile(fileData, fileEncryptionKey);
@@ -48,41 +34,21 @@ module.exports = async (sourcePath, apiKey, publicKey, signed_message) => {
         maxBodyLength: "Infinity",
         headers: {
           "Content-type": `multipart/form-data; boundary= ${formDdata._boundary}`,
-          "Encryption": true,
+          Encryption: true,
           "Mime-Type": mimeType,
           Authorization: token,
         },
       });
 
-      const nodeId = [1, 2, 3, 4, 5];
-      const nodeUrl = nodeId.map(
-        (elem) =>
-          lighthouseConfig.lighthouseBLSNode + "/api/setSharedKey/" + elem
+      const { isSuccess, error } = await saveShards(
+        publicKey,
+        response.data.Hash,
+        signed_message,
+        keyShards
       );
-
-      // send encryption key
-      const _ = await Promise.all(
-        nodeUrl.map((url, index) => {
-          return axios
-            .post(
-              url,
-              {
-                address: publicKey,
-                cid: response.data.Hash,
-                payload: {
-                  index: idData[index],
-                  key: keyShades[index]
-                }
-              },
-              {
-                headers: {
-                  Authorization: "Bearer " + signed_message,
-                },
-              }
-            )
-            .then((res) => res.data);
-        })
-      );
+      if(error){
+        throw new Error("Error encrypting file");
+      }
 
       // return response
       /*
@@ -94,7 +60,7 @@ module.exports = async (sourcePath, apiKey, publicKey, signed_message) => {
           }
         }
       */
-      return {data: response.data};
+      return { data: response.data };
     } else {
       throw new Error("Directory currently not supported!!!");
     }
