@@ -54,7 +54,7 @@ const balance = await lighthouse.getBalance(publicKey);
 
 // Upload File
 const uploadResponse = await lighthouse.upload('/home/cosmos/Desktop/wow.jpg', api-key);
-```
+
 
 Refer [GitBook](https://docs.lighthouse.storage/lighthouse-1/)
 
