@@ -22,6 +22,7 @@ const getAccessConditions = require("./encryption/getAccessConditions");
 if (typeof window === "undefined") {
   const upload = require("./upload");
   const getQuote = require("./getQuote");
+  const uploadBuffer = require("./upload/uploadBuffer");
   const uploadText = require("./upload/uploadText");
   const uploadEncrypted = require("./uploadEncrypted/node");
   const decryptFile = require("./uploadEncrypted/node/decryptFile");
@@ -31,6 +32,7 @@ if (typeof window === "undefined") {
     upload,
     addCid,
     getApiKey,
+    uploadBuffer,
     createWallet,
     getQuote,
     getBalance,
