@@ -53,6 +53,7 @@ if (typeof window === "undefined") {
   };
 } else {
   const upload = require("./upload/browser");
+  const uploadText = require("./upload/uploadTextBrowser");
   const decryptFile = require("./uploadEncrypted/browser/decryptFile");
   const uploadEncrypted = require("./uploadEncrypted/browser/index.js");
 
@@ -65,6 +66,7 @@ if (typeof window === "undefined") {
     dealStatus,
     getContractAddress,
     getFileInfo,
+    uploadText,
     uploadEncrypted,
     decryptFile,
     fetchEncryptionKey,
