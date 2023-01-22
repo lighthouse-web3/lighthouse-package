@@ -20,7 +20,7 @@ const sign_auth_message = async (publicKey, privateKey) => {
 };
 
 module.exports = {
-  command: "decrypt-file [cid]",
+  command: "decrypt-file [cid] [output]",
   desc: "Decrypt and download a file",
   handler: async function (argv) {
     if (argv.help) {
@@ -34,17 +34,23 @@ module.exports = {
         if (!config.get("LIGHTHOUSE_GLOBAL_PUBLICKEY")) {
           throw new Error("Please import wallet first!");
         }
-
+        
         // get file details
-        const fileDetails = (
-          await axios.get(
-            lighthouseConfig.lighthouseAPI +
-              "/api/lighthouse/file_info?cid=" +
-              argv.cid
-          )
-        ).data;
-        if (!fileDetails) {
-          throw new Error("Unable to get CID details.");
+        let fileName = "tempFile";
+        if(!argv.output){
+          const fileDetails = (
+            await axios.get(
+              lighthouseConfig.lighthouseAPI +
+                "/api/lighthouse/file_info?cid=" +
+                argv.cid
+            )
+          ).data;
+          if (!fileDetails) {
+            throw new Error("Unable to get CID details.");
+          }
+          fileName = fileDetails.fileName;
+        } else{
+          fileName = argv.output;
         }
 
         // Get key
@@ -76,8 +82,11 @@ module.exports = {
         );
 
         // save file
-        fs.createWriteStream(fileDetails.fileName).write(
+        fs.createWriteStream(fileName).write(
           Buffer.from(decryptedFile)
+        );
+        console.log(
+          chalk.greenBright(`${fileName} Decrypted`)
         );
       } catch (error) {
         console.log(chalk.red(error.message));
@@ -90,6 +99,12 @@ module.exports = {
         alias: "cid",
         demandOption: true,
         describe: "file CID",
+        type: "string",
+      })
+      .option("o", {
+        alias: "output",
+        demandOption: false,
+        describe: "Output name",
         type: "string",
       })
       .help()
