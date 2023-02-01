@@ -2,7 +2,7 @@ import axios from 'axios';
 import { lighthouseConfig } from '../../lighthouse.config';
 import FormData from 'form-data';
 
-module.exports = async (buffer: any, apiKey: string, mimeType = '') => {
+export default async (buffer: any, apiKey: string, mimeType = '') => {
   try {
     const token = 'Bearer ' + apiKey;
     const endpoint = lighthouseConfig.lighthouseNode + '/api/v0/add';
