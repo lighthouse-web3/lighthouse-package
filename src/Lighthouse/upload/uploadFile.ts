@@ -3,33 +3,26 @@ import { lighthouseConfig } from '../../lighthouse.config';
 import FormData from 'form-data';
 import mime from 'mime-types';
 import { readdir, createReadStream, lstatSync, stat } from 'fs-extra';
-import path from 'path';
 import basePathConverter from 'base-path-converter';
 
-export const walk = function (dir: any, done?: any) {
-  let results: any[] = [];
-  readdir(dir, function (err: any, list: any[]) {
-    if (err) return done(err);
-    let i = 0;
-    (function next() {
-      let file = list[i++];
-      if (!file) return done(null, results);
-      file = path.resolve(dir, file);
-      stat(file, function (err: any, stat: any) {
-        if (stat && stat.isDirectory()) {
-          walk(file, function (err: any, res: any) {
-            results = results.concat(res);
-            next();
-          });
-        } else {
-          results.push(file);
-          next();
-        }
-      });
-    })();
-  });
+export async function walk(dir: string) {
+  let results: string[] = [];
+
+  const files = await readdir(dir);
+
+  for (const file of files) {
+    const filePath = `${dir}/${file}`;
+    const _stat = await stat(filePath);
+
+    if (_stat.isDirectory()) {
+      results = results.concat(await walk(filePath));
+    } else {
+      results.push(filePath);
+    }
+  }
+
   return results;
-};
+}
 
 /*
   This function is used to deploy a file to the Lighthouse server.

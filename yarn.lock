@@ -1891,10 +1891,10 @@
   "resolved" "https://registry.npmjs.org/@types/yargs-parser/-/yargs-parser-21.0.0.tgz"
   "version" "21.0.0"
 
-"@types/yargs@^17.0.8":
-  "integrity" "sha512-kQxgIw2qr3/au36DPzK4Kzl5fpB/SehrD7TUBdWQlOLUkgBMhOBQzz1R9Kuukng9ukWxD3lewSMUZWCwNcmRHg=="
-  "resolved" "https://registry.npmjs.org/@types/yargs/-/yargs-17.0.21.tgz"
-  "version" "17.0.21"
+"@types/yargs@^17.0.22", "@types/yargs@^17.0.8":
+  "integrity" "sha512-pet5WJ9U8yPVRhkwuEIp5ktAeAqRZOq4UdAyWLWzxbtpyXnzbtLdKiXAjJzi/KLmPGS9wk86lUFWZFN6sISo4g=="
+  "resolved" "https://registry.npmjs.org/@types/yargs/-/yargs-17.0.22.tgz"
+  "version" "17.0.22"
   dependencies:
     "@types/yargs-parser" "*"
 
@@ -5364,7 +5364,7 @@
   "resolved" "https://registry.npmjs.org/yargs-parser/-/yargs-parser-21.1.1.tgz"
   "version" "21.1.1"
 
-"yargs@^17.3.1":
+"yargs@^17.3.1", "yargs@^17.6.2":
   "integrity" "sha512-1/9UrdHjDZc0eOU0HxOHoS78C69UD3JRMvzlJ7S79S2nTaWRA/whGCTV8o9e/N/1Va9YIV7Q4sOxD8VV4pCWOw=="
   "resolved" "https://registry.npmjs.org/yargs/-/yargs-17.6.2.tgz"
   "version" "17.6.2"

@@ -28,6 +28,7 @@
     "@types/jest": "^29.4.0",
     "@types/mime-types": "^2.1.1",
     "@types/read": "^0.0.29",
+    "@types/yargs": "^17.0.22",
     "@typescript-eslint/eslint-plugin": "^5.49.0",
     "@typescript-eslint/parser": "^5.49.0",
     "babel-jest": "^29.4.1",
@@ -58,6 +59,7 @@
     "path": "^0.12.7",
     "read": "^2.0.0",
     "tweetnacl": "^1.0.3",
-    "tweetnacl-util": "^0.15.1"
+    "tweetnacl-util": "^0.15.1",
+    "yargs": "^17.6.2"
   }
 }
