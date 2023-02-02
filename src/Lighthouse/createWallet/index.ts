@@ -1,5 +1,5 @@
 import axios from 'axios';
-import ethers from 'ethers';
+import { ethers } from 'ethers';
 import { lighthouseConfig } from '../../lighthouse.config';
 
 export default async (password: string) => {

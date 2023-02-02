@@ -8,13 +8,13 @@ export default {
   rootDir: './',
   clearMocks: true, // clear mocks before every test
   resetMocks: false, // reset mock state before every test
-  testMatch: ['<rootDir>/**/*.spec.ts'], // match only tests inside /tests folder
+  testMatch: ['<rootDir>/src/**/*.spec.ts', '<rootDir>/src/**/*.test.ts'], // match only tests inside /tests folder
   testPathIgnorePatterns: ['<rootDir>/node_modules/', '<rootDir>/.trunk/', '<rootDir>/Commands/'], // exclude unnecessary folders
 
   // following lines are about coverage
   collectCoverage: true, //[true|false]
-  collectCoverageFrom: ['<rootDir>/Lighthouse/**/*.js'],
-  coverageDirectory: '<rootDir>/coverage',
+  collectCoverageFrom: ['<rootDir>/src/Lighthouse/**/*.js'],
+  coverageDirectory: '<rootDir>/src/coverage',
   coverageReporters: ['lcov'],
   coverageThreshold: {
     global: {

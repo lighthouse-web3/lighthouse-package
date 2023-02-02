@@ -4,6 +4,7 @@ import FormData from 'form-data';
 import mime from 'mime-types';
 import { readdir, createReadStream, lstatSync, stat } from 'fs-extra';
 import path from 'path';
+import basePathConverter from 'base-path-converter';
 
 export const walk = function (dir: any, done?: any) {
   let results: any[] = [];
@@ -38,8 +39,6 @@ export const walk = function (dir: any, done?: any) {
 */
 
 export default async (sourcePath: string, apiKey: string) => {
-  const recursive = eval('require')('recursive-fs');
-  const basePathConverter = eval('require')('base-path-converter');
   const token = 'Bearer ' + apiKey;
 
   try {

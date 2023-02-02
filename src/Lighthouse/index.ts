@@ -18,13 +18,14 @@ import accessCondition from './encryption/accessConditionFile';
 import fetchEncryptionKey from './encryption/fetchEncryptionKey';
 import getAccessConditions from './encryption/getAccessConditions';
 import upload from './upload';
-import getQuote from './getQuote';
 import { detect } from 'detect-browser';
+import getEncryptionKeyPair from './encryption/getEncryptionKeyPair';
+import getQuote from './getQuote';
 import uploadBuffer from './upload/uploadBuffer';
 import uploadText from './upload/uploadText';
-// import uploadEncrypted from './uploadEncrypted/node';
-// import decryptFile from './uploadEncrypted/node/decryptFile';
-// import textUploadEncrypted from './uploadEncrypted/node/textUploadEncrypted';
+import uploadEncrypted from './uploadEncrypted';
+import decryptFile from './uploadEncrypted/decryptFile';
+import textUploadEncrypted from './uploadEncrypted/textUploadEncrypted';
 // import uploadBrowser from './upload/browser';
 // import decryptFileBrowser from './uploadEncrypted/browser/decryptFile';
 // import uploadEncryptedBrower from './uploadEncrypted/browser/index.js';
@@ -46,38 +47,12 @@ const modules = {
   shareFile,
   accessCondition,
   revokeFileAccess,
-  // uploadEncrypted,
-  // decryptFile,
-  // textUploadEncrypted,
+  uploadEncrypted,
+  decryptFile,
+  textUploadEncrypted,
   getAccessConditions,
   uploadText,
+  getEncryptionKeyPair,
 };
-
-// if (typeof window === 'undefined') {
-//   modules = {};
-// } else {
-//   import upload from './upload/browser';
-//   import decryptFile from './uploadEncrypted/browser/decryptFile';
-//   import uploadEncrypted from './uploadEncrypted/browser/index.js';
-
-//   module.exports = {
-//     upload,
-//     addCid,
-//     getApiKey,
-//     getBalance,
-//     getUploads,
-//     dealStatus,
-//     getContractAddress,
-//     getFileInfo,
-//     uploadEncrypted,
-//     decryptFile,
-//     fetchEncryptionKey,
-//     getAuthMessage,
-//     shareFile,
-//     accessCondition,
-//     revokeFileAccess,defaultdefault
-//     getAccessConditions,
-//   };
-// }
 
 export default modules;

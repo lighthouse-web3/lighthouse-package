@@ -5,9 +5,9 @@ import getApiKey from '../getApiKey';
 import upload from '../upload';
 import { lighthouseConfig } from '../../lighthouse.config';
 
-describe('upload', async () => {
+describe('upload', () => {
   test('upload Main Case File', async () => {
-    const path = resolve(process.cwd(), 'Utils/testImages/testImage1.svg');
+    const path = resolve(process.cwd(), 'src/Utils/testImages/testImage1.svg');
     const publicKey = '0x1Ec09D4B3Cb565b7CCe2eEAf71CC90c9b46c5c26';
     const verificationMessage = (
       await axios.get(lighthouseConfig.lighthouseAPI + `/api/auth/get_message?publicKey=${publicKey}`)
@@ -55,25 +55,25 @@ describe('upload', async () => {
 
   // test('upload Error Case Wrong Path', async () => {
   //   try {
-  //     const path = resolve(process.cwd(), 'Utils/testImages/testImage2.svg');
+  //     const path = resolve(process.cwd(), 'src/Utils/testImages/testImage2.svg');
   //     const deployResponse = await upload(path, 'apiKey');
   //   } catch (error: any) {
   //     expect(typeof error.message).toBe('string');
   //   }
   // }, 60000);
 
-  // test('upload Error Case Wrong Api Key File', async () => {
-  //   try {
-  //     const path = resolve(process.cwd(), 'Utils/testImages/testImage1.svg');
-  //     const deployResponse = await upload(path, 'apiKey');
-  //   } catch (error: any) {
-  //     expect(typeof error.message).toBe('string');
-  //   }
-  // }, 60000);
+  test('upload Error Case Wrong Api Key File', async () => {
+    try {
+      const path = resolve(process.cwd(), 'src/Utils/testImages/testImage1.svg');
+      const deployResponse = await upload(path, 'apiKey');
+    } catch (error: any) {
+      expect(typeof error.message).toBe('string');
+    }
+  }, 60000);
 
   // test('upload Error Case Wrong Api Key Folder', async () => {
   //   try {
-  //     const path = resolve(process.cwd(), 'Utils/testImages');
+  //     const path = resolve(process.cwd(), 'src/Utils/testImages');
   //     const deployResponse = await upload(path, 'apiKey');
   //   } catch (error: any) {
   //     expect(typeof error.message).toBe('string');

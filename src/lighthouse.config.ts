@@ -1,6 +1,4 @@
-const defaultConfig: {
-  [key: string]: string | number | any;
-} = {
+const defaultConfig = {
   lighthouseAPI: 'https://api.lighthouse.storage',
   lighthouseNode: 'https://node.lighthouse.storage',
   lighthouseGateway: 'https://gateway.lighthouse.storage',
@@ -95,5 +93,8 @@ const defaultConfig: {
     lighthouse_contract_address: '0x3C89b0a447A30b785CaF97791C9f9F60F7069C05',
   },
 };
+const typed = defaultConfig as {
+  [key: string]: string | number | any;
+};
 
-export { defaultConfig as lighthouseConfig, defaultConfig };
+export { typed as lighthouseConfig, defaultConfig };

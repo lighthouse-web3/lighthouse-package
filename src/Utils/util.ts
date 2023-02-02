@@ -16,7 +16,7 @@ const addressValidator = (value: string) => {
   } else if (/^[A-HJ-NP-Za-km-z1-9]*$/.test(value) && value.length == 44) {
     return value;
   }
-  return false;
+  return "";
 };
 
 export { isCID, isPrivateKey, addressValidator };

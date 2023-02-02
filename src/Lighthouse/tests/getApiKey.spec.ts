@@ -18,12 +18,12 @@ describe('getApiKey', () => {
     expect(typeof response.data.apiKey).toBe('string');
   }, 60000);
 
-  // test('getApiKey Null Case', async () => {
-  //   try {
-  //     const publicKey = '0xEaF4E24ffC1A2f53c07839a74966A6611b8Cb8A1';
-  //     const apiKey = await getApiKey(publicKey, 'signedMessage');
-  //   } catch (error: any) {
-  //     expect(typeof error.message).toBe('string');
-  //   }
-  // }, 60000);
+  test('getApiKey Null Case', async () => {
+    try {
+      const publicKey = '0xEaF4E24ffC1A2f53c07839a74966A6611b8Cb8A1';
+      const apiKey = await getApiKey(publicKey, 'signedMessage');
+    } catch (error: any) {
+      expect(typeof error.message).toBe('string');
+    }
+  }, 60000);
 });
