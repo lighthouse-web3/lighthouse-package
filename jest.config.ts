@@ -13,7 +13,7 @@ export default {
 
   // following lines are about coverage
   collectCoverage: true, //[true|false]
-  collectCoverageFrom: ['<rootDir>/src/Lighthouse/**/*.js'],
+  collectCoverageFrom: ['<rootDir>/src/Lighthouse/**/*.ts'],
   coverageDirectory: '<rootDir>/src/coverage',
   coverageReporters: ['lcov'],
   coverageThreshold: {

@@ -1,15 +1,17 @@
 {
   "compilerOptions": {
     "outDir": "dist",
-    "lib": ["es2016"],
+    "lib": ["es6"],
     "sourceMap": true,
     "strict": true,
     "esModuleInterop": true,  
-    "target": "ES2015",
-    "module": "commonjs",
+    "target": "ES2020",
+    "module": "CommonJS",
     "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
+    "moduleResolution": "node",
+    "allowJs": true,
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "**/*.spec.ts"]
+  "include": ["src","src/**/*.ts", "Commands/*.ts","cli.ts","index.ts","node_modules/conf"],
+  "exclude": ["node_modules", "**/*.spec.ts","**/*.test.ts",".vscode"]
 }
