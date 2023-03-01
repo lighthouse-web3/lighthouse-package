@@ -1,9 +1,10 @@
-// import Configstore from 'configstore';
-// const config = new Configstore('lighthouseSdk');
+import Conf from 'conf';
 import { lighthouseConfig } from '../lighthouse.config';
 
+const config = new Conf();
+
 function getNetwork() {
-  return lighthouseConfig.network;
+  return config.get('LIGHTHOUSE_GLOBAL_NETWORK') ? config.get('LIGHTHOUSE_GLOBAL_NETWORK') : lighthouseConfig.network;
 }
 
-export { getNetwork };
+export { getNetwork, config };

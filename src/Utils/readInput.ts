@@ -1,4 +1,4 @@
-import Read, { Options } from 'read';
+import read, { Options } from 'read';
 
 /*
   Function to read input from command line
@@ -14,7 +14,7 @@ import Read, { Options } from 'read';
 */
 export default async (options: Options) => {
   return new Promise(function (resolve, reject) {
-    Read(options, async (err, result) => {
+    read(options, async (err, result) => {
       result ? resolve(result.trim()) : reject(err);
     });
   });
