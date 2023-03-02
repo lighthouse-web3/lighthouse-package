@@ -13,8 +13,7 @@
     "test-build": "npm run build && node test-build.js",
     "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
     "lint": "eslint . --ext .ts",
-    "lint-basic": "tslint -p tsconfig.json",
-    "build-cli": "tsc --noEmit ./src/cli.ts && esbuild ./src/cli.ts --bundle --platform=node --format=cjs --outfile=dist/cli.js"
+    "lint-basic": "tslint -p tsconfig.json"
   },
   "bin": {
     "lighthouse-cli": "./dist/cli.js"
