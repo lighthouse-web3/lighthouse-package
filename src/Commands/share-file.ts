@@ -4,14 +4,8 @@ import ethers from 'ethers';
 import lighthouse from '../Lighthouse';
 import Read from 'read';
 import { config } from '../Utils/getNetwork';
+import { sign_auth_message } from './utils/auth';
 
-const sign_auth_message = async (privateKey: string) => {
-  const provider = new ethers.providers.JsonRpcProvider();
-  const signer = new ethers.Wallet(privateKey, provider);
-  const messageRequested = (await lighthouse.getAuthMessage(signer.address.toLocaleLowerCase())).data.message;
-  const signedMessage = await signer.signMessage(messageRequested);
-  return signedMessage;
-};
 
 // module.exports = {
 //   command: 'share-file [cid] [address]',
