@@ -32,3 +32,4 @@ yarn.lock
 *.mp4
 *.tgz
 yarn-error.log
+dist
