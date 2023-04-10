@@ -47,6 +47,7 @@ export default async (
     }
 
     const formData = new FormData()
+    const boundary = Symbol()
     const filesParam = await Promise.all(
       fileArr.map(async (f) => {
         const fileData = await readFileAsync(f)
@@ -69,7 +70,7 @@ export default async (
       maxContentLength: Infinity,
       maxBodyLength: Infinity,
       headers: {
-        'Content-type': `multipart/form-data; boundary= ${formData.getBoundary()}`,
+        'Content-type': `multipart/form-data; boundary= ${boundary.toString()}`,
         Encryption: `${true}`,
         'Mime-Type': mimeType,
         Authorization: token,

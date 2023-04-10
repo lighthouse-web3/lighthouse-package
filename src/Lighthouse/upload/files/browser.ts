@@ -18,6 +18,7 @@ export default async (
     }
 
     const formData = new FormData()
+    const boundary = Symbol()
     for (let i = 0; i < e.target.files.length; i++) {
       formData.append('file', e.target.files[i])
     }
@@ -28,7 +29,7 @@ export default async (
       maxContentLength: Infinity,
       maxBodyLength: Infinity,
       headers: {
-        'Content-type': `multipart/form-data; boundary= ${formData.getBoundary()}`,
+        'Content-type': `multipart/form-data; boundary= ${boundary.toString()}`,
         Encryption: `${false}`,
         'Mime-Type': mimeType,
         Authorization: token,
