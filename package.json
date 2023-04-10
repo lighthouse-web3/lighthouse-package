@@ -1,17 +1,21 @@
 {
   "name": "@lighthouse-web3/sdk",
-  "version": "0.1.12",
+  "version": "0.2.0",
   "description": "NPM package and CLI tool to interact with lighthouse protocol",
-  "main": "index.js",
-  "types": "./Lighthouse/index.d.ts",
+  "main": "./dist/Lighthouse/index.js",
+  "types": "./dist/Lighthouse/index.d.ts",
+  "files": [
+    "dist/**/*"
+  ],
   "scripts": {
+    "build": "tsc",
     "start": "node index.js",
-    "lint": "trunk check",
     "test": "jest",
-    "test-coverage": "jest --coverage --coverageDirectory=Lighthouse/tests/coverage"
+    "format": "prettier --write \"src/**/*.ts\"",
+    "lint": "eslint . --ext .ts"
   },
   "bin": {
-    "lighthouse-web3": "cli.js"
+    "lighthouse-web3": "./dist/Commands/cli.js"
   },
   "keywords": [
     "lighthouse",
@@ -37,9 +41,10 @@
     "cli-spinner": "^0.2.10",
     "conf": "^10.1.1",
     "crypto-js": "^4.1.1",
-    "ethers": "^5.5.2",
+    "ethers": "^5.7.2",
     "express": "^4.17.1",
     "form-data": "^4.0.0",
+    "fs-extra": "^11.1.1",
     "ipfs-unixfs-importer": "^9.0.6",
     "mime-types": "^2.1.35",
     "package-json": "^7.0.0",
@@ -52,6 +57,19 @@
     "yargs": "^17.2.1"
   },
   "devDependencies": {
-    "jest": "^29.3.1"
+    "@types/cli-spinner": "^0.2.1",
+    "@types/fs-extra": "^11.0.1",
+    "@types/mime-types": "^2.1.1",
+    "@types/read": "^0.0.29",
+    "@typescript-eslint/eslint-plugin": "^5.57.1",
+    "@typescript-eslint/parser": "^5.57.1",
+    "commander": "^10.0.0",
+    "eslint": "^8.38.0",
+    "jest": "^29.3.1",
+    "ora": "^6.3.0",
+    "prettier": "^2.8.7",
+    "typescript": "^5.0.4",
+    "webpack": "^5.78.0",
+    "webpack-cli": "^5.0.1"
   }
 }
