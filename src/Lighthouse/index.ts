@@ -11,7 +11,7 @@ import shareFile from './encryption/shareFile'
 import getAuthMessage from './encryption/getAuthMessage'
 import revokeFileAccess from './encryption/revokeFileAccess'
 import fetchEncryptionKey from './encryption/fetchEncryptionKey'
-import accessConditionFile from './encryption/accessConditionFile'
+import applyAccessCondition from './encryption/applyAccessCondition'
 import getAccessConditions from './encryption/getAccessConditions'
 
 // Upload
@@ -34,7 +34,7 @@ export {
   getAuthMessage,
   revokeFileAccess,
   fetchEncryptionKey,
-  accessConditionFile,
+  applyAccessCondition,
   getAccessConditions,
   upload,
   uploadText,
@@ -56,7 +56,7 @@ export default {
   getAuthMessage,
   revokeFileAccess,
   fetchEncryptionKey,
-  accessConditionFile,
+  applyAccessCondition,
   getAccessConditions,
   upload,
   uploadText,
