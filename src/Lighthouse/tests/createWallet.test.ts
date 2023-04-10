@@ -4,6 +4,7 @@ describe('create Wallet', () => {
   test('createWallet', async () => {
     const wallet = (await lighthouse.createWallet('Uchihas')).data
       .encryptedWallet
+    console.log(wallet)
     const walletParse = JSON.parse(wallet)
     expect(walletParse).toHaveProperty('address')
   }, 20000)

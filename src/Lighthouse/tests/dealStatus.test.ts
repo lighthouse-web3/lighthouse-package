@@ -6,7 +6,7 @@ describe('dealStatus', () => {
       await lighthouse.dealStatus(
         'QmaiauHSgTDMy2NtLbsygL3iKmLXBqHf39SBA1nAQFSSey'
       )
-    ).data.dealStatus
+    ).data
 
     expect(typeof response[0]['miner']).toBe('string')
   }, 20000)

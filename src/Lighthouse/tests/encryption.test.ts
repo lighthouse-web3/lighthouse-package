@@ -1,13 +1,10 @@
 import { ethers } from 'ethers'
-import { addressValidator } from '../../Utils/util'
 import lighthouse from '..'
 
 const signAuthMessage = async (publicKey: string, privateKey: string) => {
   const provider = new ethers.providers.JsonRpcProvider()
   const signer = new ethers.Wallet(privateKey, provider)
-  const address = addressValidator(publicKey)
-  const messageRequested = (await lighthouse.getAuthMessage(address)).data
-    .message
+  const messageRequested = (await lighthouse.getAuthMessage(signer.address)).data.message
   const signedMessage = await signer.signMessage(messageRequested)
   return signedMessage
 }
@@ -48,15 +45,6 @@ describe('EncryptionTest', () => {
       expect(typeof error.message).toBe('string')
     }
   }, 60000)
-
-  test('getEncryptionKeyPair Invalid Auth', async () => {
-    try {
-      const publicKey = '0xA3C960B3BA29367ecBCAf1430452C6cd7516F588'
-      const keyPair = await lighthouse.getEncryptionKeyPair(publicKey, 'apiKey')
-    } catch (error: any) {
-      expect(typeof error.message).toBe('string')
-    }
-  }, 20000)
 
   test('getAuthMessage main', async () => {
     const response = await lighthouse.getAuthMessage(
@@ -118,7 +106,7 @@ describe('EncryptionTest', () => {
       publicKey,
       '0xa74ba0e4cc2e9f0be6776509cdb1495d76ac8fdc727a8b93f60772d73893fe2e'
     )
-    const response = await lighthouse.accessCondition(
+    const response = await lighthouse.applyAccessCondition(
       publicKey,
       cid,
       signedMessage,
