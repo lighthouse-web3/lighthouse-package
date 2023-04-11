@@ -23,8 +23,8 @@ const readFileAsync = (file: any) => {
 
 export default async (
   e: any,
+  apiKey: string,
   publicKey: string,
-  accessToken: string,
   signedMessage: string,
   uploadProgressCallback = (data: any) => {}
 ) => {
@@ -39,7 +39,7 @@ export default async (
       mimeType = e.target.files[0].type
     }
     const endpoint = lighthouseConfig.lighthouseNode + '/api/v0/add'
-    const token = 'Bearer ' + accessToken
+    const token = 'Bearer ' + apiKey
 
     const fileArr = []
     for (let i = 0; i < e.target.files.length; i++) {
