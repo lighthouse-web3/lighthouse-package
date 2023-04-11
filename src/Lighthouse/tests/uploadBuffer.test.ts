@@ -14,7 +14,7 @@ describe('uploadBuffer', () => {
       )
     ).data
     const signer = new ethers.Wallet(
-      '0xace7b85099ef79e3ddea94bd44f6c42fe75e447388af464cc7d4467965f09322',
+      '0xace7b85099ef79e3ddea94bd44f6c42fe75e447388af464cc7d4467965f09322'
     )
     const signedMessage = await signer.signMessage(verificationMessage)
     const apiKey = await lighthouse.getApiKey(publicKey, signedMessage)

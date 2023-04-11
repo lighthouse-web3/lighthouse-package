@@ -15,7 +15,10 @@ const signAuthMessage = async (publicKey: string, privateKey: string) => {
 
 describe('UploadEncrypted', () => {
   test('deploy Encrypted Main Case File', async () => {
-    const path = resolve(process.cwd(), 'src/Utils/testImages/testImage1.svg')
+    const path = resolve(
+      process.cwd(),
+      'src/Lighthouse/tests/testImages/testImage1.svg'
+    )
 
     const publicKey = '0x4f544A7a285E8B9cc948884acB9Cac4b267bBfc7'
 

@@ -6,7 +6,10 @@ import { lighthouseConfig } from '../../lighthouse.config'
 
 describe('uploadFiles', () => {
   test('upload Main Case File', async () => {
-    const path = resolve(process.cwd(), 'src/Lighthouse/tests/testImages/testImage1.svg')
+    const path = resolve(
+      process.cwd(),
+      'src/Lighthouse/tests/testImages/testImage1.svg'
+    )
     const publicKey = '0x1Ec09D4B3Cb565b7CCe2eEAf71CC90c9b46c5c26'
     const verificationMessage = (
       await axios.get(
@@ -65,7 +68,10 @@ describe('uploadFiles', () => {
 
   test('upload Error Case Wrong Api Key File', async () => {
     try {
-      const path = resolve(process.cwd(), 'src/Lighthouse/tests/testImages/testImage1.svg')
+      const path = resolve(
+        process.cwd(),
+        'src/Lighthouse/tests/testImages/testImage1.svg'
+      )
       const deployResponse = await lighthouse.upload(path, 'apiKey')
     } catch (error: any) {
       expect(typeof error.message).toBe('string')
