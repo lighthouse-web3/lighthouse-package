@@ -26,7 +26,7 @@ export default async (cid: string): Promise<dealResponse> => {
     const dealStatus = (
       await axios.get(
         lighthouseConfig.lighthouseAPI +
-          `/api/lighthouse/deal_status/?cid=${cid}`
+          `/api/lighthouse/deal_status?cid=${cid}`
       )
     ).data
     return { data: dealStatus }
