@@ -9,18 +9,14 @@ export default async (cid: string, fileEncryptionKey: any) => {
       lighthouseConfig.lighthouseGateway + '/api/v0/cat/' + cid,
       null,
       {
-        headers: {
-          ContentType: 'application/json',
-          Accept: 'application/octet-stream',
-          responseType: 'arraybuffer',
-        },
+        responseType: 'arraybuffer',
       }
     )
-    /*
-      response:
-        ArrayBuffer
-    */
-    const decrypted = await decryptFile(result.data, fileEncryptionKey)
+
+    const decrypted = await decryptFile(
+      Buffer.from(result.data),
+      fileEncryptionKey
+    )
     return decrypted
   } catch (error: any) {
     throw new Error(error.message)

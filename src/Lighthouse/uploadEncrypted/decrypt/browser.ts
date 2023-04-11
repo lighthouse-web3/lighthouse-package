@@ -12,11 +12,7 @@ export default async (
     lighthouseConfig.lighthouseGateway + '/api/v0/cat/' + cid,
     null,
     {
-      headers: {
-        ContentType: 'application/json',
-        Accept: 'application/octet-stream',
-        responseType: 'arraybuffer',
-      },
+      responseType: 'blob',
     }
   )
 
