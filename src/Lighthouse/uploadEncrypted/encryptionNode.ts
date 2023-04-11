@@ -28,13 +28,16 @@ const encryptFile = async (fileArrayBuffer: any, password: any) => {
 
     const passwordKey = await importKeyFromBytes(passwordBytes, crypto)
 
-    const aesKey = await deriveKey(passwordKey, ['encrypt'], {
-      name: 'PBKDF2',
-      salt: salt,
-      iterations: 250000,
-      hash: 'SHA-256',
-    },
-    crypto
+    const aesKey = await deriveKey(
+      passwordKey,
+      ['encrypt'],
+      {
+        name: 'PBKDF2',
+        salt: salt,
+        iterations: 250000,
+        hash: 'SHA-256',
+      },
+      crypto
     )
     const cipherBytes = await crypto.subtle.encrypt(
       { name: 'AES-GCM', iv: iv },
@@ -70,13 +73,16 @@ const decryptFile = async (cipher: any, password: any) => {
     const iv = cipherBytes.slice(16, 16 + 12)
     const data = cipherBytes.slice(16 + 12)
     const passwordKey = await importKeyFromBytes(passwordBytes, crypto)
-    const aesKey = await deriveKey(passwordKey, ['decrypt'], {
+    const aesKey = await deriveKey(
+      passwordKey,
+      ['decrypt'],
+      {
         name: 'PBKDF2',
         salt: salt,
         iterations: 250000,
         hash: 'SHA-256',
       },
-    crypto
+      crypto
     )
 
     const decryptedContent = await crypto.subtle.decrypt(
