@@ -10,8 +10,9 @@ export default async (text: string, apiKey: string) => {
 
     // Upload file
     const formDdata = new FormData()
+    const blob = new Blob([text], {type: "text/plain"});
     const boundary = Symbol()
-    formDdata.append('file', Buffer.from(text))
+    formDdata.append('file', blob)
 
     const response = await axios.post(endpoint, formDdata, {
       withCredentials: false,
