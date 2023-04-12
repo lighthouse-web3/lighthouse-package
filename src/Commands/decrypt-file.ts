@@ -3,7 +3,7 @@ import fs from 'fs'
 import { ethers } from 'ethers'
 import axios from 'axios'
 import lighthouse from '../Lighthouse'
-import Read from 'read'
+import readInput from './utils/readInput'
 import { lighthouseConfig } from '../lighthouse.config'
 import { config } from './utils/getNetwork'
 import { sign_auth_message } from './utils/auth'
@@ -30,9 +30,7 @@ export default async function (cid: string) {
       silent: true,
       default: '',
     }
-    const password: any = await Read(options, (err, res) =>
-      console.log(err, res)
-    )
+    const password: any = await readInput(options)
 
     const decryptedWallet = ethers.Wallet.fromEncryptedJsonSync(
       config.get('LIGHTHOUSE_GLOBAL_WALLET') as string,
