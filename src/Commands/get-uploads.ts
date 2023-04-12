@@ -24,14 +24,14 @@ export default async function () {
         Array(5).fill('\xa0').join('') +
         chalk.yellow('File Size')
     )
-    for (let i = 0; i < response.length; i++) {
+    for (let i = 0; i < response.fileList.length; i++) {
       console.log(
         Array(4).fill('\xa0').join('') +
-          response[i]['cid'] +
+          response.fileList[i]['cid'] +
           Array(4).fill('\xa0').join('') +
-          response[i]['fileName'].substring(0, 10) +
+          response.fileList[i]['fileName'].substring(0, 10) +
           Array(4).fill('\xa0').join('') +
-          bytesToSize(parseInt(response[i]['fileSizeInBytes'])) +
+          bytesToSize(parseInt(response.fileList[i]['fileSizeInBytes'])) +
           '\r\n'
       )
     }
