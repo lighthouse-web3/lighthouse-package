@@ -5,8 +5,7 @@ import readInput from './utils/readInput'
 import { Spinner } from 'cli-spinner'
 import lighthouse from '../Lighthouse'
 import bytesToSize from './utils/byteToSize'
-import { lighthouseConfig } from '../lighthouse.config'
-import { getNetwork, config } from './utils/getNetwork'
+import { config } from './utils/getNetwork'
 
 const getQuote = async (path: string, publicKey: string, Spinner: any) => {
   const spinner = new Spinner('Getting Quote...')
@@ -86,9 +85,7 @@ const getQuote = async (path: string, publicKey: string, Spinner: any) => {
 
 const uploadFile = async (
   path: string,
-  signer: any,
   apiKey: string,
-  network: string
 ) => {
   const spinner = new Spinner('Uploading...')
   spinner.start()
@@ -143,7 +140,6 @@ export default async function (_path: string) {
     try {
       // Import nodejs specific library
       const path = resolve(process.cwd(), _path)
-      const network = getNetwork()
 
       // Display Quote
       const quoteResponse = await getQuote(
@@ -200,12 +196,8 @@ export default async function (_path: string) {
         throw new Error('Incorrect password!')
       }
 
-      const provider = new ethers.providers.JsonRpcProvider(
-        lighthouseConfig[network]['rpc']
-      )
-      const signer = new ethers.Wallet(decryptedWallet.privateKey, provider)
       const apiKey = config.get('LIGHTHOUSE_GLOBAL_API_KEY') as string
-      await uploadFile(path, signer, apiKey, network)
+      await uploadFile(path, apiKey)
     } catch (error: any) {
       console.log(chalk.red(error.message))
     }
