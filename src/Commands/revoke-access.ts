@@ -1,15 +1,9 @@
 import chalk from 'chalk'
-import { addressValidator, isCID } from '../Lighthouse/utils/util'
-import ethers from 'ethers'
+import {ethers} from 'ethers'
 import { config } from './utils/getNetwork'
 import lighthouse from '../Lighthouse'
 import { sign_auth_message } from './utils/auth'
 import readInput from './utils/readInput'
-
-// module.exports = {
-//   command: 'revoke-access [cid] [address]',
-//   desc: 'Revoke Access on a file',
-//   handler:
 
 export default async function (cid: string, address: string) {
   try {

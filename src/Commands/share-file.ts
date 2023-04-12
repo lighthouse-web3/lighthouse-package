@@ -1,15 +1,9 @@
 import chalk from 'chalk'
-import { addressValidator, isCID } from '../Lighthouse/utils/util'
-import ethers from 'ethers'
+import {ethers} from 'ethers'
 import lighthouse from '../Lighthouse'
 import readInput from './utils/readInput'
 import { config } from './utils/getNetwork'
 import { sign_auth_message } from './utils/auth'
-
-// module.exports = {
-//   command: 'share-file [cid] [address]',
-//   desc: 'Share access to other user',
-//   handler:
 
 export default async function (cid: string, address: string, _options: any) {
   if (!cid || !address) {
