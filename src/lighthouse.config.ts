@@ -1,6 +1,6 @@
 const defaultConfig = {
-  lighthouseAPI: 'https://back-test.lighthouse.storage',
-  lighthouseNode: 'https://node-test.lighthouse.storage',
+  lighthouseAPI: 'https://api.lighthouse.storage',
+  lighthouseNode: 'https://node.lighthouse.storage',
   lighthouseGateway: 'https://gateway.lighthouse.storage',
   lighthouseBLSNode: 'https://encryption.lighthouse.storage',
   network: 'polygon',
