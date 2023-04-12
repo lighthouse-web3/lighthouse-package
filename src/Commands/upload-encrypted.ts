@@ -1,20 +1,19 @@
 import chalk from 'chalk'
-import ethers from 'ethers'
+import {ethers} from 'ethers'
 import { resolve } from 'path'
 import { Spinner } from 'cli-spinner'
 
+import readInput from './utils/readInput'
 import bytesToSize from './utils/byteToSize'
 import { getNetwork, config } from './utils/getNetwork'
 import { lighthouseConfig } from '../lighthouse.config'
 import lighthouse from '../Lighthouse'
-import Read from 'read'
 
 const getQuote = async (path: string, publicKey: string, Spinner: any) => {
   const spinner = new Spinner('Getting Quote...')
   spinner.start()
 
-  const quoteResponse: any = await lighthouse.getQuote(path, publicKey)
-
+  const quoteResponse: any = (await lighthouse.getQuote(path, publicKey)).data
   spinner.stop()
   process.stdout.clearLine(-1)
   process.stdout.cursorTo(0)
@@ -34,21 +33,23 @@ const getQuote = async (path: string, publicKey: string, Spinner: any) => {
       Array(20).fill('\xa0').join('')
   )
 
-  for (let i = 0; i < quoteResponse.data.metaData.length; i++) {
+  for (let i = 0; i < quoteResponse.metaData.length; i++) {
+    const fileName = quoteResponse.metaData[i].fileName
+      .split(/\\/g)
+      .slice(-1)[0]
+      .substring(0, 20)
     console.log(
-      quoteResponse.data.metaData[i].fileName +
-        Array(34 - quoteResponse.data.metaData[i].fileName.length)
+      fileName +
+        Array(34 - (fileName ?? '').length)
           .fill('\xa0')
           .join('') +
-        bytesToSize(quoteResponse.data.metaData[i].fileSize) +
+        bytesToSize(quoteResponse.metaData[i].fileSize) +
         Array(
-          12 -
-            bytesToSize(quoteResponse.data.metaData[i].fileSize).toString()
-              .length
+          12 - bytesToSize(quoteResponse.metaData[i].fileSize).toString().length
         )
           .fill('\xa0')
           .join('') +
-        quoteResponse.data.metaData[i].mimeType
+        quoteResponse.metaData[i].mimeType
     )
   }
 
@@ -56,30 +57,30 @@ const getQuote = async (path: string, publicKey: string, Spinner: any) => {
     '\r\n' +
       chalk.cyan('Summary') +
       '\r\nTotal Size: ' +
-      bytesToSize(quoteResponse.data.totalSize)
+      bytesToSize(quoteResponse.totalSize)
   )
 
   console.log(
     'Data Limit: ' +
-      bytesToSize(parseInt(quoteResponse.data.dataLimit)) +
+      bytesToSize(parseInt(quoteResponse.dataLimit)) +
       '\r\nData Used : ' +
-      bytesToSize(parseInt(quoteResponse.data.dataUsed)) +
+      bytesToSize(parseInt(quoteResponse.dataUsed)) +
       '\r\nAfter Upload: ' +
       bytesToSize(
-        parseInt(quoteResponse.data.dataLimit) -
-          (parseInt(quoteResponse.data.dataUsed) + quoteResponse.data.totalSize)
+        parseInt(quoteResponse.dataLimit) -
+          (parseInt(quoteResponse.dataUsed) + quoteResponse.totalSize)
       )
   )
 
   const remainingAfterUpload =
-    parseInt(quoteResponse.data.dataLimit) -
-    (parseInt(quoteResponse.data.dataUsed) + quoteResponse.data.totalSize)
+    parseInt(quoteResponse.dataLimit) -
+    (parseInt(quoteResponse.dataUsed) + quoteResponse.totalSize)
 
   return {
-    fileName: quoteResponse.data.metaData[0].fileName,
-    fileSize: quoteResponse.data.metaData[0].fileSize,
-    cost: quoteResponse.data.totalCost,
-    type: quoteResponse.data.type,
+    fileName: quoteResponse.metaData[0].fileName,
+    fileSize: quoteResponse.metaData[0].fileSize,
+    cost: quoteResponse?.totalCost,
+    type: quoteResponse?.type,
     remainingAfterUpload: remainingAfterUpload,
   }
 }
@@ -176,9 +177,7 @@ export default async function (_path: string) {
         silent: false,
       }
 
-      const selected: any = await Read(options, (err, res) =>
-        console.log(err, res)
-      )
+      const selected: any = await readInput(options)
 
       if (
         selected.trim() === 'n' ||
@@ -202,18 +201,16 @@ export default async function (_path: string) {
         prompt: 'Enter your password: ',
         silent: true,
       }
-      const password: any = await Read(options, (err, res) =>
-        console.log(err, res)
-      )
+      const password: any = await readInput(options)
       const decryptedWallet = ethers.Wallet.fromEncryptedJsonSync(
         config.get('LIGHTHOUSE_GLOBAL_WALLET') as string,
         password.trim()
       )
+      if (!decryptedWallet) {
+        throw new Error('Incorrect password!')
+      }
 
-      const provider = new ethers.providers.JsonRpcProvider(
-        lighthouseConfig[network]['rpc']
-      )
-      const signer = new ethers.Wallet(decryptedWallet.privateKey, provider)
+      const signer = new ethers.Wallet(decryptedWallet.privateKey)
       const apiKey = config.get('LIGHTHOUSE_GLOBAL_API_KEY') as string
       await uploadFile(path, signer, apiKey, network)
     } catch (error: any) {
