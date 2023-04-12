@@ -1,6 +1,5 @@
 import axios from 'axios'
 import FormData from 'form-data'
-import { Buffer } from 'buffer'
 import { lighthouseConfig } from '../../../lighthouse.config'
 
 export default async (text: string, apiKey: string) => {
