@@ -1,4 +1,4 @@
-import chalk from 'chalk'
+#!/usr/bin/env node
 import { Command } from 'commander'
 
 import wallet from './wallet'
