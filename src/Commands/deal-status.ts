@@ -1,7 +1,6 @@
 import chalk from 'chalk'
-import bytesToSize from './utils/byteToSize'
 import lighthouse from '../Lighthouse'
-import { isCID } from '../Lighthouse/utils/util'
+import bytesToSize from './utils/byteToSize'
 
 const showResponse = (cid: string, dealStatus: any) => {
   console.log(
@@ -44,7 +43,7 @@ export default async function (data: any, options: any) {
     options.help()
   } else {
     try {
-      const dealStatus = (await lighthouse.dealStatus(data.cid)).data
+      const dealStatus = (await lighthouse.dealStatus(data)).data
       dealStatus.length === 0
         ? console.log('Deal creation in progress')
         : showResponse(data.cid, dealStatus)
@@ -53,3 +52,4 @@ export default async function (data: any, options: any) {
     }
   }
 }
+ 
