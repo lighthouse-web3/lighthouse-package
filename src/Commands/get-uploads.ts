@@ -1,4 +1,4 @@
-import chalk from 'kleur'
+import { yellow, red } from 'kleur'
 import { config } from './utils/getNetwork'
 import bytesToSize from './utils/byteToSize'
 import lighthouse from '../Lighthouse'
@@ -18,11 +18,11 @@ export default async function () {
     console.log(
       '\r\n' +
         Array(4).fill('\xa0').join('') +
-        chalk.yellow('CID') +
+        yellow('CID') +
         Array(47).fill('\xa0').join('') +
-        chalk.yellow('File Name') +
+        yellow('File Name') +
         Array(5).fill('\xa0').join('') +
-        chalk.yellow('File Size')
+        yellow('File Size')
     )
     for (let i = 0; i < response.fileList.length; i++) {
       console.log(
@@ -36,6 +36,6 @@ export default async function () {
       )
     }
   } catch (error: any) {
-    console.log(chalk.red(error.message))
+    console.log(red(error.message))
   }
 }

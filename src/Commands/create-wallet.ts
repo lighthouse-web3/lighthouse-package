@@ -1,4 +1,4 @@
-import chalk from 'kleur'
+import { cyan, green, red } from 'kleur'
 import { ethers } from 'ethers'
 import fs from 'fs'
 import lighthouse from '../Lighthouse'
@@ -41,12 +41,11 @@ export default async (_: any, _options: any) => {
         config.set('LIGHTHOUSE_GLOBAL_PUBLICKEY', publicKey)
 
         console.log(
-          chalk.cyan('Public Key: ' + publicKey) +
-            chalk.green('\r\nWallet Created!')
+          cyan('Public Key: ' + publicKey) + green('\r\nWallet Created!')
         )
       }
     })
   } catch (error: any) {
-    console.log(chalk.red(error.message))
+    console.log(red(error.message))
   }
 }

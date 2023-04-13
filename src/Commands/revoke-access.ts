@@ -1,4 +1,4 @@
-import chalk from 'kleur'
+import { yellow, white, red } from 'kleur'
 import { ethers } from 'ethers'
 import { config } from './utils/getNetwork'
 import lighthouse from '../Lighthouse'
@@ -37,13 +37,13 @@ export default async function (cid: string, address: string) {
     )
 
     console.log(
-      chalk.yellow('revokeTo: ') +
-        chalk.white(revokeResponse.data.revokeTo as string) +
+      yellow('revokeTo: ') +
+        white(revokeResponse.data.revokeTo as string) +
         '\r\n' +
-        chalk.yellow('cid: ') +
-        chalk.white(revokeResponse.data.cid)
+        yellow('cid: ') +
+        white(revokeResponse.data.cid)
     )
   } catch (error: any) {
-    console.log(chalk.red(error.message))
+    console.log(red(error.message))
   }
 }

@@ -1,4 +1,4 @@
-import chalk from 'kleur'
+import { green, yellow, white, red } from 'kleur'
 import { ethers } from 'ethers'
 import lighthouse from '../Lighthouse'
 import readInput from './utils/readInput'
@@ -9,7 +9,7 @@ export default async function (cid: string, address: string, _options: any) {
   if (!cid || !address) {
     console.log(
       '\r\nlighthouse-web3 share-file <cid> <address>\r\n' +
-        chalk.green('Description: ') +
+        green('Description: ') +
         'Share access to other user\r\n'
     )
   } else {
@@ -40,14 +40,14 @@ export default async function (cid: string, address: string, _options: any) {
       )
 
       console.log(
-        chalk.yellow('sharedTo: ') +
-          chalk.white(shareResponse.data.shareTo as string) +
+        yellow('sharedTo: ') +
+          white(shareResponse.data.shareTo as string) +
           '\r\n' +
-          chalk.yellow('cid: ') +
-          chalk.white(shareResponse.data.cid)
+          yellow('cid: ') +
+          white(shareResponse.data.cid)
       )
     } catch (error: any) {
-      console.log(chalk.red(error.message))
+      console.log(red(error.message))
     }
   }
 }

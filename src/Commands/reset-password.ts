@@ -1,4 +1,4 @@
-import chalk from 'kleur'
+import { cyan, green, red } from 'kleur'
 import { ethers } from 'ethers'
 import { config } from './utils/getNetwork'
 import readInput from './utils/readInput'
@@ -36,10 +36,10 @@ export default async function () {
     config.set('LIGHTHOUSE_GLOBAL_PUBLICKEY', decryptedWallet.address)
 
     console.log(
-      chalk.cyan('Public Key: ' + decryptedWallet.address) +
-        chalk.green('\r\nPassword reset successful')
+      cyan('Public Key: ' + decryptedWallet.address) +
+        green('\r\nPassword reset successful')
     )
   } catch (error: any) {
-    console.log(chalk.red(error.message))
+    console.log(red(error.message))
   }
 }

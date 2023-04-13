@@ -1,4 +1,4 @@
-import chalk from 'kleur'
+import { yellow, red } from 'kleur'
 import { ethers } from 'ethers'
 import lighthouse from '../Lighthouse'
 import byteToSize from './utils/byteToSize'
@@ -24,13 +24,13 @@ export default async function (data: any, options: any) {
     process.stdout.cursorTo(0)
 
     console.log(
-      chalk.yellow('\r\nData Limit: ') +
+      yellow('\r\nData Limit: ') +
         Array(4).fill('\xa0').join('') +
         byteToSize(response.data.dataLimit) +
-        chalk.yellow('\r\nData Used: ') +
+        yellow('\r\nData Used: ') +
         Array(5).fill('\xa0').join('') +
         byteToSize(response.data.dataUsed) +
-        chalk.yellow('\r\nData Remaining: ') +
+        yellow('\r\nData Remaining: ') +
         byteToSize(response.data.dataLimit - response.data.dataUsed)
     )
 
@@ -64,7 +64,7 @@ export default async function (data: any, options: any) {
         provider
       )
       console.log(
-        chalk.yellow('\r\nUSDT Balance: ') +
+        yellow('\r\nUSDT Balance: ') +
           Array(2).fill('\xa0').join('') +
           ethers.utils.formatUnits(
             await contractUSDT.balanceOf(
@@ -80,7 +80,7 @@ export default async function (data: any, options: any) {
         provider
       )
       console.log(
-        chalk.yellow('USDC Balance: ') +
+        yellow('USDC Balance: ') +
           Array(2).fill('\xa0').join('') +
           ethers.utils.formatUnits(
             await contractUSDC.balanceOf(
@@ -96,7 +96,7 @@ export default async function (data: any, options: any) {
         provider
       )
       console.log(
-        chalk.yellow('DAI Balance: ') +
+        yellow('DAI Balance: ') +
           Array(3).fill('\xa0').join('') +
           ethers.utils.formatUnits(
             await contractDai.balanceOf(
@@ -107,7 +107,7 @@ export default async function (data: any, options: any) {
       )
 
       console.log(
-        chalk.yellow(network) +
+        yellow(network) +
           ':' +
           Array(15 - network.length)
             .fill('\xa0')
@@ -120,7 +120,7 @@ export default async function (data: any, options: any) {
       )
     }
   } catch (error: any) {
-    console.log(chalk.red(error.message))
+    console.log(red(error.message))
     process.exit(0)
   }
 }

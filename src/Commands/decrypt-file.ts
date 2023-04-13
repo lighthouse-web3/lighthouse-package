@@ -1,4 +1,4 @@
-import chalk from 'kleur'
+import { red } from 'kleur'
 import fs from 'fs'
 import { ethers } from 'ethers'
 import axios from 'axios'
@@ -53,6 +53,6 @@ export default async function (cid: string) {
     // save file
     fs.createWriteStream(fileDetails.fileName).write(Buffer.from(decryptedFile))
   } catch (error: any) {
-    console.log(chalk.red(error.message))
+    console.log(red(error.message))
   }
 }

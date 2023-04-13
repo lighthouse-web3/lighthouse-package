@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import { Command } from 'commander'
-import C from 'kleur'
+import { yellow, gray, dim, green } from 'kleur'
 
 import wallet from './wallet'
 import upload from './upload'
@@ -24,9 +24,7 @@ Command.prototype.helpInformation = function (context: any) {
   let options: string[] = []
 
   if (context.command.commands.length) {
-    desc = desc.concat([
-      C.green('Commands') + '\r\t\t\t\t' + C.gray('Description'),
-    ])
+    desc = desc.concat([green('Commands') + '\r\t\t\t\t' + gray('Description')])
 
     desc = desc.concat(
       context.command.commands.map((cmd: any) => {
@@ -41,7 +39,7 @@ Command.prototype.helpInformation = function (context: any) {
     )
   }
   if (context.command.options.length) {
-    options = options.concat([C.yellow('Options:')])
+    options = options.concat([yellow('Options:')])
     options = options.concat(
       context.command.options.map((cmd: any) => {
         const name = cmd.flags.trimEnd().trimStart()
@@ -59,7 +57,7 @@ Command.prototype.helpInformation = function (context: any) {
     context.command?.parent?._name ?? '' + ' ' + context.command._name
 
   const usage = [
-    C.yellow('Usage: ') + cmdName + ' ' + C.dim(this.usage()),
+    yellow('Usage: ') + cmdName + ' ' + dim(this.usage()),
     this.description(),
   ]
 
@@ -152,16 +150,13 @@ widgets.addHelpText(
   'after',
   '\r\nExample:' +
     '\r\n  New api-key' +
-    Array(18).fill('\xa0').join('') +
-    '  lighthouse-web3 api-key --new' +
-    '\r\n  Change Network' +
     Array(17).fill('\xa0').join('') +
-    'lighthouse-web3 --network polygon' +
+    '  lighthouse-web3 api-key --new' +
     '\r\n  Create wallet' +
-    Array(18).fill('\xa0').join('') +
+    Array(17).fill('\xa0').join('') +
     'lighthouse-web3 create-wallet' +
     '\r\n  Import wallet' +
-    Array(18).fill('\xa0').join('') +
+    Array(17).fill('\xa0').join('') +
     'lighthouse-web3 import-wallet --key 0x7e9fd9a....a8600\r\n'
 )
 
