@@ -1,7 +1,6 @@
 import axios from 'axios'
-import chalk from 'kleur'
+import { cyan, green, red } from 'kleur'
 import { ethers } from 'ethers'
-import { isPrivateKey } from '../Lighthouse/utils/util'
 import { config } from './utils/getNetwork'
 import readInput from './utils/readInput'
 import { lighthouseConfig } from '../lighthouse.config'
@@ -33,11 +32,10 @@ export default async function (data: any, options: any) {
       config.set('LIGHTHOUSE_GLOBAL_PUBLICKEY', wallet.address)
 
       console.log(
-        chalk.cyan('Public Key: ' + wallet.address) +
-          chalk.green('\r\nWallet Imported!')
+        cyan('Public Key: ' + wallet.address) + green('\r\nWallet Imported!')
       )
     } catch (error: any) {
-      console.log(chalk.red(error.message))
+      console.log(red(error.message))
     }
   }
 }
