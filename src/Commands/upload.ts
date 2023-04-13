@@ -1,4 +1,4 @@
-import chalk from 'kleur'
+import { cyan, red, yellow, green, magenta } from 'kleur'
 import { ethers } from 'ethers'
 import { resolve } from 'path'
 import readInput from './utils/readInput'
@@ -17,17 +17,17 @@ const getQuote = async (path: string, publicKey: string, Spinner: any) => {
   process.stdout.cursorTo(0)
 
   if (!quoteResponse) {
-    console.log(chalk.red('Error getting quote!'))
-    console.log(chalk.yellow('Check if the wallet is imported!'))
+    console.log(red('Error getting quote!'))
+    console.log(yellow('Check if the wallet is imported!'))
     process.exit()
   }
 
   console.log(
-    chalk.cyan('Name') +
+    cyan('Name') +
       Array(30).fill('\xa0').join('') +
-      chalk.cyan('Size') +
+      cyan('Size') +
       Array(8).fill('\xa0').join('') +
-      chalk.cyan('Type') +
+      cyan('Type') +
       Array(20).fill('\xa0').join('')
   )
 
@@ -53,7 +53,7 @@ const getQuote = async (path: string, publicKey: string, Spinner: any) => {
 
   console.log(
     '\r\n' +
-      chalk.cyan('Summary') +
+      cyan('Summary') +
       '\r\nTotal Size: ' +
       bytesToSize(quoteResponse.totalSize)
   )
@@ -94,22 +94,20 @@ const uploadFile = async (path: string, apiKey: string) => {
   process.stdout.cursorTo(0)
 
   if (!uploadResponse.Hash) {
-    console.log(chalk.red('Upload failed!'))
-    console.log(
-      chalk.yellow('Check if api key is correct or create a new key!')
-    )
+    console.log(red('Upload failed!'))
+    console.log(yellow('Check if api key is correct or create a new key!'))
     process.exit()
   }
 
   console.log(
-    chalk.green('File Uploaded, visit following url to view content!\r\n') +
-      chalk.cyan(
+    green('File Uploaded, visit following url to view content!\r\n') +
+      cyan(
         'Visit: ' +
           'https://gateway.lighthouse.storage/ipfs/' +
           uploadResponse.Hash +
           '\r\n'
       ) +
-      chalk.cyan(
+      cyan(
         Array(7).fill('\xa0').join('') +
           'https://ipfs.io/ipfs/' +
           uploadResponse.Hash
@@ -124,12 +122,12 @@ export default async function (_path: string) {
   if (!_path) {
     console.log(
       'lighthouse-web3 upload <path>\r\n\r\n' +
-        chalk.green('Description: ') +
+        green('Description: ') +
         'Upload a file\r\n\r\n' +
-        chalk.cyan('Options:\r\n') +
+        cyan('Options:\r\n') +
         Array(3).fill('\xa0').join('') +
         '--path: Required, path to file\r\n\r\n' +
-        chalk.magenta('Example:') +
+        magenta('Example:') +
         Array(3).fill('\xa0').join('') +
         'lighthouse-web3 upload /home/cosmos/Desktop/ILoveAnime.jpg\r\n'
     )
@@ -147,7 +145,7 @@ export default async function (_path: string) {
 
       // Upload
       console.log(
-        chalk.green(
+        green(
           'Carefully check the above details are correct, then confirm to complete this upload'
         ) + ' Y/n'
       )
@@ -196,7 +194,7 @@ export default async function (_path: string) {
       const apiKey = config.get('LIGHTHOUSE_GLOBAL_API_KEY') as string
       await uploadFile(path, apiKey)
     } catch (error: any) {
-      console.log(chalk.red(error.message))
+      console.log(red(error.message))
     }
   }
 }
