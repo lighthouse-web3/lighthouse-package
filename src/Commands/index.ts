@@ -55,9 +55,13 @@ Command.prototype.helpInformation = function (context: any) {
     )
   }
 
-  const cmdName = context.command._name
+  const cmdName =
+    context.command?.parent?._name ?? '' + ' ' + context.command._name
 
-  const usage = [C.yellow('Usage: ') + cmdName + ' ' + C.dim(this.usage()), '']
+  const usage = [
+    C.yellow('Usage: ') + cmdName + ' ' + C.dim(this.usage()),
+    this.description(),
+  ]
 
   return ['']
     .concat(usage)
