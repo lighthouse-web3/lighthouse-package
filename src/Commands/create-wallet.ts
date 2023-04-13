@@ -1,4 +1,4 @@
-import chalk from 'chalk'
+import chalk from 'kleur'
 import { ethers } from 'ethers'
 import fs from 'fs'
 import lighthouse from '../Lighthouse'

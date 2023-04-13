@@ -1,4 +1,4 @@
-import chalk from 'chalk'
+import chalk from 'kleur'
 import { ethers } from 'ethers'
 import { Spinner } from 'cli-spinner'
 import lighthouse from '../Lighthouse'

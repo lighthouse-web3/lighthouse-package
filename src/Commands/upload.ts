@@ -1,4 +1,4 @@
-import chalk from 'chalk'
+import chalk from 'kleur'
 import { ethers } from 'ethers'
 import { resolve } from 'path'
 import readInput from './utils/readInput'
@@ -83,10 +83,7 @@ const getQuote = async (path: string, publicKey: string, Spinner: any) => {
   }
 }
 
-const uploadFile = async (
-  path: string,
-  apiKey: string,
-) => {
+const uploadFile = async (path: string, apiKey: string) => {
   const spinner = new Spinner('Uploading...')
   spinner.start()
 

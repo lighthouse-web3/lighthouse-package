@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import { Command } from 'commander'
+import C from 'kleur'
 
 import wallet from './wallet'
 import upload from './upload'
@@ -17,6 +18,54 @@ import resetPassword from './reset-password'
 import uploadEncrypted from './upload-encrypted'
 
 const widgets = new Command('lighthouse-web3')
+
+Command.prototype.helpInformation = function (context: any) {
+  let desc: string[] = []
+  let options: string[] = []
+
+  if (context.command.commands.length) {
+    desc = desc.concat([
+      C.green('Commands') + '\r\t\t\t\t' + C.gray('Description'),
+    ])
+
+    desc = desc.concat(
+      context.command.commands.map((cmd: any) => {
+        const name = cmd._name.trimEnd().trimStart()
+        return (
+          '  ' +
+          name.padEnd(28 - name.length, ' ') +
+          '\r\t\t\t\t' +
+          cmd._description
+        )
+      })
+    )
+  }
+  if (context.command.options.length) {
+    options = options.concat([C.yellow('Options:')])
+    options = options.concat(
+      context.command.options.map((cmd: any) => {
+        const name = cmd.flags.trimEnd().trimStart()
+        return (
+          '  ' +
+          name.padEnd(28 - name.length, ' ') +
+          '\r\t\t\t\t' +
+          cmd.description
+        )
+      })
+    )
+  }
+
+  const cmdName = context.command._name
+
+  const usage = [C.yellow('Usage: ') + cmdName + ' ' + C.dim(this.usage()), '']
+
+  return ['']
+    .concat(usage)
+    .concat(desc.concat(['\n']))
+    .concat(options)
+    .concat('')
+    .join('\n')
+}
 
 widgets.addHelpText('before', 'Welcome to lighthouse-web3')
 widgets.version('0.2.0')
@@ -50,10 +99,7 @@ widgets
   .option('-i, --import <key>', 'To import existing api-key')
   .action(apiKey)
 
-widgets
-  .command('balance')
-  .description('Get your data usage')
-  .action(balance)
+widgets.command('balance').description('Get your data usage').action(balance)
 
 widgets
   .command('upload')
@@ -98,20 +144,21 @@ widgets
   .description('Get details of file uploaded')
   .action(getUploads)
 
-widgets.addHelpText('after', 
-  "\r\nExample:" +
-  "\r\n  New api-key" +
-  Array(18).fill("\xa0").join("") +
-  "  lighthouse-web3 api-key --new" +
-  "\r\n  Change Network" +
-  Array(17).fill("\xa0").join("") +
-  "lighthouse-web3 --network polygon" +
-  "\r\n  Create wallet" +
-  Array(18).fill("\xa0").join("") +
-  "lighthouse-web3 create-wallet" +
-  "\r\n  Import wallet" +
-  Array(18).fill("\xa0").join("") +
-  "lighthouse-web3 import-wallet --key 0x7e9fd9a....a8600\r\n"
+widgets.addHelpText(
+  'after',
+  '\r\nExample:' +
+    '\r\n  New api-key' +
+    Array(18).fill('\xa0').join('') +
+    '  lighthouse-web3 api-key --new' +
+    '\r\n  Change Network' +
+    Array(17).fill('\xa0').join('') +
+    'lighthouse-web3 --network polygon' +
+    '\r\n  Create wallet' +
+    Array(18).fill('\xa0').join('') +
+    'lighthouse-web3 create-wallet' +
+    '\r\n  Import wallet' +
+    Array(18).fill('\xa0').join('') +
+    'lighthouse-web3 import-wallet --key 0x7e9fd9a....a8600\r\n'
 )
 
 widgets.parse(process.argv)

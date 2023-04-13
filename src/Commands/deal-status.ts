@@ -1,4 +1,4 @@
-import chalk from 'chalk'
+import chalk from 'kleur'
 import lighthouse from '../Lighthouse'
 import bytesToSize from './utils/byteToSize'
 
@@ -52,4 +52,3 @@ export default async function (data: any, options: any) {
     }
   }
 }
- 

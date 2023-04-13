@@ -1,4 +1,4 @@
-import chalk from 'chalk'
+import chalk from 'kleur'
 import { ethers } from 'ethers'
 import { config } from './utils/getNetwork'
 import readInput from './utils/readInput'

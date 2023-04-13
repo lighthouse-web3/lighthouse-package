@@ -1,4 +1,4 @@
-import chalk from 'chalk'
+import chalk from 'kleur'
 import { config } from './utils/getNetwork'
 import bytesToSize from './utils/byteToSize'
 import lighthouse from '../Lighthouse'

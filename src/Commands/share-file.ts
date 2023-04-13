@@ -1,5 +1,5 @@
-import chalk from 'chalk'
-import {ethers} from 'ethers'
+import chalk from 'kleur'
+import { ethers } from 'ethers'
 import lighthouse from '../Lighthouse'
 import readInput from './utils/readInput'
 import { config } from './utils/getNetwork'
@@ -41,7 +41,7 @@ export default async function (cid: string, address: string, _options: any) {
 
       console.log(
         chalk.yellow('sharedTo: ') +
-          chalk.white(shareResponse.data.shareTo) +
+          chalk.white(shareResponse.data.shareTo as string) +
           '\r\n' +
           chalk.yellow('cid: ') +
           chalk.white(shareResponse.data.cid)

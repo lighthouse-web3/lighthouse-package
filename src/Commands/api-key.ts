@@ -1,5 +1,5 @@
 import axios from 'axios'
-import chalk from 'chalk'
+import chalk from 'kleur'
 import { ethers } from 'ethers'
 import lighthouse from '../Lighthouse'
 import readInput from './utils/readInput'

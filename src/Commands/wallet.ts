@@ -1,4 +1,4 @@
-import chalk from 'chalk'
+import chalk from 'kleur'
 import { getNetwork, config } from './utils/getNetwork'
 
 export default async function (data: any) {

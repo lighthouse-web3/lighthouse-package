@@ -1,4 +1,4 @@
-import chalk from 'chalk'
+import chalk from 'kleur'
 import { ethers } from 'ethers'
 import lighthouse from '../Lighthouse'
 import byteToSize from './utils/byteToSize'

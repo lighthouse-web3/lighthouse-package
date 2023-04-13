@@ -1,4 +1,4 @@
-import chalk from 'chalk'
+import chalk from 'kleur'
 import fs from 'fs'
 import { ethers } from 'ethers'
 import axios from 'axios'

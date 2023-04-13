@@ -1,5 +1,5 @@
-import chalk from 'chalk'
-import {ethers} from 'ethers'
+import chalk from 'kleur'
+import { ethers } from 'ethers'
 import { resolve } from 'path'
 import { Spinner } from 'cli-spinner'
 

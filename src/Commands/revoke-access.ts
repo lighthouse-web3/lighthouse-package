@@ -1,5 +1,5 @@
-import chalk from 'chalk'
-import {ethers} from 'ethers'
+import chalk from 'kleur'
+import { ethers } from 'ethers'
 import { config } from './utils/getNetwork'
 import lighthouse from '../Lighthouse'
 import { sign_auth_message } from './utils/auth'
@@ -38,7 +38,7 @@ export default async function (cid: string, address: string) {
 
     console.log(
       chalk.yellow('revokeTo: ') +
-        chalk.white(revokeResponse.data.revokeTo) +
+        chalk.white(revokeResponse.data.revokeTo as string) +
         '\r\n' +
         chalk.yellow('cid: ') +
         chalk.white(revokeResponse.data.cid)
