@@ -8,16 +8,16 @@ export default async (text: string, apiKey: string) => {
     const endpoint = lighthouseConfig.lighthouseNode + '/api/v0/add'
 
     // Upload file
-    const formDdata = new FormData()
+    const formData = new FormData()
 
-    formDdata.append('file', Buffer.from(text))
+    formData.append('file', Buffer.from(text))
 
-    const response = await axios.post(endpoint, formDdata, {
+    const response = await axios.post(endpoint, formData, {
       withCredentials: true,
       maxContentLength: Infinity, //this is needed to prevent axios from erroring out with large directories
       maxBodyLength: Infinity,
       headers: {
-        'Content-type': `multipart/form-data; boundary= ${formDdata.getBoundary()}`,
+        'Content-type': `multipart/form-data; boundary= ${formData.getBoundary()}`,
         Encryption: 'false',
         'Mime-Type': 'text/plain',
         Authorization: token,
