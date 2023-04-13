@@ -1,5 +1,5 @@
 import axios from 'axios'
-import chalk from 'kleur'
+import { yellow, green, red } from 'kleur'
 import { ethers } from 'ethers'
 import lighthouse from '../Lighthouse'
 import readInput from './utils/readInput'
@@ -8,18 +8,17 @@ import { lighthouseConfig } from '../lighthouse.config'
 
 export default async (data: any, options: any) => {
   if (JSON.stringify(data) === '{}') {
-    console.log(chalk.yellow('Select an option:'))
+    console.log(yellow('Select an option:'))
     options.help()
   } else {
     if (data.import) {
       config.set('LIGHTHOUSE_GLOBAL_API_KEY', data.import)
-      console.log(chalk.green('\r\nApi Key imported!!'))
+      console.log(green('\r\nApi Key imported!!'))
     } else {
       try {
         if (config.get('LIGHTHOUSE_GLOBAL_API_KEY') && !data.new) {
           console.log(
-            chalk.yellow('\r\nApi Key: ') +
-              config.get('LIGHTHOUSE_GLOBAL_API_KEY')
+            yellow('\r\nApi Key: ') + config.get('LIGHTHOUSE_GLOBAL_API_KEY')
           )
         } else {
           if (!config.get('LIGHTHOUSE_GLOBAL_WALLET')) {
@@ -54,10 +53,10 @@ export default async (data: any, options: any) => {
           )
 
           config.set('LIGHTHOUSE_GLOBAL_API_KEY', response.data.apiKey)
-          console.log(chalk.yellow('\r\nApi Key: ') + response.data.apiKey)
+          console.log(yellow('\r\nApi Key: ') + response.data.apiKey)
         }
       } catch (error: any) {
-        console.log(chalk.red(error.message))
+        console.log(red(error.message))
       }
     }
   }
