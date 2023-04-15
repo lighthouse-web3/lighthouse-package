@@ -3,7 +3,7 @@ import FormData from 'form-data'
 import { Buffer } from 'buffer'
 import { lighthouseConfig } from '../../../lighthouse.config'
 
-export default async (text: string, apiKey: string) => {
+export default async (text: string, apiKey: string, name: string) => {
   try {
     const token = 'Bearer ' + apiKey
     const endpoint = lighthouseConfig.lighthouseNode + '/api/v0/add'
@@ -12,7 +12,7 @@ export default async (text: string, apiKey: string) => {
     const formDdata = new FormData()
     const blob = new Blob([text], {type: "text/plain"});
     const boundary = Symbol()
-    formDdata.append('file', blob)
+    formDdata.append('file', blob, name)
 
     const response = await axios.post(endpoint, formDdata, {
       withCredentials: false,

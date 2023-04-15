@@ -9,7 +9,8 @@ export default async (
   text: string,
   apiKey: string,
   publicKey: string,
-  signed_message: string
+  signedMessage: string,
+  name: string
 ) => {
   try {
     const token = 'Bearer ' + apiKey
@@ -25,7 +26,7 @@ export default async (
       fileEncryptionKey
     )
 
-    formDdata.append('file', Buffer.from(encryptedData))
+    formDdata.append('file', Buffer.from(encryptedData), {filename: name})
 
     const response = await axios.post(endpoint, formDdata, {
       withCredentials: true,
@@ -42,7 +43,7 @@ export default async (
     const { error } = await saveShards(
       publicKey,
       response.data.Hash,
-      signed_message,
+      signedMessage,
       keyShards
     )
 
