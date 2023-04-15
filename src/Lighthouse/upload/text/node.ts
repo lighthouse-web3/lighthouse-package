@@ -2,7 +2,7 @@ import axios from 'axios'
 import FormData from 'form-data'
 import { lighthouseConfig } from '../../../lighthouse.config'
 
-export default async (text: string, apiKey: string) => {
+export default async (text: string, apiKey: string, name: string) => {
   try {
     const token = 'Bearer ' + apiKey
     const endpoint = lighthouseConfig.lighthouseNode + '/api/v0/add'
@@ -10,7 +10,7 @@ export default async (text: string, apiKey: string) => {
     // Upload file
     const formData = new FormData()
 
-    formData.append('file', Buffer.from(text))
+    formData.append('file', Buffer.from(text), {filename: name})
 
     const response = await axios.post(endpoint, formData, {
       withCredentials: true,
