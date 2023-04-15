@@ -1,4 +1,4 @@
-# Lighthouse <img src="https://img.shields.io/badge/BETA-v0.1.10-green"/>
+# Lighthouse <img src="https://img.shields.io/badge/BETA-v0.2.1-green"/>
 
 Lighthouse is a permanent decentralized file storage protocol that allows the ability to pay once and store forever. While traditionally, users need to repeatedly keep track and pay for their storage after every fixed amount of time, Lighthouse manages this for them and makes sure that user files are stored forever. The aim is to move users from a rent-based cost model where they are renting their own files on cloud storage to a permanent ownership model. It is built on top of IPFS, Filecoin, and Polygon. It uses the existing miner network and storage capacity of the filecoin network.
 
@@ -42,7 +42,7 @@ lighthouse-web3 wallet
 ## NodeJs Example
 
 ```javascript
-const lighthouse = require("@lighthouse-web3/sdk");
+import lighthouse from "@lighthouse-web3/sdk";
 
 // Create wallet
 const wallet = await lighthouse.createWallet(
@@ -53,7 +53,7 @@ const wallet = await lighthouse.createWallet(
 const balance = await lighthouse.getBalance(publicKey);
 
 // Upload File
-const uploadResponse = await lighthouse.upload('/home/cosmos/Desktop/wow.jpg', api-key);
+const uploadResponse = await lighthouse.upload('/home/cosmos/Desktop/wow.jpg', 'YOUR_API_KEY');
 
 
 Refer [GitBook](https://docs.lighthouse.storage/lighthouse-1/)
