@@ -7,7 +7,8 @@ export default async (
   mimeType = 'null'
 ) => {
   // Upload File to IPFS
-  if (typeof process !== 'undefined' && process.release.name === 'node') {
+  // @ts-expect-error
+  if (typeof window === "undefined") {
     return await node(cid, fileEncryptionKey)
   } else {
     return await browser(cid, fileEncryptionKey, mimeType)
