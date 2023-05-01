@@ -1,7 +1,7 @@
 /* istanbul ignore file */
 import axios from 'axios'
 import FormData from 'form-data'
-import { encryptFile } from '../../encryptionNode'
+import { encryptFile } from '../../encryptionBrowser'
 import { generate, saveShards } from '@lighthouse-web3/kavach'
 import { lighthouseConfig } from '../../../../lighthouse.config'
 
@@ -27,14 +27,15 @@ export default async (
       fileEncryptionKey
     )
 
-    formDdata.append('file', new Blob([encryptedData], {type: "text/plain"}), {filename: name})
+    formDdata.append('file', new Blob([encryptedData], {type: "text/plain"}), name)
 
+    const boundary = Symbol()
     const response = await axios.post(endpoint, formDdata, {
-      withCredentials: true,
+      withCredentials: false,
       maxContentLength: Infinity, //this is needed to prevent axios from erroring out with large directories
       maxBodyLength: Infinity,
       headers: {
-        'Content-type': `multipart/form-data; boundary= ${formDdata.getBoundary()}`,
+        'Content-type': `multipart/form-data; boundary= ${boundary.toString()}`,
         Encryption: 'true',
         'Mime-Type': 'text/plain',
         Authorization: token,
