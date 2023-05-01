@@ -9,7 +9,8 @@ export default async (
   uploadProgressCallback = (data: any) => {}
 ) => {
   // Upload File to IPFS
-  if (typeof process !== 'undefined' && process.release.name === 'node') {
+  // @ts-expect-error
+  if (typeof window === "undefined") {
     return await uploadFile(path, apiKey, publicKey, signedMessage)
   } else {
     return await browser(

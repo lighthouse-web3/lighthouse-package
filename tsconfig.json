@@ -11,6 +11,7 @@
     "esModuleInterop": true,  
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
+    "experimentalDecorators": true,
     "moduleResolution": "node",
     "allowJs": true,
     "declaration": true,

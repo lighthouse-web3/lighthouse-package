@@ -1,4 +1,5 @@
 import serverSide from './node'
+import browser from './browser'
 
 export default async (
   text: string,
@@ -7,5 +8,10 @@ export default async (
   signedMessage: string,
   name= 'text'
 ) => {
-  return await serverSide(text, apiKey, publicKey, signedMessage, name)
+  // @ts-expect-error
+  if (typeof window === "undefined") {
+    return await serverSide(text, apiKey, publicKey, signedMessage, name)
+  } else{
+    return await browser(text, apiKey, publicKey, signedMessage, name)
+  }
 }
