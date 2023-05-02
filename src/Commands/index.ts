@@ -6,6 +6,7 @@ import wallet from './wallet'
 import upload from './upload'
 import apiKey from './api-key'
 import balance from './balance'
+import createCar from './create-car'
 import shareFile from './share-file'
 import getUploads from './get-uploads'
 import dealStatus from './deal-status'
@@ -14,6 +15,7 @@ import createWallet from './create-wallet'
 import walletForget from './wallet-forget'
 import importWallet from './import-wallet'
 import revokeAccess from './revoke-access'
+import viewCarFiles from './view-car-files'
 import resetPassword from './reset-password'
 import uploadEncrypted from './upload-encrypted'
 
@@ -70,7 +72,7 @@ Command.prototype.helpInformation = function (context: any) {
 }
 
 widgets.addHelpText('before', 'Welcome to lighthouse-web3')
-widgets.version('0.2.2')
+widgets.version('0.2.3')
 
 widgets
   .command('wallet')
@@ -102,6 +104,16 @@ widgets
   .action(apiKey)
 
 widgets.command('balance').description('Get your data usage').action(balance)
+
+widgets
+  .command('view-car-files')
+  .description('View car files with deal making data')
+  .action(viewCarFiles)
+widgets
+  .command('create-car')
+  .description('create car file for deal creation')
+  .argument('<path>', 'Path to file')
+  .action(createCar)
 
 widgets
   .command('upload')
