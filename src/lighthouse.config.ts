@@ -3,6 +3,7 @@ const defaultConfig = {
   lighthouseNode: 'https://node.lighthouse.storage',
   lighthouseGateway: 'https://gateway.lighthouse.storage',
   lighthouseBLSNode: 'https://encryption.lighthouse.storage',
+  lighthouseDataDepot: 'https://data-depot.lighthouse.storage',
   network: 'polygon',
   fantom: {
     symbol: 'FTM',
