@@ -22,6 +22,11 @@ import uploadBuffer from './upload/buffer/uploadBuffer'
 import uploadEncrypted from './uploadEncrypted/encrypt/file'
 import textUploadEncrypted from './uploadEncrypted/encrypt/text'
 
+// Data Depot
+import createCar from './createCAR/createCar'
+import viewCarFiles from './createCAR/viewCarFiles'
+import dataDepotAuth from './createCAR/dataDepotAuth'
+
 export {
   getQuote,
   getApiKey,
@@ -42,6 +47,9 @@ export {
   uploadEncrypted,
   textUploadEncrypted,
   decryptFile,
+  createCar,
+  dataDepotAuth,
+  viewCarFiles
 }
 
 export default {
@@ -64,4 +72,7 @@ export default {
   uploadEncrypted,
   textUploadEncrypted,
   decryptFile,
+  createCar,
+  dataDepotAuth,
+  viewCarFiles
 }
