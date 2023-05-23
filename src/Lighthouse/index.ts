@@ -27,6 +27,12 @@ import createCar from './createCAR/createCar'
 import viewCarFiles from './createCAR/viewCarFiles'
 import dataDepotAuth from './createCAR/dataDepotAuth'
 
+// IPNS
+import generateKey from './ipns/generateKey'
+import publishRecord from './ipns/publishRecord'
+import getAllKeys from './ipns/getAllKeys'
+import removeKey from './ipns/removeKey'
+
 export {
   getQuote,
   getApiKey,
@@ -49,7 +55,11 @@ export {
   decryptFile,
   createCar,
   dataDepotAuth,
-  viewCarFiles
+  viewCarFiles,
+  generateKey,
+  publishRecord,
+  getAllKeys,
+  removeKey
 }
 
 export default {
@@ -74,5 +84,9 @@ export default {
   decryptFile,
   createCar,
   dataDepotAuth,
-  viewCarFiles
+  viewCarFiles,
+  generateKey,
+  publishRecord,
+  getAllKeys,
+  removeKey
 }
