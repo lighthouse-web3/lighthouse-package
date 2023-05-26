@@ -5,22 +5,21 @@ import { lighthouseConfig } from '../../../lighthouse.config'
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 export default async (
-  e: any,
+  files: any,
   accessToken: string,
   uploadProgressCallback = (data: any) => {}
 ) => {
   try {
     const endpoint = lighthouseConfig.lighthouseNode + '/api/v0/add'
-    e.persist()
     let mimeType = null
-    if (e.target.files.length === 1) {
-      mimeType = e.target.files[0].type
+    if (files.length === 1) {
+      mimeType = files[0].type
     }
 
     const formData = new FormData()
     const boundary = Symbol()
-    for (let i = 0; i < e.target.files.length; i++) {
-      formData.append('file', e.target.files[i])
+    for (let i = 0; i < files.length; i++) {
+      formData.append('file', files[i])
     }
 
     const token = 'Bearer ' + accessToken
