@@ -41,6 +41,6 @@ test('IPNS', async () => {
   expect(typeof publishRes.Name).toBe('string')
   
   //Remove Key
-  const removeRes = await lighthouse.removeKey('00d31681ea3648edb059186ee6cb789a', apiKey)
+  const removeRes = await lighthouse.removeKey(key.ipnsName, apiKey)
   expect(typeof removeRes.data.Keys.length).toBe('number')
 }, 40000)
