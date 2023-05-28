@@ -17,8 +17,8 @@ import getAccessConditions from './encryption/getAccessConditions'
 // Upload
 import upload from './upload/files'
 import uploadText from './upload/text'
+import uploadBuffer from './upload/buffer'
 import decryptFile from './uploadEncrypted/decrypt'
-import uploadBuffer from './upload/buffer/uploadBuffer'
 import uploadEncrypted from './uploadEncrypted/encrypt/file'
 import textUploadEncrypted from './uploadEncrypted/encrypt/text'
 
