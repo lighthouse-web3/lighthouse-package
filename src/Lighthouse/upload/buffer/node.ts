@@ -1,9 +1,9 @@
 import axios from 'axios'
+import FormData from 'form-data'
 import { lighthouseConfig } from '../../../lighthouse.config'
 
 export default async (buffer: any, apiKey: string, mimeType = '') => {
   try {
-    const FormData = eval(`require`)('form-data')
     const token = 'Bearer ' + apiKey
     const endpoint = lighthouseConfig.lighthouseNode + '/api/v0/add'
 

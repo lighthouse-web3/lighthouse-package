@@ -22,7 +22,7 @@ const readFileAsync = (file: any) => {
 }
 
 export default async (
-  e: any,
+  files: any,
   apiKey: string,
   publicKey: string,
   signedMessage: string,
@@ -33,17 +33,16 @@ export default async (
     const { masterKey: fileEncryptionKey, keyShards } = await generate()
 
     // Upload file
-    e.persist()
     let mimeType = null
-    if (e.target.files.length === 1) {
-      mimeType = e.target.files[0].type
+    if (files.length === 1) {
+      mimeType = files[0].type
     }
     const endpoint = lighthouseConfig.lighthouseNode + '/api/v0/add'
     const token = 'Bearer ' + apiKey
 
     const fileArr = []
-    for (let i = 0; i < e.target.files.length; i++) {
-      fileArr.push(e.target.files[i])
+    for (let i = 0; i < files.length; i++) {
+      fileArr.push(files[i])
     }
 
     const formData = new FormData()

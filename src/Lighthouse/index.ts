@@ -17,8 +17,8 @@ import getAccessConditions from './encryption/getAccessConditions'
 // Upload
 import upload from './upload/files'
 import uploadText from './upload/text'
+import uploadBuffer from './upload/buffer'
 import decryptFile from './uploadEncrypted/decrypt'
-import uploadBuffer from './upload/buffer/uploadBuffer'
 import uploadEncrypted from './uploadEncrypted/encrypt/file'
 import textUploadEncrypted from './uploadEncrypted/encrypt/text'
 
@@ -26,6 +26,12 @@ import textUploadEncrypted from './uploadEncrypted/encrypt/text'
 import createCar from './createCAR/createCar'
 import viewCarFiles from './createCAR/viewCarFiles'
 import dataDepotAuth from './createCAR/dataDepotAuth'
+
+// IPNS
+import generateKey from './ipns/generateKey'
+import publishRecord from './ipns/publishRecord'
+import getAllKeys from './ipns/getAllKeys'
+import removeKey from './ipns/removeKey'
 
 export {
   getQuote,
@@ -49,7 +55,11 @@ export {
   decryptFile,
   createCar,
   dataDepotAuth,
-  viewCarFiles
+  viewCarFiles,
+  generateKey,
+  publishRecord,
+  getAllKeys,
+  removeKey
 }
 
 export default {
@@ -74,5 +84,9 @@ export default {
   decryptFile,
   createCar,
   dataDepotAuth,
-  viewCarFiles
+  viewCarFiles,
+  generateKey,
+  publishRecord,
+  getAllKeys,
+  removeKey
 }

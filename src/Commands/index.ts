@@ -2,6 +2,7 @@
 import { Command } from 'commander'
 import { yellow, gray, dim, green } from 'kleur'
 
+import ipns from './ipns'
 import wallet from './wallet'
 import upload from './upload'
 import apiKey from './api-key'
@@ -72,7 +73,7 @@ Command.prototype.helpInformation = function (context: any) {
 }
 
 widgets.addHelpText('before', 'Welcome to lighthouse-web3')
-widgets.version('0.2.3')
+widgets.version('0.2.4')
 
 widgets
   .command('wallet')
@@ -104,6 +105,17 @@ widgets
   .action(apiKey)
 
 widgets.command('balance').description('Get your data usage').action(balance)
+
+widgets
+  .command('ipns')
+  .option('-gen, --generate-key', 'Generate IPNS Key')
+  .option('-pub, --publish', 'Publish CID')
+  .option('-l, --list', 'List all keys')
+  .option('-r, --remove <key>', 'Remove Key')
+  .option('-k, --key <key>', 'Publish Key argument')
+  .option('-c, --cid <cid>', 'Publish CID argument')
+  .description('IPNS service')
+  .action(ipns)
 
 widgets
   .command('view-car-files')
