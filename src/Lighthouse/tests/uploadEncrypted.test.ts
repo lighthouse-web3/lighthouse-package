@@ -4,11 +4,11 @@ import { ethers } from 'ethers'
 import lighthouse from '..'
 import { lighthouseConfig } from '../../lighthouse.config'
 
-const signAuthMessage = async (publicKey: string, privateKey: string) => {
+export const signAuthMessage = async (privateKey: string) => {
   const provider = new ethers.providers.JsonRpcProvider()
   const signer = new ethers.Wallet(privateKey, provider)
-  const messageRequested = (await lighthouse.getAuthMessage(publicKey)).data
-    .message
+  const messageRequested = (await lighthouse.getAuthMessage(signer.address))
+    .data.message
   const signedMessage = await signer.signMessage(messageRequested)
   return signedMessage
 }
@@ -37,7 +37,6 @@ describe('UploadEncrypted', () => {
     const apiKey = await lighthouse.getApiKey(publicKey, signedMessage)
 
     const signedMessageEncryption = await signAuthMessage(
-      publicKey,
       '0x8488d2c632da07a93647d7cf701ab6728a884467b1595f3c94007977a20b3539'
     )
     const deployResponse = (

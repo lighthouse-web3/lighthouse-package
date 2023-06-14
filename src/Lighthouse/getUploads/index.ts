@@ -17,14 +17,14 @@ type fileObject = {
 
 export type uploadsResponseType = {
   data: {
-    fileList: fileObject[],
+    fileList: fileObject[]
     totalFiles: number
   }
 }
 
 export default async (
   publicKey: string,
-  pageNo:number = 1
+  pageNo = 1
 ): Promise<uploadsResponseType> => {
   try {
     const uploads = (
