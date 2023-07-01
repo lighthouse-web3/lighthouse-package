@@ -23,16 +23,19 @@ describe('uploadFiles', () => {
     const signedMessage = await signer.signMessage(verificationMessage)
     const apiKey = await lighthouse.getApiKey(publicKey, signedMessage)
 
-    const deployResponse = await lighthouse.upload(path, apiKey.data.apiKey)
+    const full_deployResponse = (
+      await lighthouse.upload(path, apiKey.data.apiKey)
+    ).data
+    const deployResponse = full_deployResponse[0]
 
-    expect(deployResponse.data).toHaveProperty('Name')
-    expect(typeof deployResponse.data['Name']).toBe('string')
+    expect(deployResponse).toHaveProperty('Name')
+    expect(typeof deployResponse['Name']).toBe('string')
 
-    expect(deployResponse.data).toHaveProperty('Hash')
-    expect(typeof deployResponse.data['Hash']).toBe('string')
+    expect(deployResponse).toHaveProperty('Hash')
+    expect(typeof deployResponse['Hash']).toBe('string')
 
-    expect(deployResponse.data).toHaveProperty('Size')
-    expect(typeof deployResponse.data['Size']).toBe('string')
+    expect(deployResponse).toHaveProperty('Size')
+    expect(typeof deployResponse['Size']).toBe('string')
   }, 60000)
 
   test('upload Main Case Folder', async () => {
@@ -53,9 +56,11 @@ describe('uploadFiles', () => {
     const signedMessage = await signer.signMessage(verificationMessage)
     const apiKey = await lighthouse.getApiKey(publicKey, signedMessage)
 
-    const deployResponse = (await lighthouse.upload(path, apiKey.data.apiKey))
-      .data
-
+    const full_deployResponse = (
+      await lighthouse.upload(path, apiKey.data.apiKey)
+    ).data
+    expect(full_deployResponse.length).toBeGreaterThan(1)
+    const deployResponse = full_deployResponse[0]
     expect(deployResponse).toHaveProperty('Name')
     expect(typeof deployResponse['Name']).toBe('string')
 
@@ -72,7 +77,7 @@ describe('uploadFiles', () => {
         process.cwd(),
         'src/Lighthouse/tests/testImages/testImage1.svg'
       )
-      const deployResponse = await lighthouse.upload(path, 'apiKey')
+      await lighthouse.upload(path, 'apiKey')
     } catch (error: any) {
       expect(typeof error.message).toBe('string')
     }

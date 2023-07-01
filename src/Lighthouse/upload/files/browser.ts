@@ -2,19 +2,23 @@
 import axios from 'axios'
 import FormData from 'form-data'
 import { lighthouseConfig } from '../../../lighthouse.config'
+import { IFileUploadedResponse, IUploadProgressCallback } from '../../../types'
+import { checkDuplicateFileNames } from '../../utils/util'
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 export default async (
   files: any,
   accessToken: string,
-  uploadProgressCallback = (data: any) => {}
-) => {
+  uploadProgressCallback: (data: IUploadProgressCallback) => void
+): Promise<{ data: IFileUploadedResponse[] }> => {
   try {
-    const endpoint = lighthouseConfig.lighthouseNode + '/api/v0/add'
+    const endpoint =
+      lighthouseConfig.lighthouseNode + '/api/v0/add?wrap-with-directory=false'
     let mimeType = null
     if (files.length === 1) {
       mimeType = files[0].type
     }
+    checkDuplicateFileNames(files)
 
     const formData = new FormData()
     const boundary = Symbol()
@@ -44,19 +48,13 @@ export default async (
     })
 
     if (typeof response.data === 'string') {
-      const temp = response.data.split('\n')
-      response.data = JSON.parse(temp[temp.length - 2])
+      response.data = JSON.parse(
+        `[${response.data.slice(0, -1)}]`.split('\n').join(',')
+      )
+    } else {
+      response.data = [response.data]
     }
 
-    /*
-      {
-        data: {
-          Name: 'flow1.png',
-          Hash: 'QmUHDKv3NNL1mrg4NTW4WwJqetzwZbGNitdjr2G6Z5Xe6s',
-          Size: '31735'
-        }
-      }
-    */
     return { data: response.data }
   } catch (error: any) {
     throw new Error(error?.message)
