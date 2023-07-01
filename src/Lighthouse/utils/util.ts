@@ -19,6 +19,18 @@ const addressValidator = (value: string) => {
   return ''
 }
 
+function checkDuplicateFileNames(files: any[]) {
+  const fileNames = new Set()
 
+  for (let i = 0; i < files.length; i++) {
+    const fileName = files[i].name
 
-export { isCID, isPrivateKey, addressValidator }
+    if (fileNames.has(fileName)) {
+      throw new Error(`Duplicate file name found: ${fileName}`)
+    }
+
+    fileNames.add(fileName)
+  }
+}
+
+export { isCID, isPrivateKey, addressValidator, checkDuplicateFileNames }

@@ -2,9 +2,14 @@
 import axios from 'axios'
 import FormData from 'form-data'
 import { generate, saveShards } from '@lighthouse-web3/kavach'
-
+import {
+  IFileUploadedResponse,
+  IUploadProgressCallback,
+} from '../../../../types'
 import { encryptFile } from '../../encryptionBrowser'
 import { lighthouseConfig } from '../../../../lighthouse.config'
+import { checkDuplicateFileNames } from '../../../utils/util'
+
 declare const FileReader: any
 
 const readFileAsync = (file: any) => {
@@ -26,34 +31,40 @@ export default async (
   apiKey: string,
   publicKey: string,
   signedMessage: string,
-  uploadProgressCallback = (data: any) => {}
-) => {
+  uploadProgressCallback: (data: IUploadProgressCallback) => void
+): Promise<{ data: IFileUploadedResponse[] }> => {
   try {
+    let keyMap = {} as any
     // Generate fileEncryptionKey
-    const { masterKey: fileEncryptionKey, keyShards } = await generate()
+    // const { masterKey: fileEncryptionKey, keyShards } = await generate()
 
     // Upload file
     let mimeType = null
     if (files.length === 1) {
       mimeType = files[0].type
     }
-    const endpoint = lighthouseConfig.lighthouseNode + '/api/v0/add'
+    const endpoint =
+      lighthouseConfig.lighthouseNode + '/api/v0/add?wrap-with-directory=false'
     const token = 'Bearer ' + apiKey
 
     const fileArr = []
     for (let i = 0; i < files.length; i++) {
       fileArr.push(files[i])
     }
+    checkDuplicateFileNames(fileArr)
 
     const formData = new FormData()
     const boundary = Symbol()
     const filesParam = await Promise.all(
       fileArr.map(async (f) => {
+        const { masterKey: fileEncryptionKey, keyShards } = await generate()
         const fileData = await readFileAsync(f)
         const encryptedData = await encryptFile(fileData, fileEncryptionKey)
+        keyMap = { ...keyMap, [f.name]: keyShards }
         return {
           data: new Blob([encryptedData], { type: f.type }),
           fileName: f.name,
+          keyShards,
         }
       })
     )
@@ -83,25 +94,38 @@ export default async (
         })
       },
     })
-
-    const { isSuccess, error } = await saveShards(
-      publicKey,
-      response.data.Hash,
-      signedMessage,
-      keyShards
-    )
-    if (error) {
-      throw new Error('Error encrypting file')
+    if (typeof response.data === 'string') {
+      response.data = JSON.parse(
+        `[${response.data.slice(0, -1)}]`.split('\n').join(',')
+      )
+    } else {
+      response.data = [response.data]
     }
+
+    const savedKey = await Promise.all(
+      response.data.map(async (data: IFileUploadedResponse) => {
+        return saveShards(
+          publicKey,
+          data.Hash,
+          signedMessage,
+          keyMap[data.Name]
+        )
+      })
+    )
+    savedKey.forEach((_savedKey) => {
+      if (!_savedKey.isSuccess) {
+        throw new Error(JSON.stringify(_savedKey))
+      }
+    })
 
     // return response
     /*
       {
-        data: {
+        data: [{
           Name: 'flow1.png',
           Hash: 'QmUHDKv3NNL1mrg4NTW4WwJqetzwZbGNitdjr2G6Z5Xe6s',
           Size: '31735'
-        }
+        }]
       }
     */
     return { data: response.data }

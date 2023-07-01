@@ -3,13 +3,14 @@ import { lighthouseConfig } from '../../../../lighthouse.config'
 import { generate, saveShards } from '@lighthouse-web3/kavach'
 import { encryptFile } from '../../encryptionNode'
 import { walk } from '../../../upload/files/node'
+import { IFileUploadedResponse } from '../../../../types'
 
 export default async (
   sourcePath: any,
   apiKey: string,
   publicKey: string,
   signed_message: string
-) => {
+): Promise<{ data: IFileUploadedResponse[] }> => {
   const FormData = eval('require')('form-data')
   const mime = eval('require')('mime-types')
   const fs = eval('require')('fs-extra')
@@ -55,17 +56,7 @@ export default async (
         throw new Error('Error encrypting file')
       }
 
-      // return response
-      /*
-        {
-          data: {
-            Name: 'flow1.png',
-            Hash: 'QmUHDKv3NNL1mrg4NTW4WwJqetzwZbGNitdjr2G6Z5Xe6s',
-            Size: '31735'
-          }
-        }
-      */
-      return { data: response.data }
+      return { data: [response.data] }
     } catch (error: any) {
       console.log(error)
       throw new Error(error.message)
@@ -76,7 +67,7 @@ export default async (
 
     let keyMap = {} as any
 
-    const data = await Promise.all(
+    await Promise.all(
       files.map(async (file: any) => {
         // const mimeType = mime.lookup(file)
         const { masterKey: fileEncryptionKey, keyShards } = await generate()
@@ -105,7 +96,7 @@ export default async (
     })
     const jsondata = JSON.parse(
       `[${response.data.slice(0, -1)}]`.split('\n').join(',')
-    ) as { Hash: string; Name: string; Size: string }[]
+    ) as IFileUploadedResponse[]
 
     const savedKey = await Promise.all(
       jsondata.map(async (data) => {
@@ -122,6 +113,6 @@ export default async (
         throw new Error(JSON.stringify(_savedKey))
       }
     })
-    return jsondata
+    return { data: jsondata }
   }
 }
