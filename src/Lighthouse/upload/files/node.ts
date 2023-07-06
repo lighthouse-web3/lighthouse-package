@@ -56,6 +56,11 @@ export default async (sourcePath: string, apiKey: string, multi: boolean) => {
         },
       })
 
+      if (multi) {
+        const temp = response.data.split('\n');
+        response.data = JSON.parse(temp[temp.length - 2]);
+      }
+
       return { data: response.data }
     } else {
       const files = await walk(sourcePath)
