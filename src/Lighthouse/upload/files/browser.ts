@@ -9,11 +9,12 @@ import { checkDuplicateFileNames } from '../../utils/util'
 export default async (
   files: any,
   accessToken: string,
+  multi: boolean,
   uploadProgressCallback: (data: IUploadProgressCallback) => void
 ): Promise<{ data: IFileUploadedResponse[] }> => {
   try {
     const endpoint =
-      lighthouseConfig.lighthouseNode + '/api/v0/add?wrap-with-directory=false'
+      lighthouseConfig.lighthouseNode + `/api/v0/add?wrap-with-directory=${multi}`
     let mimeType = null
     if (files.length === 1) {
       mimeType = files[0].type
@@ -47,12 +48,12 @@ export default async (
       },
     })
 
-    if (typeof response.data === 'string') {
+    if (typeof response.data === 'string' && multi) {
       response.data = JSON.parse(
         `[${response.data.slice(0, -1)}]`.split('\n').join(',')
       )
     } else {
-      response.data = [response.data]
+      response.data = response.data
     }
 
     return { data: response.data }
