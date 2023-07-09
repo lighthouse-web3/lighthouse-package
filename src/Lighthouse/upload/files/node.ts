@@ -2,7 +2,7 @@ import axios from 'axios'
 import FormData from 'form-data'
 import basePathConvert from '../../utils/basePathConvert'
 import { lighthouseConfig } from '../../../lighthouse.config'
-import { UploadFileReturnType } from '../../../types'
+import { UploadFileReturnType, IFileUploadedResponse } from '../../../types'
 
 export async function walk(dir: string) {
   const { readdir, stat } = eval(`require`)('fs-extra')
@@ -30,11 +30,21 @@ export async function walk(dir: string) {
   @param {string} apiKey - The api key of the user.
 */
 
-export default async <T extends boolean>(
+// Overload for when multi is true
+async function uploadFile(
   sourcePath: string,
   apiKey: string,
-  multi: T
-): Promise<{ data: UploadFileReturnType<T> }> => {
+  multi: true
+): Promise<{ data: IFileUploadedResponse[] }>
+
+// Overload for when multi is false
+async function uploadFile(
+  sourcePath: string,
+  apiKey: string,
+  multi: false
+): Promise<{ data: IFileUploadedResponse }>
+
+async function uploadFile(sourcePath: string, apiKey: string, multi: boolean) {
   const { createReadStream, lstatSync } = eval(`require`)('fs-extra')
   const mime = eval(`require`)('mime-types')
 
@@ -117,3 +127,5 @@ export default async <T extends boolean>(
     throw new Error(error.message)
   }
 }
+
+export default uploadFile
