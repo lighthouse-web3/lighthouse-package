@@ -9,3 +9,7 @@ export interface IFileUploadedResponse {
   Hash: string
   Size: string
 }
+
+export type UploadFileReturnType<T extends boolean> = T extends true
+  ? IFileUploadedResponse[]
+  : IFileUploadedResponse

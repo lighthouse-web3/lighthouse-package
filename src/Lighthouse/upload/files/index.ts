@@ -5,7 +5,7 @@ import { IUploadProgressCallback } from '../../../types'
 export default async (
   path: string | any,
   apiKey: string,
-  multi: boolean = false,
+  multi = false,
   uploadProgressCallback?: (data: IUploadProgressCallback) => void
 ) => {
   // Upload File to IPFS
