@@ -9,7 +9,6 @@ export default async (
   uploadProgressCallback?: (data: any) => void
 ) => {
   // Upload File to IPFS
-  // @ts-expect-error check Environment
   if (typeof window === 'undefined') {
     return await uploadFile(path, apiKey, publicKey, signedMessage)
   } else {

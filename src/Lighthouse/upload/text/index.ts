@@ -3,7 +3,6 @@ import uploadTextBrowser from './browser'
 
 export default async (text: string, apiKey: string, name='text') => {
   // Upload File to IPFS
-  // @ts-expect-error
   if (typeof window === "undefined") {
     return await uploadTextServer(text, apiKey, name)
   } else {

@@ -112,22 +112,24 @@ const uploadFile = async (
   process.stdout.clearLine(-1)
   process.stdout.cursorTo(0)
 
-  if (!uploadResponse.Hash) {
+  if (!uploadResponse[0].Hash) {
     console.log(red('Upload failed!'))
     console.log(yellow('Check if api key is correct or create a new key!'))
     process.exit()
   }
 
-  console.log(
-    green('File Uploaded, visit following url to view content!\r\n') +
-      cyan(
-        'Visit: ' +
-          'https://files.lighthouse.storage/viewFile/' +
-          uploadResponse.Hash
-      )
-  )
+  uploadResponse.forEach((fileResponse) => {
+    console.log(
+      green('File Uploaded, visit following url to view content!\r\n') +
+        cyan(
+          'Visit: ' +
+            'https://files.lighthouse.storage/viewFile/' +
+            fileResponse.Hash
+        )
+    )
 
-  console.log('CID: ' + uploadResponse.Hash)
+    console.log('CID: ' + fileResponse.Hash)
+  })
   return
 }
 

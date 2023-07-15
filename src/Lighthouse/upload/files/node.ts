@@ -2,7 +2,7 @@ import axios from 'axios'
 import FormData from 'form-data'
 import basePathConvert from '../../utils/basePathConvert'
 import { lighthouseConfig } from '../../../lighthouse.config'
-import { UploadFileReturnType, IFileUploadedResponse } from '../../../types'
+import { IFileUploadedResponse } from '../../../types'
 
 export async function walk(dir: string) {
   const { readdir, stat } = eval(`require`)('fs-extra')
@@ -47,6 +47,7 @@ async function uploadFile(
 async function uploadFile(sourcePath: string, apiKey: string, multi: boolean) {
   const { createReadStream, lstatSync } = eval(`require`)('fs-extra')
   const mime = eval(`require`)('mime-types')
+  const path = eval(`require`)('path')
 
   const token = 'Bearer ' + apiKey
   const stats = lstatSync(sourcePath)
@@ -86,9 +87,17 @@ async function uploadFile(sourcePath: string, apiKey: string, multi: boolean) {
 
       files.forEach((file: any) => {
         //for each file stream, we need to include the correct relative file path
-        data.append('file', createReadStream(file), {
-          filepath: basePathConvert(sourcePath, file),
-        })
+        data.append(
+          'file',
+          createReadStream(file),
+          multi
+            ? {
+                filename: path.basename(file),
+              }
+            : {
+                filepath: basePathConvert(sourcePath, file),
+              }
+        )
       })
 
       const response = await axios.post(endpoint, data, {

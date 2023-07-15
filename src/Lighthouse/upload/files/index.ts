@@ -5,27 +5,26 @@ import { IUploadProgressCallback, IFileUploadedResponse } from '../../../types'
 async function uploadFiles(
   sourcePath: string | any,
   apiKey: string,
-  multi?: true,
-  uploadProgressCallback?: (data: IUploadProgressCallback) => void
-): Promise<{ data: IFileUploadedResponse[] }>
-
-async function uploadFiles(
-  sourcePath: string | any,
-  apiKey: string,
   multi?: false,
   uploadProgressCallback?: (data: IUploadProgressCallback) => void
 ): Promise<{ data: IFileUploadedResponse }>
 
 async function uploadFiles(
+  sourcePath: string | any,
+  apiKey: string,
+  multi?: true,
+  uploadProgressCallback?: (data: IUploadProgressCallback) => void
+): Promise<{ data: IFileUploadedResponse[] }>
+
+async function uploadFiles(
   path: string | any,
   apiKey: string,
-  multi = false,
+  multi?: boolean,
   uploadProgressCallback?: (data: IUploadProgressCallback) => void
 ) {
   // Upload File to IPFS
 
   if (multi) {
-    // @ts-expect-error Check Environment
     if (typeof window === 'undefined') {
       return await uploadFile(path, apiKey, true)
     } else {
@@ -40,7 +39,6 @@ async function uploadFiles(
       )
     }
   } else {
-    // @ts-expect-error Check Environment
     if (typeof window === 'undefined') {
       return await uploadFile(path, apiKey, false)
     } else {
