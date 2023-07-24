@@ -81,7 +81,7 @@ describe('UploadEncrypted', () => {
     const signedMessageEncryption = await signAuthMessage(
       '0x8488d2c632da07a93647d7cf701ab6728a884467b1595f3c94007977a20b3539'
     )
-    const { JWT, error } = await getJWT(
+    const { JWT } = await getJWT(
       signer.address.toLowerCase(),
       signedMessageEncryption
     )
