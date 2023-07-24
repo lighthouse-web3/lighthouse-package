@@ -15,31 +15,32 @@ export default async (
   const mime = eval('require')('mime-types')
   const fs = eval('require')('fs-extra')
   const token = 'Bearer ' + apiKey
-  const endpoint = lighthouseConfig.lighthouseNode + '/api/v0/add'
+  const endpoint =
+    lighthouseConfig.lighthouseNode + '/api/v0/add?wrap-with-directory=false'
   const stats = fs.lstatSync(sourcePath)
 
   if (stats.isFile()) {
     try {
       // Upload file
-      const formDdata = new FormData()
+      const formData = new FormData()
       const mimeType = mime.lookup(sourcePath)
 
       const { masterKey: fileEncryptionKey, keyShards } = await generate()
 
       const fileData = fs.readFileSync(sourcePath)
       const encryptedData = await encryptFile(fileData, fileEncryptionKey)
-      formDdata.append(
+      formData.append(
         'file',
         Buffer.from(encryptedData),
         sourcePath.replace(/^.*[\\/]/, '')
       )
 
-      const response = await axios.post(endpoint, formDdata, {
+      const response = await axios.post(endpoint, formData, {
         withCredentials: true,
         maxContentLength: Infinity, //this is needed to prevent axios from erroring out with large directories
         maxBodyLength: Infinity,
         headers: {
-          'Content-type': `multipart/form-data; boundary= ${formDdata.getBoundary()}`,
+          'Content-type': `multipart/form-data; boundary= ${formData.getBoundary()}`,
           Encryption: 'true',
           'Mime-Type': mimeType ? mimeType : '',
           Authorization: token,
@@ -58,12 +59,11 @@ export default async (
 
       return { data: [response.data] }
     } catch (error: any) {
-      console.log(error)
       throw new Error(error.message)
     }
   } else {
     const files = await walk(sourcePath)
-    const formDdata = new FormData()
+    const formData = new FormData()
 
     let keyMap = {} as any
 
@@ -75,7 +75,7 @@ export default async (
         const fileData = fs.readFileSync(file)
         const encryptedData = await encryptFile(fileData, fileEncryptionKey)
         const filename = file.slice(sourcePath.length + 1).replaceAll('/', '-')
-        await formDdata.append('file', Buffer.from(encryptedData), filename)
+        await formData.append('file', Buffer.from(encryptedData), filename)
         keyMap = { ...keyMap, [filename]: keyShards }
         return [filename, keyShards]
       })
@@ -84,12 +84,12 @@ export default async (
     const token = 'Bearer ' + apiKey
     const endpoint =
       lighthouseConfig.lighthouseNode + '/api/v0/add?wrap-with-directory=false'
-    const response = await axios.post(endpoint, formDdata, {
+    const response = await axios.post(endpoint, formData, {
       withCredentials: true,
       maxContentLength: Infinity, //this is needed to prevent axios from erroring out with large directories
       maxBodyLength: Infinity,
       headers: {
-        'Content-type': `multipart/form-data; boundary= ${formDdata.getBoundary()}`,
+        'Content-type': `multipart/form-data; boundary= ${formData.getBoundary()}`,
         Encryption: 'true',
         Authorization: token,
       },

@@ -2,18 +2,20 @@
 import axios from 'axios'
 import FormData from 'form-data'
 import { lighthouseConfig } from '../../../lighthouse.config'
-import { IFileUploadedResponse, IUploadProgressCallback } from '../../../types'
+import { IUploadProgressCallback, UploadFileReturnType } from '../../../types'
 import { checkDuplicateFileNames } from '../../utils/util'
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
-export default async (
+export default async <T extends boolean>(
   files: any,
   accessToken: string,
+  multi: boolean,
   uploadProgressCallback: (data: IUploadProgressCallback) => void
-): Promise<{ data: IFileUploadedResponse[] }> => {
+): Promise<{ data: UploadFileReturnType<T> }> => {
   try {
     const endpoint =
-      lighthouseConfig.lighthouseNode + '/api/v0/add?wrap-with-directory=false'
+      lighthouseConfig.lighthouseNode +
+      `/api/v0/add?wrap-with-directory=${multi}`
     let mimeType = null
     if (files.length === 1) {
       mimeType = files[0].type
@@ -47,12 +49,10 @@ export default async (
       },
     })
 
-    if (typeof response.data === 'string') {
+    if (typeof response.data === 'string' && multi) {
       response.data = JSON.parse(
         `[${response.data.slice(0, -1)}]`.split('\n').join(',')
       )
-    } else {
-      response.data = [response.data]
     }
 
     return { data: response.data }
