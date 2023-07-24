@@ -23,10 +23,9 @@ describe('uploadFiles', () => {
     const signedMessage = await signer.signMessage(verificationMessage)
     const apiKey = await lighthouse.getApiKey(publicKey, signedMessage)
 
-    const full_deployResponse = (
-      await lighthouse.upload(path, apiKey.data.apiKey)
+    const deployResponse = (
+      await lighthouse.upload(path, apiKey.data.apiKey, false)
     ).data
-    const deployResponse = full_deployResponse[0]
 
     expect(deployResponse).toHaveProperty('Name')
     expect(typeof deployResponse['Name']).toBe('string')
@@ -57,7 +56,7 @@ describe('uploadFiles', () => {
     const apiKey = await lighthouse.getApiKey(publicKey, signedMessage)
 
     const full_deployResponse = (
-      await lighthouse.upload(path, apiKey.data.apiKey)
+      await lighthouse.upload(path, apiKey.data.apiKey, true)
     ).data
     expect(full_deployResponse.length).toBeGreaterThan(1)
     const deployResponse = full_deployResponse[0]

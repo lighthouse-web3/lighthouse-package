@@ -6,12 +6,12 @@ export default async (
   apiKey: string,
   publicKey: string,
   signedMessage: string,
-  name= 'text'
+  name = 'text'
 ) => {
   // @ts-expect-error
-  if (typeof window === "undefined") {
+  if (typeof window === 'undefined') {
     return await serverSide(text, apiKey, publicKey, signedMessage, name)
-  } else{
+  } else {
     return await browser(text, apiKey, publicKey, signedMessage, name)
   }
 }

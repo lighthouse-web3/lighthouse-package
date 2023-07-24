@@ -15,7 +15,8 @@ export default async (
   const mime = eval('require')('mime-types')
   const fs = eval('require')('fs-extra')
   const token = 'Bearer ' + apiKey
-  const endpoint = lighthouseConfig.lighthouseNode + '/api/v0/add'
+  const endpoint =
+    lighthouseConfig.lighthouseNode + '/api/v0/add?wrap-with-directory=false'
   const stats = fs.lstatSync(sourcePath)
 
   if (stats.isFile()) {
@@ -56,7 +57,7 @@ export default async (
         throw new Error('Error encrypting file')
       }
 
-      return { data: response.data }
+      return { data: [response.data] }
     } catch (error: any) {
       throw new Error(error.message)
     }
