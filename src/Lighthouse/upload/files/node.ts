@@ -46,7 +46,6 @@ async function uploadFile(
 
 async function uploadFile(sourcePath: string, apiKey: string, multi: boolean) {
   const { createReadStream, lstatSync } = eval(`require`)('fs-extra')
-  const mime = eval(`require`)('mime-types')
   const path = eval(`require`)('path')
 
   const token = 'Bearer ' + apiKey
@@ -58,7 +57,6 @@ async function uploadFile(sourcePath: string, apiKey: string, multi: boolean) {
     if (stats.isFile()) {
       //we need to create a single read stream instead of reading the directory recursively
       const data = new FormData()
-      const mimeType = mime.lookup(sourcePath)
 
       data.append('file', createReadStream(sourcePath))
 
@@ -69,7 +67,6 @@ async function uploadFile(sourcePath: string, apiKey: string, multi: boolean) {
         headers: {
           'Content-type': `multipart/form-data; boundary= ${data.getBoundary()}`,
           Encryption: 'false',
-          'Mime-Type': `${mimeType}`,
           Authorization: token,
         },
       })
@@ -83,7 +80,6 @@ async function uploadFile(sourcePath: string, apiKey: string, multi: boolean) {
     } else {
       const files = await walk(sourcePath)
       const data = new FormData()
-      const mimeType = mime.lookup(sourcePath)
 
       files.forEach((file: any) => {
         //for each file stream, we need to include the correct relative file path
@@ -107,7 +103,6 @@ async function uploadFile(sourcePath: string, apiKey: string, multi: boolean) {
         headers: {
           'Content-type': `multipart/form-data; boundary= ${data.getBoundary()}`,
           Encryption: 'false',
-          'Mime-Type': `${mimeType}`,
           Authorization: token,
         },
       })
