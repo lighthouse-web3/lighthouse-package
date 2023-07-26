@@ -82,7 +82,6 @@ export default async (
       headers: {
         'Content-type': `multipart/form-data; boundary= ${boundary.toString()}`,
         Encryption: `${true}`,
-        'Mime-Type': mimeType,
         Authorization: token,
       },
       onUploadProgress: function (progressEvent) {
