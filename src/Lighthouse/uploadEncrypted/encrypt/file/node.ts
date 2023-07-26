@@ -12,7 +12,6 @@ export default async (
   signed_message: string
 ): Promise<{ data: IFileUploadedResponse[] }> => {
   const FormData = eval('require')('form-data')
-  const mime = eval('require')('mime-types')
   const fs = eval('require')('fs-extra')
   const token = 'Bearer ' + apiKey
   const endpoint =
@@ -23,7 +22,6 @@ export default async (
     try {
       // Upload file
       const formData = new FormData()
-      const mimeType = mime.lookup(sourcePath)
 
       const { masterKey: fileEncryptionKey, keyShards } = await generate()
 
@@ -42,7 +40,6 @@ export default async (
         headers: {
           'Content-type': `multipart/form-data; boundary= ${formData.getBoundary()}`,
           Encryption: 'true',
-          'Mime-Type': mimeType ? mimeType : '',
           Authorization: token,
         },
       })
