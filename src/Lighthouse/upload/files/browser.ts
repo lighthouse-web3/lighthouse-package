@@ -16,10 +16,6 @@ export default async <T extends boolean>(
     const endpoint =
       lighthouseConfig.lighthouseNode +
       `/api/v0/add?wrap-with-directory=${multi}`
-    let mimeType = null
-    if (files.length === 1) {
-      mimeType = files[0].type
-    }
     checkDuplicateFileNames(files)
 
     const formData = new FormData()
@@ -36,7 +32,6 @@ export default async <T extends boolean>(
       headers: {
         'Content-type': `multipart/form-data; boundary= ${boundary.toString()}`,
         Encryption: `${false}`,
-        'Mime-Type': mimeType,
         Authorization: token,
       },
       onUploadProgress: function (progressEvent) {
@@ -53,6 +48,9 @@ export default async <T extends boolean>(
       response.data = JSON.parse(
         `[${response.data.slice(0, -1)}]`.split('\n').join(',')
       )
+    } else {
+      const temp = response.data.split('\n')
+      response.data = JSON.parse(temp[temp.length - 2])
     }
 
     return { data: response.data }
