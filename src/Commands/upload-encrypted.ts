@@ -5,7 +5,7 @@ import { Spinner } from 'cli-spinner'
 
 import readInput from './utils/readInput'
 import bytesToSize from './utils/byteToSize'
-import { getNetwork, config } from './utils/getNetwork'
+import { config } from './utils/getNetwork'
 import lighthouse from '../Lighthouse'
 
 const getQuote = async (path: string, publicKey: string, Spinner: any) => {
@@ -84,12 +84,7 @@ const getQuote = async (path: string, publicKey: string, Spinner: any) => {
   }
 }
 
-const uploadFile = async (
-  path: string,
-  signer: any,
-  apiKey: string,
-  network: any
-) => {
+const uploadFile = async (path: string, signer: any, apiKey: string) => {
   const spinner = new Spinner('Uploading...')
   spinner.start()
 
@@ -150,7 +145,6 @@ export default async function (_path: string) {
     try {
       // Import nodejs specific library
       const path = resolve(process.cwd(), _path)
-      const network = getNetwork()
 
       // Display Quote
       const quoteResponse = await getQuote(
@@ -206,7 +200,7 @@ export default async function (_path: string) {
 
       const signer = new ethers.Wallet(decryptedWallet.privateKey)
       const apiKey = config.get('LIGHTHOUSE_GLOBAL_API_KEY') as string
-      await uploadFile(path, signer, apiKey, network)
+      await uploadFile(path, signer, apiKey)
     } catch (error: any) {
       console.log(red(error.message))
     }

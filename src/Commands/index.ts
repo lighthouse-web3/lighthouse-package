@@ -19,6 +19,7 @@ import revokeAccess from './revoke-access'
 import viewCarFiles from './view-car-files'
 import resetPassword from './reset-password'
 import uploadEncrypted from './upload-encrypted'
+import podsi from './podsi'
 
 const widgets = new Command('lighthouse-web3')
 
@@ -126,6 +127,12 @@ widgets
   .description('create car file for deal creation')
   .argument('<path>', 'Path to file')
   .action(createCar)
+
+widgets
+  .command('podsi')
+  .description('Show Proof of data segment inclusion')
+  .argument('<cid>', 'CID of the file previously uploaded')
+  .action(podsi)
 
 widgets
   .command('upload')

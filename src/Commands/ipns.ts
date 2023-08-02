@@ -41,7 +41,7 @@ export default async function (_options: any) {
     }
 
     if(_options.remove || _options.r) {
-      const removeRes = await lighthouse.removeKey(_options.remove, config.get('LIGHTHOUSE_GLOBAL_API_KEY') as string)
+      await lighthouse.removeKey(_options.remove, config.get('LIGHTHOUSE_GLOBAL_API_KEY') as string)
       console.log(
         green('Record Removed!!!')
       )
