@@ -23,14 +23,19 @@ export type uploadsResponseType = {
 }
 
 export default async (
-  publicKey: string,
+  authToken: string,
   pageNo = 1
 ): Promise<uploadsResponseType> => {
   try {
     const uploads = (
       await axios.get(
         lighthouseConfig.lighthouseAPI +
-          `/api/user/files_uploaded?publicKey=${publicKey}&pageNo=${pageNo}`
+          `/api/user/files_uploaded?pageNo=${pageNo}`,
+        {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        }
       )
     ).data
 

@@ -5,13 +5,13 @@ import lighthouse from '../Lighthouse'
 
 export default async function () {
   try {
-    if (!config.get('LIGHTHOUSE_GLOBAL_PUBLICKEY')) {
-      throw new Error('Wallet not created/imported')
+    if (!config.get('LIGHTHOUSE_GLOBAL_API_KEY')) {
+      throw new Error('Please create api-key first: use api-key command')
     }
 
     const response = (
       await lighthouse.getUploads(
-        config.get('LIGHTHOUSE_GLOBAL_PUBLICKEY') as string
+        config.get('LIGHTHOUSE_GLOBAL_API_KEY') as string
       )
     ).data
 
