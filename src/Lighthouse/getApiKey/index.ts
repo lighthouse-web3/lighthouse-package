@@ -27,7 +27,6 @@ export default async (
     */
     return { data: { apiKey } }
   } catch (error: any) {
-    console.log(error.toJSON())
     throw new Error(error.response.data)
   }
 }
