@@ -2,19 +2,21 @@
 import axios from 'axios'
 import FormData from 'form-data'
 import { lighthouseConfig } from '../../../lighthouse.config'
+import { IUploadProgressCallback, UploadFileReturnType } from '../../../types'
+import { checkDuplicateFileNames } from '../../utils/util'
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
-export default async (
+export default async <T extends boolean>(
   files: any,
   accessToken: string,
-  uploadProgressCallback = (data: any) => {}
-) => {
+  multi: boolean,
+  uploadProgressCallback: (data: IUploadProgressCallback) => void
+): Promise<{ data: UploadFileReturnType<T> }> => {
   try {
-    const endpoint = lighthouseConfig.lighthouseNode + '/api/v0/add'
-    let mimeType = null
-    if (files.length === 1) {
-      mimeType = files[0].type
-    }
+    const endpoint =
+      lighthouseConfig.lighthouseNode +
+      `/api/v0/add?wrap-with-directory=${multi}`
+    checkDuplicateFileNames(files)
 
     const formData = new FormData()
     const boundary = Symbol()
@@ -30,7 +32,6 @@ export default async (
       headers: {
         'Content-type': `multipart/form-data; boundary= ${boundary.toString()}`,
         Encryption: `${false}`,
-        'Mime-Type': mimeType,
         Authorization: token,
       },
       onUploadProgress: function (progressEvent) {
@@ -44,19 +45,16 @@ export default async (
     })
 
     if (typeof response.data === 'string') {
-      const temp = response.data.split('\n')
-      response.data = JSON.parse(temp[temp.length - 2])
+      if(multi){
+        response.data = JSON.parse(
+          `[${response.data.slice(0, -1)}]`.split('\n').join(',')
+        )
+      } else {
+        const temp = response.data.split('\n')
+        response.data = JSON.parse(temp[temp.length - 2])
+      }
     }
 
-    /*
-      {
-        data: {
-          Name: 'flow1.png',
-          Hash: 'QmUHDKv3NNL1mrg4NTW4WwJqetzwZbGNitdjr2G6Z5Xe6s',
-          Size: '31735'
-        }
-      }
-    */
     return { data: response.data }
   } catch (error: any) {
     throw new Error(error?.message)

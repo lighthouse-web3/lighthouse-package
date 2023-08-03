@@ -33,6 +33,9 @@ import publishRecord from './ipns/publishRecord'
 import getAllKeys from './ipns/getAllKeys'
 import removeKey from './ipns/removeKey'
 
+//PODSI
+import posdi from './podsi'
+
 export {
   getQuote,
   getApiKey,
@@ -59,7 +62,8 @@ export {
   generateKey,
   publishRecord,
   getAllKeys,
-  removeKey
+  removeKey,
+  posdi,
 }
 
 export default {
@@ -88,5 +92,6 @@ export default {
   generateKey,
   publishRecord,
   getAllKeys,
-  removeKey
+  removeKey,
+  posdi,
 }

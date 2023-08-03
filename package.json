@@ -1,6 +1,6 @@
 {
   "name": "@lighthouse-web3/sdk",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "description": "NPM package and CLI tool to interact with lighthouse protocol",
   "main": "./dist/Lighthouse/index.js",
   "types": "./dist/Lighthouse/index.d.ts",
@@ -10,7 +10,7 @@
   "scripts": {
     "build": "tsc",
     "start": "node index.js",
-    "test": "jest",
+    "test": "jest --runInBand",
     "format": "prettier --write \"src/**/*.ts\"",
     "lint": "eslint . --ext .ts"
   },

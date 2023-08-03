@@ -39,7 +39,6 @@ export default async (_: any, _options: any) => {
       } else {
         config.set('LIGHTHOUSE_GLOBAL_WALLET', encryptedWallet)
         config.set('LIGHTHOUSE_GLOBAL_PUBLICKEY', publicKey)
-
         console.log(
           cyan('Public Key: ' + publicKey) + green('\r\nWallet Created!')
         )
