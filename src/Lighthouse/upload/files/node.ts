@@ -107,13 +107,15 @@ async function uploadFile(sourcePath: string, apiKey: string, multi: boolean) {
         },
       })
 
-      if (typeof response.data === 'string' && multi) {
-        response.data = JSON.parse(
-          `[${response.data.slice(0, -1)}]`.split('\n').join(',')
-        )
-      } else {
-        const temp = response.data.split('\n')
-        response.data = JSON.parse(temp[temp.length - 2])
+      if (typeof response.data === 'string') {
+        if(multi){
+          response.data = JSON.parse(
+            `[${response.data.slice(0, -1)}]`.split('\n').join(',')
+          )
+        } else {
+          const temp = response.data.split('\n')
+          response.data = JSON.parse(temp[temp.length - 2])
+        }
       }
 
       /*
