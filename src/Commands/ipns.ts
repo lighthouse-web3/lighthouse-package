@@ -8,8 +8,10 @@ export default async function (_options: any) {
       throw new Error('Please create an API key first!')
     }
 
-    if(_options.generateKey || _options.gen) {
-      const key = await lighthouse.generateKey(config.get('LIGHTHOUSE_GLOBAL_API_KEY') as string)
+    if (_options.generateKey || _options.gen) {
+      const key = await lighthouse.generateKey(
+        config.get('LIGHTHOUSE_GLOBAL_API_KEY') as string
+      )
       console.log(
         yellow('ipnsName: ') +
           white(key.data.ipnsName) +
@@ -19,11 +21,11 @@ export default async function (_options: any) {
       )
     }
 
-    if((
-        _options.publish || _options.pub) &&
-        (_options.cid || _options.c) &&
-        (_options.key || _options.k)
-      ) {
+    if (
+      (_options.publish || _options.pub) &&
+      (_options.cid || _options.c) &&
+      (_options.key || _options.k)
+    ) {
       const publishResponse = await lighthouse.publishRecord(
         _options.cid,
         _options.key,
@@ -31,37 +33,46 @@ export default async function (_options: any) {
       )
       console.log(
         yellow('Published: ') +
-        '\r\n' +
-        cyan(
-          'Visit: ' +
-            'https://gateway.lighthouse.storage/ipns/' +
-            publishResponse.data.Name
-        )
+          '\r\n' +
+          cyan(
+            'Visit: ' +
+              'https://gateway.lighthouse.storage/ipns/' +
+              publishResponse.data.Name
+          )
       )
     }
 
-    if(_options.remove || _options.r) {
-      await lighthouse.removeKey(_options.remove, config.get('LIGHTHOUSE_GLOBAL_API_KEY') as string)
-      console.log(
-        green('Record Removed!!!')
+    if (_options.remove || _options.r) {
+      await lighthouse.removeKey(
+        _options.remove,
+        config.get('LIGHTHOUSE_GLOBAL_API_KEY') as string
       )
+      console.log(green('Record Removed!!!'))
     }
 
-    if(_options.list || _options.l) {
-      const keys = await lighthouse.getAllKeys(config.get('LIGHTHOUSE_GLOBAL_API_KEY') as string)
-      if(keys.data.length>0){
+    if (_options.list || _options.l) {
+      const keys = await lighthouse.getAllKeys(
+        config.get('LIGHTHOUSE_GLOBAL_API_KEY') as string
+      )
+      if (keys.data.length > 0) {
         console.log(yellow('List of ipns records: \r\n'))
-        for(let i=0; i<keys.data.length; i++) {
+        for (let i = 0; i < keys.data.length; i++) {
           console.log(
-            yellow('  Key:     ') + keys.data[i].ipnsName + '\r\n' +
-            yellow('  IPNS ID: ') + keys.data[i].ipnsId + '\r\n' +
-            yellow('  CID:     ') + keys.data[i].cid + '\r\n'
+            yellow('  Key:     ') +
+              keys.data[i].ipnsName +
+              '\r\n' +
+              yellow('  IPNS ID: ') +
+              keys.data[i].ipnsId +
+              '\r\n' +
+              yellow('  CID:     ') +
+              keys.data[i].cid +
+              '\r\n'
           )
         }
       }
     }
-
   } catch (error: any) {
     console.log(red(error.message))
+    process.exit(0)
   }
 }
