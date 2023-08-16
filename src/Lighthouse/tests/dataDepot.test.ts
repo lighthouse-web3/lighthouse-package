@@ -1,29 +1,62 @@
-import axios from 'axios'
 import { resolve } from 'path'
-import { ethers } from 'ethers'
 import lighthouse from '..'
-import { lighthouseConfig } from '../../lighthouse.config'
+import 'dotenv/config'
 
-describe('Data Depot', () => {
-  test('Data Depot', async () => {
+describe('createCAR', () => {
+  const apiKey = process.env.TEST_API_KEY
+  let accessToken
+
+  describe('dataDepotAuth', () => {
+    it('should generate data depot auth token from valid API key', async () => {
+      const authToken = (await lighthouse.dataDepotAuth(apiKey)).data
+        .access_token
+      expect(typeof authToken).toBe('string')
+      accessToken = authToken
+    }, 20000)
+
+    it('should not generate data depot auth token from invalid API key', async () => {
+      try {
+        const invalidAPI = 'invalid.apiKey'
+        const authToken = (await lighthouse.dataDepotAuth(invalidAPI)).data
+          .access_token
+      } catch (error) {
+        expect(error.message).toBe('Request failed with status code 403')
+      }
+    }, 20000)
+  })
+
+  describe('createCar', () => {
     const path = resolve(
       process.cwd(),
       'src/Lighthouse/tests/testImages/testImage1.svg'
     )
-    const publicKey = '0x1Ec09D4B3Cb565b7CCe2eEAf71CC90c9b46c5c26'
-    const verificationMessage = (
-      await axios.get(
-        lighthouseConfig.lighthouseAPI +
-          `/api/auth/get_message?publicKey=${publicKey}`
-      )
-    ).data
-    const signer = new ethers.Wallet(
-      '0xd7f1e7ccf6e3620327d3b29c57018d076305148eec487c57d8121beac0067895'
-    )
-    const signedMessage = await signer.signMessage(verificationMessage)
-    const res = await lighthouse.getApiKey(publicKey, signedMessage)
-    const authToken = (await lighthouse.dataDepotAuth(res.data.apiKey)).data.access_token
-    const uploadResponse = await lighthouse.createCar(path, authToken)
-    expect(typeof uploadResponse.data).toBe('string')
-  }, 20000)
+    it('should upload the CAR file when valid access token is provided', async () => {
+      const uploadResponse = await lighthouse.createCar(path, accessToken)
+      expect(uploadResponse.data).toEqual('Uploaded the files successfully')
+    }, 20000)
+    it('should not upload the CAR file when invalid access token is provided', async () => {
+      try {
+        const uploadResponse = await lighthouse.createCar(path, 'accessToken')
+      } catch (error) {
+        expect(error.message).toBe('Error: Request failed with status code 403')
+      }
+    }, 20000)
+  })
+
+  describe('viewCarFiles', () => {
+    it('should retrieve the CAR files from valid access token', async () => {
+      const response = await lighthouse.viewCarFiles(1, accessToken)
+      expect(response.data.length).toBeGreaterThanOrEqual(1)
+      expect(response.data[0]).toHaveProperty('pieceCid')
+      expect(response.data[0]).toHaveProperty('carSize')
+    }, 20000)
+
+    it('should not retrieve the CAR files from invalid access token', async () => {
+      try {
+        const response = await lighthouse.viewCarFiles(1, 'invalidAccessToken')
+      } catch (error) {
+        expect(error.message).toBe('Error: Request failed with status code 403')
+      }
+    }, 20000)
+  })
 })
