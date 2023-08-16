@@ -1,14 +1,24 @@
 import lighthouse from '..'
 
-describe('get File info', () => {
-  test('getFileInfo', async () => {
-    const fileInfo = (
-      await lighthouse.getFileInfo(
-        'bafkreia4ruswe7ghckleh3lmpujo5asrnd7hrtu5r23zjk2robpcoend34'
-      )
-    ).data
+describe('getFileInfo', () => {
+  it('should retrieve file information from CID', async () => {
+    const fileName = 'testImage1.svg'
+    const cid = 'QmaiauHSgTDMy2NtLbsygL3iKmLXBqHf39SBA1nAQFSSey'
+    const fileInfo = (await lighthouse.getFileInfo(cid)).data
+
+    console.log(fileInfo)
 
     expect(fileInfo).toHaveProperty('fileSizeInBytes')
     expect(fileInfo).toHaveProperty('encryption')
+    expect(fileInfo).toHaveProperty('txHash')
+    expect(fileInfo.fileName).toBe(fileName)
+  }, 20000)
+
+  it('should not retrieve file information from invalid CID', async () => {
+    try {
+      const fileInfo = (await lighthouse.getFileInfo('invalidCID')).data
+    } catch (error) {
+      expect(error.message).toBe('Invalid CID')
+    }
   }, 20000)
 })
