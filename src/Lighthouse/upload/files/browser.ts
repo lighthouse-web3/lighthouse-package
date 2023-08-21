@@ -2,7 +2,7 @@
 import axios from 'axios'
 import FormData from 'form-data'
 import { lighthouseConfig } from '../../../lighthouse.config'
-import { IUploadProgressCallback, UploadFileReturnType } from '../../../types'
+import { IUploadProgressCallback, UploadFileReturnType, DealParameters } from '../../../types'
 import { checkDuplicateFileNames } from '../../utils/util'
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -10,6 +10,7 @@ export default async <T extends boolean>(
   files: any,
   accessToken: string,
   multi: boolean,
+  dealParameters: DealParameters|undefined,
   uploadProgressCallback: (data: IUploadProgressCallback) => void
 ): Promise<{ data: UploadFileReturnType<T> }> => {
   try {
@@ -33,6 +34,7 @@ export default async <T extends boolean>(
         'Content-type': `multipart/form-data; boundary= ${boundary.toString()}`,
         Encryption: `${false}`,
         Authorization: token,
+        'X-Deal-Parameter': dealParameters?JSON.stringify(dealParameters):'null'
       },
       onUploadProgress: function (progressEvent) {
         const _progress = Math.round(progressEvent.loaded / progressEvent.total)

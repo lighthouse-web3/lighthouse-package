@@ -10,6 +10,13 @@ export interface IFileUploadedResponse {
   Size: string
 }
 
+export type DealParameters = {
+  miner: string[],
+  num_copies: Number,
+  repair_threshold: Number,
+  renew_threshold: Number
+}
+
 export type UploadFileReturnType<T extends boolean> = T extends true
   ? IFileUploadedResponse[]
   : IFileUploadedResponse
