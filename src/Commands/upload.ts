@@ -195,6 +195,7 @@ export default async function (_path: string) {
       await uploadFile(path, apiKey)
     } catch (error: any) {
       console.log(red(error.message))
+      process.exit(0)
     }
   }
 }

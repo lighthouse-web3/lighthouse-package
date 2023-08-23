@@ -54,5 +54,6 @@ export default async function (cid: string) {
     fs.createWriteStream(fileDetails.fileName).write(Buffer.from(decryptedFile))
   } catch (error: any) {
     console.log(red(error.message))
+    process.exit(0)
   }
 }

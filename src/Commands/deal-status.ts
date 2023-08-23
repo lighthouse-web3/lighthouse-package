@@ -49,6 +49,7 @@ export default async function (data: any, options: any) {
         : showResponse(data, dealStatus)
     } catch (error: any) {
       console.log(red(error.message))
+      process.exit(0)
     }
   }
 }

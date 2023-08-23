@@ -203,6 +203,7 @@ export default async function (_path: string) {
       await uploadFile(path, signer, apiKey)
     } catch (error: any) {
       console.log(red(error.message))
+      process.exit(0)
     }
   }
 }

@@ -46,5 +46,6 @@ export default async (_: any, _options: any) => {
     })
   } catch (error: any) {
     console.log(red(error.message))
+    process.exit(0)
   }
 }

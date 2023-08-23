@@ -48,6 +48,7 @@ export default async function (cid: string, address: string, _options: any) {
       )
     } catch (error: any) {
       console.log(red(error.message))
+      process.exit(0)
     }
   }
 }

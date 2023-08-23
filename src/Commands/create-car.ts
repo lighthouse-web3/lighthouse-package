@@ -20,20 +20,22 @@ export default async function (_path: string, options: any) {
   } else {
     try {
       const path = resolve(process.cwd(), _path)
-      if(fs.lstatSync(path).isDirectory()){
+      if (fs.lstatSync(path).isDirectory()) {
         throw new Error('Directory is not supported')
-      } else{
+      } else {
         const apiKey = config.get('LIGHTHOUSE_GLOBAL_API_KEY') as string
         if (!apiKey) {
           throw new Error('Please create api-key first: use api-key command')
         }
 
-        const authToken = (await lighthouse.dataDepotAuth(apiKey)).data.access_token
+        const authToken = (await lighthouse.dataDepotAuth(apiKey)).data
+          .access_token
         const uploadResponse = await lighthouse.createCar(path, authToken)
         console.log(green('File uploaded successfully!!!'))
       }
     } catch (error: any) {
       console.log(red(error.message))
+      process.exit(0)
     }
   }
 }
