@@ -3,13 +3,14 @@ import { lighthouseConfig } from '../../../../lighthouse.config'
 import { generate, saveShards } from '@lighthouse-web3/kavach'
 import { encryptFile } from '../../encryptionNode'
 import { walk } from '../../../upload/files/node'
-import { IFileUploadedResponse } from '../../../../types'
+import { IFileUploadedResponse, DealParameters } from '../../../../types'
 
 export default async (
   sourcePath: any,
   apiKey: string,
   publicKey: string,
-  signed_message: string
+  signed_message: string,
+  dealParameters: DealParameters|undefined,
 ): Promise<{ data: IFileUploadedResponse[] }> => {
   const FormData = eval('require')('form-data')
   const fs = eval('require')('fs-extra')
@@ -41,6 +42,7 @@ export default async (
           'Content-type': `multipart/form-data; boundary= ${formData.getBoundary()}`,
           Encryption: 'true',
           Authorization: token,
+          'X-Deal-Parameter': dealParameters?JSON.stringify(dealParameters):'null'
         },
       })
 
@@ -89,6 +91,7 @@ export default async (
         'Content-type': `multipart/form-data; boundary= ${formData.getBoundary()}`,
         Encryption: 'true',
         Authorization: token,
+        'X-Deal-Parameter': dealParameters?JSON.stringify(dealParameters):'null'
       },
     })
     const jsondata = JSON.parse(

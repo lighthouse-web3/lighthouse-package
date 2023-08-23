@@ -211,5 +211,6 @@ export default async function (_amount: number) {
     }
   } catch (error: any) {
     console.log(chalk.red(error.message))
+    process.exit(0)
   }
 }

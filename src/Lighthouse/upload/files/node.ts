@@ -2,7 +2,7 @@ import axios from 'axios'
 import FormData from 'form-data'
 import basePathConvert from '../../utils/basePathConvert'
 import { lighthouseConfig } from '../../../lighthouse.config'
-import { IFileUploadedResponse } from '../../../types'
+import { UploadFileReturnType, DealParameters } from '../../../types'
 
 export async function walk(dir: string) {
   const { readdir, stat } = eval(`require`)('fs-extra')
@@ -23,28 +23,12 @@ export async function walk(dir: string) {
   return results
 }
 
-/*
-  This function is used to deploy a file to the Lighthouse server.
-  It takes the following parameters:
-  @param {string} sourcePath - The path of file/folder.
-  @param {string} apiKey - The api key of the user.
-*/
-
-// Overload for when multi is true
-async function uploadFile(
+export default async <T extends boolean>(
   sourcePath: string,
   apiKey: string,
-  multi: true
-): Promise<{ data: IFileUploadedResponse[] }>
-
-// Overload for when multi is false
-async function uploadFile(
-  sourcePath: string,
-  apiKey: string,
-  multi: false
-): Promise<{ data: IFileUploadedResponse }>
-
-async function uploadFile(sourcePath: string, apiKey: string, multi: boolean) {
+  multi: boolean,
+  dealParameters: DealParameters|undefined,
+): Promise<{ data: UploadFileReturnType<T> }> => {
   const { createReadStream, lstatSync } = eval(`require`)('fs-extra')
   const path = eval(`require`)('path')
 
@@ -68,6 +52,7 @@ async function uploadFile(sourcePath: string, apiKey: string, multi: boolean) {
           'Content-type': `multipart/form-data; boundary= ${data.getBoundary()}`,
           Encryption: 'false',
           Authorization: token,
+          'X-Deal-Parameter': dealParameters?JSON.stringify(dealParameters):'null'
         },
       })
 
@@ -104,6 +89,7 @@ async function uploadFile(sourcePath: string, apiKey: string, multi: boolean) {
           'Content-type': `multipart/form-data; boundary= ${data.getBoundary()}`,
           Encryption: 'false',
           Authorization: token,
+          'X-Deal-Parameter': dealParameters?JSON.stringify(dealParameters):'null'
         },
       })
 
@@ -133,5 +119,3 @@ async function uploadFile(sourcePath: string, apiKey: string, multi: boolean) {
     throw new Error(error.message)
   }
 }
-
-export default uploadFile
