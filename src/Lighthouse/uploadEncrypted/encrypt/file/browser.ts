@@ -5,6 +5,7 @@ import { generate, saveShards } from '@lighthouse-web3/kavach'
 import {
   IFileUploadedResponse,
   IUploadProgressCallback,
+  DealParameters,
 } from '../../../../types'
 import { encryptFile } from '../../encryptionBrowser'
 import { lighthouseConfig } from '../../../../lighthouse.config'
@@ -31,6 +32,7 @@ export default async (
   apiKey: string,
   publicKey: string,
   signedMessage: string,
+  dealParameters: DealParameters|undefined,
   uploadProgressCallback: (data: IUploadProgressCallback) => void
 ): Promise<{ data: IFileUploadedResponse[] }> => {
   try {
@@ -83,6 +85,7 @@ export default async (
         'Content-type': `multipart/form-data; boundary= ${boundary.toString()}`,
         Encryption: `${true}`,
         Authorization: token,
+        'X-Deal-Parameter': dealParameters?JSON.stringify(dealParameters):'null'
       },
       onUploadProgress: function (progressEvent) {
         const _progress = Math.round(progressEvent.loaded / progressEvent.total)
