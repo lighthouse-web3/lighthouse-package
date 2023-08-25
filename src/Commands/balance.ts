@@ -42,7 +42,7 @@ export default async function (data: any, options: any) {
       network === 'binance' ||
       network === 'optimism'
     ) {
-      const provider = new ethers.providers.JsonRpcProvider(
+      const provider = new ethers.JsonRpcProvider(
         lighthouseConfig[network]['rpc']
       )
 
@@ -66,7 +66,7 @@ export default async function (data: any, options: any) {
       console.log(
         yellow('\r\nUSDT Balance: ') +
           Array(2).fill('\xa0').join('') +
-          ethers.utils.formatUnits(
+          ethers.formatUnits(
             await contractUSDT.balanceOf(
               config.get('LIGHTHOUSE_GLOBAL_PUBLICKEY')
             ),
@@ -82,7 +82,7 @@ export default async function (data: any, options: any) {
       console.log(
         yellow('USDC Balance: ') +
           Array(2).fill('\xa0').join('') +
-          ethers.utils.formatUnits(
+          ethers.formatUnits(
             await contractUSDC.balanceOf(
               config.get('LIGHTHOUSE_GLOBAL_PUBLICKEY')
             ),
@@ -98,7 +98,7 @@ export default async function (data: any, options: any) {
       console.log(
         yellow('DAI Balance: ') +
           Array(3).fill('\xa0').join('') +
-          ethers.utils.formatUnits(
+          ethers.formatUnits(
             await contractDai.balanceOf(
               config.get('LIGHTHOUSE_GLOBAL_PUBLICKEY')
             ),
@@ -112,7 +112,7 @@ export default async function (data: any, options: any) {
           Array(15 - network.length)
             .fill('\xa0')
             .join('') +
-          ethers.utils.formatEther(
+          ethers.formatEther(
             await provider.getBalance(
               config.get('LIGHTHOUSE_GLOBAL_PUBLICKEY') as string
             )
