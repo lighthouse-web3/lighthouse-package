@@ -18,6 +18,10 @@ jobs:
       - run: npm ci
       - run: npm run build
       - run: npm test
+        env:
+          TEST_API_KEY: ${{ secrets.TEST_API_KEY }}
+          TEST_PRIVATE_KEY: ${{ secrets.TEST_PRIVATE_KEY }}
+          TEST_PUBLIC_KEY: ${{ secrets.TEST_PUBLIC_KEY }}
 
   publish-npm:
     needs: build
