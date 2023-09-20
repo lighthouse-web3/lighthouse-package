@@ -11,7 +11,7 @@ const isPrivateKey = (key: string) => {
 }
 
 const addressValidator = (value: string) => {
-  if (ethers.utils.isAddress(value?.toLowerCase())) {
+  if (ethers.isAddress(value?.toLowerCase())) {
     return value.toLowerCase()
   } else if (/^[A-HJ-NP-Za-km-z1-9]*$/.test(value) && value.length == 44) {
     return value

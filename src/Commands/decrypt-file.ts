@@ -8,7 +8,7 @@ import { lighthouseConfig } from '../lighthouse.config'
 import { config } from './utils/getNetwork'
 import { sign_auth_message } from './utils/auth'
 
-export default async function (cid: string) {
+export default async function (cid: string, dynamicData = {}) {
   try {
     if (!config.get('LIGHTHOUSE_GLOBAL_PUBLICKEY')) {
       throw new Error('Please import wallet first!')
@@ -41,7 +41,8 @@ export default async function (cid: string) {
     const fileEncryptionKey = await lighthouse.fetchEncryptionKey(
       cid,
       decryptedWallet.address,
-      signedMessage
+      signedMessage,
+      dynamicData
     )
 
     // Decrypt

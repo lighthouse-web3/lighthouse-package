@@ -27,8 +27,9 @@ jobs:
       - name: Install 🔧
         run: npm install
 
-#       - name: Lint 🧐
-#         run: npm run lint
-
       - name: Test 🚨
         run: npm test
+        env:
+          TEST_API_KEY: ${{ secrets.TEST_API_KEY }}
+          TEST_PRIVATE_KEY: ${{ secrets.TEST_PRIVATE_KEY }}
+          TEST_PUBLIC_KEY: ${{ secrets.TEST_PUBLIC_KEY }}
