@@ -1,84 +1,63 @@
-import axios from 'axios'
 import { resolve } from 'path'
-import { ethers } from 'ethers'
 import lighthouse from '..'
-import { lighthouseConfig } from '../../lighthouse.config'
+import 'dotenv/config'
 
 describe('uploadFiles', () => {
-  test('upload Main Case File', async () => {
+  const apiKey = process.env.TEST_API_KEY
+
+  it('should upload file to ipfs when correct path is provided', async () => {
     const path = resolve(
       process.cwd(),
       'src/Lighthouse/tests/testImages/testImage1.svg'
     )
-    const publicKey = '0x1Ec09D4B3Cb565b7CCe2eEAf71CC90c9b46c5c26'
-    const verificationMessage = (
-      await axios.get(
-        lighthouseConfig.lighthouseAPI +
-          `/api/auth/get_message?publicKey=${publicKey}`
-      )
-    ).data
-    const signer = new ethers.Wallet(
-      '0xd7f1e7ccf6e3620327d3b29c57018d076305148eec487c57d8121beac0067895'
-    )
-    const signedMessage = await signer.signMessage(verificationMessage)
-    const apiKey = await lighthouse.getApiKey(publicKey, signedMessage)
-
-    const deployResponse = (
-      await lighthouse.upload(path, apiKey.data.apiKey, false)
-    ).data
+    const fileName = path.split('/').slice(-1)[0]
+    const deployResponse = (await lighthouse.upload(path, apiKey, false)).data
+    // console.log(deployResponse)
 
     expect(deployResponse).toHaveProperty('Name')
-    expect(typeof deployResponse['Name']).toBe('string')
-
     expect(deployResponse).toHaveProperty('Hash')
-    expect(typeof deployResponse['Hash']).toBe('string')
-
     expect(deployResponse).toHaveProperty('Size')
+
+    expect(deployResponse['Name']).toBe(fileName)
+    expect(typeof deployResponse['Hash']).toBe('string')
     expect(typeof deployResponse['Size']).toBe('string')
   }, 60000)
 
-  test('upload Main Case Folder', async () => {
+  it('should upload folder to ipfs when correct path is provided', async () => {
     const path = resolve(process.cwd(), 'src/Lighthouse/tests/testImages')
-
-    const publicKey = '0x1Ec09D4B3Cb565b7CCe2eEAf71CC90c9b46c5c26'
-    const verificationMessage = (
-      await axios.get(
-        lighthouseConfig.lighthouseAPI +
-          `/api/auth/get_message?publicKey=${publicKey}`
-      )
-    ).data
-    const provider = ethers.getDefaultProvider()
-    const signer = new ethers.Wallet(
-      '0xd7f1e7ccf6e3620327d3b29c57018d076305148eec487c57d8121beac0067895',
-      provider
-    )
-    const signedMessage = await signer.signMessage(verificationMessage)
-    const apiKey = await lighthouse.getApiKey(publicKey, signedMessage)
-
-    const full_deployResponse = (
-      await lighthouse.upload(path, apiKey.data.apiKey, true)
-    ).data
+    const full_deployResponse = (await lighthouse.upload(path, apiKey, true))
+      .data
+    console.log(full_deployResponse)
     expect(full_deployResponse.length).toBeGreaterThan(1)
     const deployResponse = full_deployResponse[0]
     expect(deployResponse).toHaveProperty('Name')
-    expect(typeof deployResponse['Name']).toBe('string')
-
     expect(deployResponse).toHaveProperty('Hash')
-    expect(typeof deployResponse['Hash']).toBe('string')
-
     expect(deployResponse).toHaveProperty('Size')
+
+    expect(deployResponse).toHaveProperty('Name')
+    expect(typeof deployResponse['Hash']).toBe('string')
     expect(typeof deployResponse['Size']).toBe('string')
   }, 60000)
 
-  test('upload Error Case Wrong Api Key File', async () => {
+  it('should not upload to ipfs when incorrect path is provided', async () => {
+    try {
+      const path = 'invalid/path/img.svg'
+      const deployResponse = await lighthouse.upload(path, apiKey, false)
+    } catch (error) {
+      // console.log(error.message)
+      expect(error.code).toBe('ENOENT')
+    }
+  }, 60000)
+
+  it('should not upload to ipfs when wrong API key is provided', async () => {
     try {
       const path = resolve(
         process.cwd(),
         'src/Lighthouse/tests/testImages/testImage1.svg'
       )
-      await lighthouse.upload(path, 'apiKey')
-    } catch (error: any) {
-      expect(typeof error.message).toBe('string')
+      await lighthouse.upload(path, 'random apiKey')
+    } catch (error) {
+      expect(error.message).toBe('Request failed with status code 500')
     }
   }, 60000)
 })
