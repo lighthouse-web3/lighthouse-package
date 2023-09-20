@@ -1,8 +1,6 @@
-import axios from 'axios'
 import { resolve } from 'path'
 import { ethers } from 'ethers'
 import lighthouse from '..'
-import { lighthouseConfig } from '../../lighthouse.config'
 import { getJWT } from '@lighthouse-web3/kavach'
 import 'dotenv/config'
 
@@ -16,9 +14,9 @@ export const signAuthMessage = async (privateKey: string) => {
 }
 
 describe('uploadEncrypted', () => {
-  const publicKey = process.env.TEST_PUBLIC_KEY
-  const privateKey = process.env.TEST_PRIVATE_KEY
-  const apiKey = process.env.TEST_API_KEY
+  const publicKey = process.env.TEST_PUBLIC_KEY as string
+  const privateKey = process.env.TEST_PRIVATE_KEY as string
+  const apiKey = process.env.TEST_API_KEY as string
 
   const path = resolve(
     process.cwd(),
