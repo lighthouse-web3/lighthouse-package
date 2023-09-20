@@ -2,7 +2,7 @@ import lighthouse from '..'
 import 'dotenv/config'
 
 describe('uploadBuffer', () => {
-  const apiKey = process.env.TEST_API_KEY
+  const apiKey = process.env.TEST_API_KEY as string
   const image =
     'iVBORw0KGgoAAAANSUhEUgAAAA8AAAAMCAYAAAC9QufkAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAADCSURBVChTrZJRCoMwDIaTtM56hsEeRNjDELz/yeas7ZLYMBWEOfZBiH+axKSK7bXNcJKcpSQDpZTgrEmx1NPS6zf+VIwsCAHZ9khczJAcjRUNiAjOu02SQY70zJAc0djdukxYenCdXEaak0rnSoH1s+9SNPb3PnvvYY4zxBiXaKEOtfrxOaqvLhW/lWB6TXrrJOMq7OTZTJKMdXyjh8eQ2em4dvgtvPqn2yEH/yD51S0KMm7TBKjrZV9l1/fCu4cmwBsXPlBp+IIIrQAAAABJRU5ErkJggg=='
 
