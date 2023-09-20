@@ -3,10 +3,9 @@ import 'dotenv/config'
 
 describe('getBalance', () => {
   it('should retrieve balance when lighthouse-package generated public key provided', async () => {
-    const publicKey = process.env.TEST_PUBLIC_KEY
+    const publicKey = process.env.TEST_PUBLIC_KEY as string
     const balance = (await lighthouse.getBalance(publicKey)).data
 
-    console.log(balance)
     expect(typeof balance.dataLimit).toBe('number')
     expect(typeof balance.dataUsed).toBe('number')
     expect(balance.dataLimit).toBeGreaterThanOrEqual(balance.dataUsed)
