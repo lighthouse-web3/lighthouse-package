@@ -7,7 +7,7 @@ import { getJWT } from '@lighthouse-web3/kavach'
 import 'dotenv/config'
 
 export const signAuthMessage = async (privateKey: string) => {
-  const provider = new ethers.providers.JsonRpcProvider()
+  const provider = new ethers.JsonRpcProvider()
   const signer = new ethers.Wallet(privateKey, provider)
   const messageRequested = (await lighthouse.getAuthMessage(signer.address))
     .data.message

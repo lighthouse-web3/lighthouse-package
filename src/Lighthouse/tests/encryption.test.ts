@@ -1,8 +1,8 @@
 import { ethers } from 'ethers'
 import lighthouse from '..'
 
-const signAuthMessage = async (privateKey: string) => {
-  const provider = new ethers.providers.JsonRpcProvider()
+const signAuthMessage = async (publicKey: string, privateKey: string) => {
+  const provider = new ethers.JsonRpcProvider()
   const signer = new ethers.Wallet(privateKey, provider)
   const messageRequested = (await lighthouse.getAuthMessage(signer.address))
     .data.message

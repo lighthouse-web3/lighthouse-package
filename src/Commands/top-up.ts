@@ -48,7 +48,7 @@ export default async function (_amount: number) {
     const network = getNetwork()
 
     if (network === 'polygon-testnet') {
-      const provider = new ethers.providers.JsonRpcProvider(
+      const provider = new ethers.JsonRpcProvider(
         lighthouseConfig[network]['rpc']
       )
 
@@ -154,7 +154,7 @@ export default async function (_amount: number) {
       console.log(
         chalk.yellow('USDC Balance: ') +
           Array(2).fill('\xa0').join('') +
-          ethers.utils.formatUnits(
+          ethers.formatUnits(
             await contractUSDC.balanceOf(
               config.get('LIGHTHOUSE_GLOBAL_PUBLICKEY')
             ),
@@ -171,7 +171,7 @@ export default async function (_amount: number) {
           'GB'
       )
 
-      const amount = ethers.utils
+      const amount = ethers
         .parseUnits(String(_amount), await contractUSDC.decimals())
         .toString()
 

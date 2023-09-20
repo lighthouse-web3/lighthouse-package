@@ -167,6 +167,17 @@ export default async function (_path: string) {
 
       const selected: any = await readInput(options)
 
+      // Check if valid input (Y/n) is not provided
+      if (
+        selected.trim() !== 'y' &&
+        selected.trim() !== 'Y' &&
+        selected.trim() !== 'n' &&
+        selected.trim() !== 'N' &&
+        selected.trim() !== 'no'
+      ) {
+        throw new Error('Invalid choice. Please choose Y or n.');
+      }
+
       if (
         selected.trim() === 'n' ||
         selected.trim() === 'N' ||
@@ -190,6 +201,12 @@ export default async function (_path: string) {
         silent: true,
       }
       const password: any = await readInput(options)
+      
+      // Check if password is empty or not provided
+      if (!password || password.trim() === '') {
+        throw new Error('Password not provided!');
+      }
+
       const decryptedWallet = ethers.Wallet.fromEncryptedJsonSync(
         config.get('LIGHTHOUSE_GLOBAL_WALLET') as string,
         password.trim()
