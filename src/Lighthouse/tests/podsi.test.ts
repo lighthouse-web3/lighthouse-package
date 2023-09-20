@@ -5,7 +5,7 @@ describe('podsi', () => {
     const response = (
       await lighthouse.posdi('QmaiauHSgTDMy2NtLbsygL3iKmLXBqHf39SBA1nAQFSSey')
     ).data
-    console.log(response)
+    
     expect(response).toHaveProperty('pieceCID')
     expect(response).toHaveProperty('proof')
     expect(response).toHaveProperty('dealInfo')
