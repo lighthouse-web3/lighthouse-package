@@ -1,11 +1,8 @@
-import { ethers } from 'ethers'
-import axios from 'axios'
 import lighthouse from '..'
-import { lighthouseConfig } from '../../lighthouse.config'
 import 'dotenv/config'
 
 describe('getUpload', () => {
-  const apiKey = process.env.TEST_API_KEY
+  const apiKey = process.env.TEST_API_KEY as string
   const publicKey = process.env.TEST_PUBLIC_KEY
 
   it('should retrieve upload details with correct API key', async () => {
