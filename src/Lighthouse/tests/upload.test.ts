@@ -3,7 +3,7 @@ import lighthouse from '..'
 import 'dotenv/config'
 
 describe('uploadFiles', () => {
-  const apiKey = process.env.TEST_API_KEY
+  const apiKey = process.env.TEST_API_KEY as string
 
   it('should upload file to ipfs when correct path is provided', async () => {
     const path = resolve(
@@ -12,7 +12,6 @@ describe('uploadFiles', () => {
     )
     const fileName = path.split('/').slice(-1)[0]
     const deployResponse = (await lighthouse.upload(path, apiKey, false)).data
-    // console.log(deployResponse)
 
     expect(deployResponse).toHaveProperty('Name')
     expect(deployResponse).toHaveProperty('Hash')
@@ -27,7 +26,7 @@ describe('uploadFiles', () => {
     const path = resolve(process.cwd(), 'src/Lighthouse/tests/testImages')
     const full_deployResponse = (await lighthouse.upload(path, apiKey, true))
       .data
-    console.log(full_deployResponse)
+
     expect(full_deployResponse.length).toBeGreaterThan(1)
     const deployResponse = full_deployResponse[0]
     expect(deployResponse).toHaveProperty('Name')
@@ -44,7 +43,6 @@ describe('uploadFiles', () => {
       const path = 'invalid/path/img.svg'
       const deployResponse = await lighthouse.upload(path, apiKey, false)
     } catch (error) {
-      // console.log(error.message)
       expect(error.code).toBe('ENOENT')
     }
   }, 60000)
