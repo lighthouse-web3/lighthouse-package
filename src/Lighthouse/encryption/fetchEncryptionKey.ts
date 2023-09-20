@@ -9,9 +9,11 @@ export type fetchEncryptionKeyResponse = {
 export default async (
   cid: string,
   publicKey: string,
-  signedMessage: string
+  signedMessage: string,
+  dynamicData = {},
+  shardCount = 3
 ): Promise<fetchEncryptionKeyResponse> => {
-  const { error, shards } = await recoverShards(publicKey, cid, signedMessage)
+  const { error, shards } = await recoverShards(publicKey, cid, signedMessage, shardCount, dynamicData)
   if (error) {
     throw error
   }
@@ -20,13 +22,5 @@ export default async (
   if (recoverError) {
     throw recoverError
   }
-  /*
-    return:
-      {
-        data: {
-          key: '519862401c52447c87eb4d41ea5e99f4c6b82a5914cf4086a61f25ef3128122d'
-        }
-      }
-  */
   return { data: { key: key } }
 }
