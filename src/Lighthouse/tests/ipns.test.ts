@@ -5,8 +5,8 @@ import { lighthouseConfig } from '../../lighthouse.config'
 import 'dotenv/config'
 
 describe('ipns', () => {
-  const apiKey = process.env.TEST_API_KEY
-  let ipnsName
+  const apiKey = process.env.TEST_API_KEY as string
+  let ipnsName: string
   describe('generateKey', () => {
     it('should generate Key using valid apiKey', async () => {
       const key = (await lighthouse.generateKey(apiKey)).data
