@@ -3,8 +3,7 @@ import lighthouse from '..'
 import 'dotenv/config'
 
 describe('getQuote', () => {
-  const apiKey = process.env.TEST_API_KEY
-  const publicKey = process.env.TEST_PUBLIC_KEY
+  const publicKey = process.env.TEST_PUBLIC_KEY as string
   const filePath = resolve(
     process.cwd(),
     'src/Lighthouse/tests/testImages/testImage1.svg'
