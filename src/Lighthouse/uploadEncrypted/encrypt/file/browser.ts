@@ -31,8 +31,8 @@ export default async (
   files: any,
   apiKey: string,
   publicKey: string,
-  signedMessage: string,
-  dealParameters: DealParameters|undefined,
+  auth_token: string,
+  dealParameters: DealParameters | undefined,
   uploadProgressCallback: (data: IUploadProgressCallback) => void
 ): Promise<{ data: IFileUploadedResponse[] }> => {
   try {
@@ -54,6 +54,10 @@ export default async (
       fileArr.push(files[i])
     }
     checkDuplicateFileNames(fileArr)
+
+    if (files.length > 1 && auth_token.startsWith("0x")) {
+      throw new Error(JSON.stringify(`auth_token must be a JWT`))
+    }
 
     const formData = new FormData()
     const boundary = Symbol()
@@ -85,7 +89,7 @@ export default async (
         'Content-type': `multipart/form-data; boundary= ${boundary.toString()}`,
         Encryption: `${true}`,
         Authorization: token,
-        'X-Deal-Parameter': dealParameters?JSON.stringify(dealParameters):'null'
+        'X-Deal-Parameter': dealParameters ? JSON.stringify(dealParameters) : 'null'
       },
       onUploadProgress: function (progressEvent) {
         const _progress = Math.round(progressEvent.loaded / progressEvent.total)
@@ -109,7 +113,7 @@ export default async (
         return saveShards(
           publicKey,
           data.Hash,
-          signedMessage,
+          auth_token,
           keyMap[data.Name]
         )
       })

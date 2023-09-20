@@ -9,8 +9,8 @@ export default async (
   sourcePath: any,
   apiKey: string,
   publicKey: string,
-  signed_message: string,
-  dealParameters: DealParameters|undefined,
+  auth_token: string,
+  dealParameters: DealParameters | undefined,
 ): Promise<{ data: IFileUploadedResponse[] }> => {
   const FormData = eval('require')('form-data')
   const fs = eval('require')('fs-extra')
@@ -42,14 +42,14 @@ export default async (
           'Content-type': `multipart/form-data; boundary= ${formData.getBoundary()}`,
           Encryption: 'true',
           Authorization: token,
-          'X-Deal-Parameter': dealParameters?JSON.stringify(dealParameters):'null'
+          'X-Deal-Parameter': dealParameters ? JSON.stringify(dealParameters) : 'null'
         },
       })
 
       const { error } = await saveShards(
         publicKey,
         response.data.Hash,
-        signed_message,
+        auth_token,
         keyShards
       )
       if (error) {
@@ -63,6 +63,10 @@ export default async (
   } else {
     const files = await walk(sourcePath)
     const formData = new FormData()
+
+    if (files.length > 1 && auth_token.startsWith("0x")) {
+      throw new Error(JSON.stringify(`auth_token must be a JWT`))
+    }
 
     let keyMap = {} as any
 
@@ -91,7 +95,7 @@ export default async (
         'Content-type': `multipart/form-data; boundary= ${formData.getBoundary()}`,
         Encryption: 'true',
         Authorization: token,
-        'X-Deal-Parameter': dealParameters?JSON.stringify(dealParameters):'null'
+        'X-Deal-Parameter': dealParameters ? JSON.stringify(dealParameters) : 'null'
       },
     })
     const jsondata = JSON.parse(
@@ -103,7 +107,7 @@ export default async (
         return saveShards(
           publicKey,
           data.Hash,
-          signed_message,
+          auth_token,
           keyMap[data.Name]
         )
       })
