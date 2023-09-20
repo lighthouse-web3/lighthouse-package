@@ -3,8 +3,8 @@ import lighthouse from '..'
 import 'dotenv/config'
 
 describe('createCAR', () => {
-  const apiKey = process.env.TEST_API_KEY
-  let accessToken
+  const apiKey = process.env.TEST_API_KEY as string
+  let accessToken: string
 
   describe('dataDepotAuth', () => {
     it('should generate data depot auth token from valid API key', async () => {
