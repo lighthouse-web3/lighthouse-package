@@ -2,7 +2,7 @@ import lighthouse from '..'
 import 'dotenv/config'
 
 describe('uploadText', () => {
-  const apiKey = process.env.TEST_API_KEY
+  const apiKey = process.env.TEST_API_KEY as string
   const text =
     'Lorem ipsum dolor sit amet, consectetur adip eu fugiat null a ante et dolore magna aliq'
 
