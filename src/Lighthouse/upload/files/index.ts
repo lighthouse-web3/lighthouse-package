@@ -1,12 +1,11 @@
 import uploadFile from './node'
 import uploadFileBrowser from './browser'
-import { IUploadProgressCallback, IFileUploadedResponse, DealParameters } from '../../../types'
+import { IUploadProgressCallback, IFileUploadedResponse } from '../../../types'
 
 async function uploadFiles(
   sourcePath: string | any,
   apiKey: string,
   multi?: false,
-  dealParameters?: DealParameters,
   uploadProgressCallback?: (data: IUploadProgressCallback) => void
 ): Promise<{ data: IFileUploadedResponse }>
 
@@ -14,7 +13,6 @@ async function uploadFiles(
   sourcePath: string | any,
   apiKey: string,
   multi?: true,
-  dealParameters?: DealParameters,
   uploadProgressCallback?: (data: IUploadProgressCallback) => void
 ): Promise<{ data: IFileUploadedResponse[] }>
 
@@ -22,7 +20,6 @@ async function uploadFiles(
   path: string | any,
   apiKey: string,
   multi?: boolean,
-  dealParameters?: DealParameters,
   uploadProgressCallback?: (data: IUploadProgressCallback) => void
 ) {
   // Upload File to IPFS
@@ -30,13 +27,12 @@ async function uploadFiles(
   if (multi) {
     // @ts-expect-error
     if (typeof window === 'undefined') {
-      return await uploadFile(path, apiKey, true, dealParameters)
+      return await uploadFile(path, apiKey, true)
     } else {
       return await uploadFileBrowser(
         path,
         apiKey,
         true,
-        dealParameters,
         uploadProgressCallback ||
           (() => {
             return
@@ -46,13 +42,12 @@ async function uploadFiles(
   } else {
     // @ts-expect-error
     if (typeof window === 'undefined') {
-      return await uploadFile(path, apiKey, false, dealParameters)
+      return await uploadFile(path, apiKey, false)
     } else {
       return await uploadFileBrowser(
         path,
         apiKey,
         false,
-        dealParameters,
         uploadProgressCallback ||
           (() => {
             return

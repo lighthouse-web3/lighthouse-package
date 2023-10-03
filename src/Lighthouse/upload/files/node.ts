@@ -2,7 +2,7 @@ import axios from 'axios'
 import FormData from 'form-data'
 import basePathConvert from '../../utils/basePathConvert'
 import { lighthouseConfig } from '../../../lighthouse.config'
-import { UploadFileReturnType, DealParameters } from '../../../types'
+import { UploadFileReturnType } from '../../../types'
 
 export async function walk(dir: string) {
   const { readdir, stat } = eval(`require`)('fs-extra')
@@ -27,7 +27,6 @@ export default async <T extends boolean>(
   sourcePath: string,
   apiKey: string,
   multi: boolean,
-  dealParameters: DealParameters|undefined,
 ): Promise<{ data: UploadFileReturnType<T> }> => {
   const { createReadStream, lstatSync } = eval(`require`)('fs-extra')
   const path = eval(`require`)('path')
@@ -51,8 +50,7 @@ export default async <T extends boolean>(
         headers: {
           'Content-type': `multipart/form-data; boundary= ${data.getBoundary()}`,
           Encryption: 'false',
-          Authorization: token,
-          'X-Deal-Parameter': dealParameters?JSON.stringify(dealParameters):'null'
+          Authorization: token
         },
       })
 
@@ -88,8 +86,7 @@ export default async <T extends boolean>(
         headers: {
           'Content-type': `multipart/form-data; boundary= ${data.getBoundary()}`,
           Encryption: 'false',
-          Authorization: token,
-          'X-Deal-Parameter': dealParameters?JSON.stringify(dealParameters):'null'
+          Authorization: token
         },
       })
 
