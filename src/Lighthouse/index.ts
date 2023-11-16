@@ -22,11 +22,6 @@ import decryptFile from './uploadEncrypted/decrypt'
 import uploadEncrypted from './uploadEncrypted/encrypt/file'
 import textUploadEncrypted from './uploadEncrypted/encrypt/text'
 
-// Data Depot
-import createCar from './createCAR/createCar'
-import viewCarFiles from './createCAR/viewCarFiles'
-import dataDepotAuth from './createCAR/dataDepotAuth'
-
 // IPNS
 import generateKey from './ipns/generateKey'
 import publishRecord from './ipns/publishRecord'
@@ -56,9 +51,6 @@ export {
   uploadEncrypted,
   textUploadEncrypted,
   decryptFile,
-  createCar,
-  dataDepotAuth,
-  viewCarFiles,
   generateKey,
   publishRecord,
   getAllKeys,
@@ -86,9 +78,6 @@ export default {
   uploadEncrypted,
   textUploadEncrypted,
   decryptFile,
-  createCar,
-  dataDepotAuth,
-  viewCarFiles,
   generateKey,
   publishRecord,
   getAllKeys,
