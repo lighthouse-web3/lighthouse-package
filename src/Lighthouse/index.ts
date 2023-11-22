@@ -6,6 +6,10 @@ import getUploads from './getUploads'
 import getFileInfo from './getFileInfo'
 import createWallet from './createWallet'
 
+// Pay per deal
+import fund from './payPerDeal/fund'
+import getPrice from './payPerDeal/getPrice'
+
 // Encryption
 import shareFile from './encryption/shareFile'
 import getAuthMessage from './encryption/getAuthMessage'
@@ -32,6 +36,8 @@ import removeKey from './ipns/removeKey'
 import posdi from './podsi'
 
 export {
+  fund,
+  getPrice,
   getQuote,
   getApiKey,
   getBalance,
@@ -59,6 +65,8 @@ export {
 }
 
 export default {
+  fund,
+  getPrice,
   getQuote,
   getApiKey,
   getBalance,
