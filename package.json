@@ -39,7 +39,7 @@
     "cli-spinner": "^0.2.10",
     "commander": "^10.0.0",
     "conf": "^10.1.1",
-    "crypto-js": "^4.1.1",
+    "crypto-js": "^4.2.0",
     "ethers": "^6.7.1",
     "form-data": "^4.0.0",
     "fs-extra": "^11.1.1",
@@ -50,7 +50,7 @@
     "recursive-fs": "^2.1.0"
   },
   "devDependencies": {
-    "@babel/preset-env": "^7.21.4",
+    "@babel/preset-env": "^7.23.2",
     "@babel/preset-typescript": "^7.21.4",
     "@types/cli-spinner": "^0.2.1",
     "@types/fs-extra": "^11.0.1",
