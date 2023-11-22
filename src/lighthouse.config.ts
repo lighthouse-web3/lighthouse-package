@@ -54,6 +54,16 @@ const defaultConfig = {
     usd_contract_decimal: 6,
     dai_contract_decimal: 18,
   },
+  filecoin: {
+    symbol: 'FIL',
+    rpc: 'https://mainnet.optimism.io',
+    scan: 'https://filfox.info/en/message/',
+    chain_id: '10',
+    lighthouse_contract_address: '0x9297A1eD441eA63257e933DCC335EE4D1E562C37',
+    usdc_contract_address: '0xEB466342C4d449BC9f53A865D5Cb90586f405215',
+    usdc_contract_decimal: 6,
+    native_decimal: 18,
+  },
   'calibration': {
     symbol: 'FIL',
     rpc: 'https://api.calibration.node.glif.io/rpc/v1',
@@ -61,7 +71,7 @@ const defaultConfig = {
     chain_id: '314159',
     lighthouse_contract_address: '0x808a85bbFD82369A3B0c6eFFd4Be1d475F05a6a0',
     usdt_contract_address: '0xA471B7936906fF810865e52AF86C12B9865C850A',
-    usdt_contract_decimal: 18,
+    usdt_contract_decimal: 6,
     native_decimal: 18
   },
   'fantom-testnet': {
