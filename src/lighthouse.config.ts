@@ -71,7 +71,7 @@ const defaultConfig = {
     chain_id: '314159',
     lighthouse_contract_address: '0x808a85bbFD82369A3B0c6eFFd4Be1d475F05a6a0',
     usdt_contract_address: '0xA471B7936906fF810865e52AF86C12B9865C850A',
-    usdt_contract_decimal: 6,
+    usdt_contract_decimal: 18,
     native_decimal: 18
   },
   'fantom-testnet': {
