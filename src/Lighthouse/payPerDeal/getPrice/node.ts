@@ -36,18 +36,18 @@ const calculatePrice = async(size: number, network: string, token?: string) => {
 	return priceInSmallestUnits
 }
 
-export default async (pathorprice: string|number, network: string, token?: string): Promise<bigint> => {
+export default async (pathOrSize: string|number, network: string, token?: string): Promise<bigint> => {
 	try {
 		if(!network) {
 			throw new Error("Token not provided!!!")
 		}
-		if(typeof pathorprice === 'string') {
+		if(typeof pathOrSize === 'string') {
 			const { lstatSync } = eval(`require`)('fs-extra')
-			const { size } = lstatSync(pathorprice)
+			const { size } = lstatSync(pathOrSize)
 			const price = calculatePrice(size, network.toLowerCase(), token?.toLowerCase())
 			return price
 		} else {
-			const price = calculatePrice(pathorprice, network.toLowerCase(), token?.toLowerCase())
+			const price = calculatePrice(pathOrSize, network.toLowerCase(), token?.toLowerCase())
 			return price
 		}
 	} catch (error: any) {

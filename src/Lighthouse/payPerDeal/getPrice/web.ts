@@ -37,18 +37,18 @@ const calculatePrice = async(size: number, network: string, token?: string) => {
 	return priceInSmallestUnits
 }
 
-export default async (pathorprice: any|number, network: string, token?: string): Promise<bigint> => {
+export default async (pathOrSize: any|number, network: string, token?: string): Promise<bigint> => {
 	try {
 		if(!network) {
 			throw new Error("Token not provided!!!")
 		}
-		if(typeof pathorprice === 'number') {
-            const price = calculatePrice(pathorprice, network.toLowerCase(), token?.toLowerCase())
+		if(typeof pathOrSize === 'number') {
+            const price = calculatePrice(pathOrSize, network.toLowerCase(), token?.toLowerCase())
 			return price
 		} else {
             let totalSize = 0
-            for(let i=0; i<pathorprice.length; i++){
-                totalSize = totalSize + pathorprice[i]['size']
+            for(let i=0; i<pathOrSize.length; i++){
+                totalSize = totalSize + pathOrSize[i]['size']
             }
             const price = calculatePrice(totalSize, network.toLowerCase(), token?.toLowerCase())
 			return price
