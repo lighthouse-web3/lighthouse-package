@@ -1,3 +1,4 @@
+/* istanbul ignore file */
 import { ethers } from "ethers"
 import erc20 from "./abi/erc20"
 import lighthuseContract from "./abi/lighthouseContract"
