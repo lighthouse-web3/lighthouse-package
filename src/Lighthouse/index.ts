@@ -9,6 +9,7 @@ import createWallet from './createWallet'
 // Pay per deal
 import fund from './payPerDeal/fund'
 import getPrice from './payPerDeal/getPrice'
+import oneTimeAuth from './payPerDeal/oneTimeAuth'
 
 // Encryption
 import shareFile from './encryption/shareFile'
@@ -38,6 +39,7 @@ import posdi from './podsi'
 export {
   fund,
   getPrice,
+  oneTimeAuth,
   getQuote,
   getApiKey,
   getBalance,
@@ -67,6 +69,7 @@ export {
 export default {
   fund,
   getPrice,
+  oneTimeAuth,
   getQuote,
   getApiKey,
   getBalance,
