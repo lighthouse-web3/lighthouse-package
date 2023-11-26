@@ -7,8 +7,9 @@ describe('getFileInfo', () => {
     const fileInfo = (await lighthouse.getFileInfo(cid)).data
 
     expect(fileInfo).toHaveProperty('fileSizeInBytes')
+    expect(fileInfo).toHaveProperty('cid')
     expect(fileInfo).toHaveProperty('encryption')
-    expect(fileInfo).toHaveProperty('txHash')
+    expect(fileInfo).toHaveProperty('mimeType')
     expect(fileInfo.fileName).toBe(fileName)
   }, 20000)
 
