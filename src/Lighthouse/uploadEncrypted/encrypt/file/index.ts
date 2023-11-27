@@ -9,6 +9,7 @@ export default async (
   uploadProgressCallback?: (data: any) => void
 ) => {
   // Upload File to IPFS
+  //@ts-ignore
   if (typeof window === 'undefined') {
     return await uploadFile(path, apiKey, publicKey, signedMessage)
   } else {

@@ -6,6 +6,7 @@ export default async (
   apiKey: string
 ) => {
   // Upload File to IPFS
+  //@ts-ignore
   if (typeof window === "undefined") {
     return await uploadBuffer(buffer, apiKey)
   } else {

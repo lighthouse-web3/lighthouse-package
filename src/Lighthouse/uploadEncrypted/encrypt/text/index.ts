@@ -8,6 +8,7 @@ export default async (
   signedMessage: string,
   name = 'text'
 ) => {
+  //@ts-ignore
   if (typeof window === 'undefined') {
     return await serverSide(text, apiKey, publicKey, signedMessage, name)
   } else {
