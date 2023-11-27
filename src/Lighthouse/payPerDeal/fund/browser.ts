@@ -10,6 +10,7 @@ export default async (amount: number, network: string, token: string) => {
     if(!config) {
         throw new Error("Unsupported Network!!!")
     }
+    //@ts-ignore
     const provider = new ethers.BrowserProvider((window as any).ethereum)
     const signer = await provider.getSigner()
     if(token.toLowerCase()==="native") {
