@@ -9,7 +9,6 @@ export type fileInfoType = {
     encryption: boolean
     fileName: string
     mimeType: string
-    txHash: string
   }
 }
 
@@ -34,7 +33,6 @@ export default async (cid: string): Promise<fileInfoType> => {
           "encryption":false,
           "fileName":"testImages",
           "mimeType":null,
-          "txHash":"0xb373590b34cb767d537ea5da40a71232e1491a6327bc8b428743ea1b5fd4ee5a"
         }
     */
     return { data: fileInfo }

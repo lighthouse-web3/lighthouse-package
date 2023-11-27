@@ -6,6 +6,11 @@ import getUploads from './getUploads'
 import getFileInfo from './getFileInfo'
 import createWallet from './createWallet'
 
+// Pay per deal
+import fund from './payPerDeal/fund'
+import getPrice from './payPerDeal/getPrice'
+import oneTimeAuth from './payPerDeal/oneTimeAuth'
+
 // Encryption
 import shareFile from './encryption/shareFile'
 import getAuthMessage from './encryption/getAuthMessage'
@@ -22,11 +27,6 @@ import decryptFile from './uploadEncrypted/decrypt'
 import uploadEncrypted from './uploadEncrypted/encrypt/file'
 import textUploadEncrypted from './uploadEncrypted/encrypt/text'
 
-// Data Depot
-import createCar from './createCAR/createCar'
-import viewCarFiles from './createCAR/viewCarFiles'
-import dataDepotAuth from './createCAR/dataDepotAuth'
-
 // IPNS
 import generateKey from './ipns/generateKey'
 import publishRecord from './ipns/publishRecord'
@@ -37,6 +37,9 @@ import removeKey from './ipns/removeKey'
 import posdi from './podsi'
 
 export {
+  fund,
+  getPrice,
+  oneTimeAuth,
   getQuote,
   getApiKey,
   getBalance,
@@ -56,9 +59,6 @@ export {
   uploadEncrypted,
   textUploadEncrypted,
   decryptFile,
-  createCar,
-  dataDepotAuth,
-  viewCarFiles,
   generateKey,
   publishRecord,
   getAllKeys,
@@ -67,6 +67,9 @@ export {
 }
 
 export default {
+  fund,
+  getPrice,
+  oneTimeAuth,
   getQuote,
   getApiKey,
   getBalance,
@@ -86,9 +89,6 @@ export default {
   uploadEncrypted,
   textUploadEncrypted,
   decryptFile,
-  createCar,
-  dataDepotAuth,
-  viewCarFiles,
   generateKey,
   publishRecord,
   getAllKeys,

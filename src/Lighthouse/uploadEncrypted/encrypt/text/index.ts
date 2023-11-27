@@ -8,7 +8,6 @@ export default async (
   signedMessage: string,
   name = 'text'
 ) => {
-  // @ts-expect-error
   if (typeof window === 'undefined') {
     return await serverSide(text, apiKey, publicKey, signedMessage, name)
   } else {

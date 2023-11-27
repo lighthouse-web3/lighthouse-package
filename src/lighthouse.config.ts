@@ -3,7 +3,6 @@ const defaultConfig = {
   lighthouseNode: 'https://node.lighthouse.storage',
   lighthouseGateway: 'https://gateway.lighthouse.storage',
   lighthouseBLSNode: 'https://encryption.lighthouse.storage',
-  lighthouseDataDepot: 'https://data-depot.lighthouse.storage',
   network: 'polygon',
   fantom: {
     symbol: 'FTM',
@@ -26,8 +25,10 @@ const defaultConfig = {
     usdt_contract_address: '0xc2132D05D31c914a87C6611C10748AEb04B58e8F',
     usdc_contract_address: '0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174',
     dai_contract_address: '0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063',
-    usd_contract_decimal: 6,
+    usdt_contract_decimal: 6,
+    usdc_contract_decimal: 6,
     dai_contract_decimal: 18,
+    native_decimal: 18
   },
   binance: {
     symbol: 'BNB',
@@ -52,6 +53,26 @@ const defaultConfig = {
     dai_contract_address: '0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1',
     usd_contract_decimal: 6,
     dai_contract_decimal: 18,
+  },
+  filecoin: {
+    symbol: 'FIL',
+    rpc: 'https://mainnet.optimism.io',
+    scan: 'https://filfox.info/en/message/',
+    chain_id: '10',
+    lighthouse_contract_address: '0x9297A1eD441eA63257e933DCC335EE4D1E562C37',
+    usdc_contract_address: '0xEB466342C4d449BC9f53A865D5Cb90586f405215',
+    usdc_contract_decimal: 6,
+    native_decimal: 18,
+  },
+  'calibration': {
+    symbol: 'FIL',
+    rpc: 'https://api.calibration.node.glif.io/rpc/v1',
+    scan: 'https://calibration.filfox.info/en/message/',
+    chain_id: '314159',
+    lighthouse_contract_address: '0x808a85bbFD82369A3B0c6eFFd4Be1d475F05a6a0',
+    usdt_contract_address: '0xA471B7936906fF810865e52AF86C12B9865C850A',
+    usdt_contract_decimal: 18,
+    native_decimal: 18
   },
   'fantom-testnet': {
     symbol: 'FTM',

@@ -28,7 +28,6 @@ async function uploadFiles(
   // Upload File to IPFS
 
   if (multi) {
-    // @ts-expect-error
     if (typeof window === 'undefined') {
       return await uploadFile(path, apiKey, true, dealParameters)
     } else {
@@ -44,7 +43,6 @@ async function uploadFiles(
       )
     }
   } else {
-    // @ts-expect-error
     if (typeof window === 'undefined') {
       return await uploadFile(path, apiKey, false, dealParameters)
     } else {
