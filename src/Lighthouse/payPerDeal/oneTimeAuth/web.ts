@@ -5,6 +5,7 @@ import { lighthouseConfig } from '../../../lighthouse.config'
 
 export default async (): Promise<string> => {
 	try {
+		//@ts-ignore
 		const provider = new ethers.BrowserProvider((window as any).ethereum)
     	const signer = await provider.getSigner()
 		const message = (await axios.get(
