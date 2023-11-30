@@ -1,6 +1,6 @@
 {
   "name": "@lighthouse-web3/sdk",
-  "version": "3.0.0",
+  "version": "0.3.0",
   "description": "NPM package and CLI tool to interact with lighthouse protocol",
   "main": "./dist/Lighthouse/index.js",
   "types": "./dist/Lighthouse/index.d.ts",
