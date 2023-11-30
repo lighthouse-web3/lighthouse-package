@@ -56,9 +56,9 @@ const defaultConfig = {
   },
   filecoin: {
     symbol: 'FIL',
-    rpc: 'https://mainnet.optimism.io',
+    rpc: 'https://api.node.glif.io',
     scan: 'https://filfox.info/en/message/',
-    chain_id: '10',
+    chain_id: '314',
     lighthouse_contract_address: '0x9297A1eD441eA63257e933DCC335EE4D1E562C37',
     usdc_contract_address: '0xEB466342C4d449BC9f53A865D5Cb90586f405215',
     usdc_contract_decimal: 6,

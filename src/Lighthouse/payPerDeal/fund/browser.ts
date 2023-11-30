@@ -12,11 +12,18 @@ export default async (amount: number, network: string, token: string) => {
     }
     //@ts-ignore
     const provider = new ethers.BrowserProvider((window as any).ethereum)
+    const getFeeData=await provider.getFeeData()
     const signer = await provider.getSigner()
     if(token.toLowerCase()==="native") {
+        const gasEstimate = await signer.estimateGas({
+          to: config.lighthouse_contract_address,
+          value: amount,
+        })
         const tx = await signer.sendTransaction({
-            to: config.lighthouse_contract_address,
-            value: amount,
+          to: config.lighthouse_contract_address,
+          value: amount,
+          gasLimit: gasEstimate,
+          gasPrice: getFeeData.gasPrice,
         })
         await tx.wait()
         return tx
@@ -24,9 +31,27 @@ export default async (amount: number, network: string, token: string) => {
         const tokenAddress = config[`${token.toLowerCase()}_contract_address`]
         const paymentContract = new ethers.Contract(config.lighthouse_contract_address, lighthuseContract, signer)
         const erc20Contract = new ethers.Contract(tokenAddress, erc20, signer)
-        const approvalTx = await erc20Contract.approve(config.lighthouse_contract_address, amount)
+        const approvalData = erc20Contract.interface.encodeFunctionData("approve", [config.lighthouse_contract_address, amount]);
+        const approvalTxObject = {
+          to: tokenAddress,
+          data: approvalData,
+        }
+        const gasEstimateForApproval = await signer.estimateGas(approvalTxObject);
+        const approvalTx = await erc20Contract.approve(config.lighthouse_contract_address, amount, {
+          gasLimit: gasEstimateForApproval,
+          gasPrice: getFeeData.gasPrice,
+        })
         await approvalTx.wait()
-        const tx = await paymentContract.receiveToken(amount, tokenAddress)
+        const transferData = paymentContract.interface.encodeFunctionData("receiveToken", [amount, tokenAddress])
+        const transferTxObject = {
+          to: config.lighthouse_contract_address,
+          data: transferData,
+        }
+        const gasEstimateForTransfer = await signer.estimateGas(transferTxObject)
+        const tx = await paymentContract.receiveToken(amount, tokenAddress, {
+          gasLimit: gasEstimateForTransfer,
+          gasPrice: getFeeData.gasPrice,
+        })
         await tx.wait()
         return tx
     }
