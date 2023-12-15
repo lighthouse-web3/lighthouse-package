@@ -8,7 +8,7 @@
     "dist/**/*"
   ],
   "scripts": {
-    "build": "tsc",
+    "build": "ts-node readme_update.js && tsc",
     "start": "node index.js",
     "test": "jest --runInBand",
     "format": "prettier --write \"src/**/*.ts\"",
