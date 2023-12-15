@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import { Command } from 'commander'
 import { yellow, gray, dim, green } from 'kleur'
+import { version } from '../../package.json'
 
 import ipns from './ipns'
 import wallet from './wallet'
@@ -72,7 +73,7 @@ Command.prototype.helpInformation = function (context: any) {
 }
 
 widgets.addHelpText('before', 'Welcome to lighthouse-web3')
-widgets.version('0.3.0')
+widgets.version(version)
 
 widgets
   .command('wallet')
