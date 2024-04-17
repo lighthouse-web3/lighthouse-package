@@ -24,13 +24,13 @@ export type uploadsResponseType = {
 
 export default async (
   authToken: string,
-  pageNo = 1
+  lastKey: string|null = null
 ): Promise<uploadsResponseType> => {
   try {
     const uploads = (
       await axios.get(
         lighthouseConfig.lighthouseAPI +
-          `/api/user/files_uploaded?pageNo=${pageNo}`,
+          `/api/user/files_uploaded?lastKey=${lastKey}`,
         {
           headers: {
             Authorization: `Bearer ${authToken}`,
@@ -41,8 +41,7 @@ export default async (
 
     /*
       {
-        data: {
-          "fileList":[
+        "fileList":[
             {
               publicKey: '0xa3c960b3ba29367ecbcaf1430452c6cd7516f588',
               fileName: 'flow1.png',
@@ -57,8 +56,7 @@ export default async (
               encryption: true
             },
           ],
-          "totalFiles": 75
-        }
+        "totalFiles": 75
       }
     */
     return { data: uploads }

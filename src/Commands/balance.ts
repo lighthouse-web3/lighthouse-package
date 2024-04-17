@@ -15,7 +15,7 @@ export default async function (data: any, options: any) {
     spinner.start()
 
     const response = await lighthouse.getBalance(
-      config.get('LIGHTHOUSE_GLOBAL_PUBLICKEY') as string
+      config.get('LIGHTHOUSE_GLOBAL_API_KEY') as string
     )
 
     spinner.stop()

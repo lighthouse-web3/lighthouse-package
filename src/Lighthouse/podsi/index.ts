@@ -1,8 +1,41 @@
 import axios from 'axios'
 import { defaultConfig } from '../../lighthouse.config'
-import { IPodsiData } from '../../types'
 
-export default async (cid: string): Promise<{ data: IPodsiData }> => {
+type Proof = {
+  verifierData: {
+    commPc: string
+    sizePc: string
+  }
+  inclusionProof: {
+    proofIndex: {
+      index: string
+      path: string[]
+    }
+    proofSubtree: {
+      index: string
+      path: string[]
+    }
+    indexRecord: {
+      checksum: string
+      proofIndex: string
+      proofSubtree: number
+      size: number
+    }
+  }
+}
+
+type DealInfo = {
+  dealId: number
+  storageProvider: string
+  proof: Proof
+}
+
+type PODSIData = {
+  pieceCID: string
+  dealInfo: DealInfo[]
+}
+
+export default async (cid: string): Promise<{ data: PODSIData }> => {
   try {
     const response = await axios.get(
       defaultConfig.lighthouseAPI + `/api/lighthouse/get_proof?cid=${cid}`

@@ -7,11 +7,11 @@ import lighthouse from '../Lighthouse'
 import bytesToSize from './utils/byteToSize'
 import { config } from './utils/getNetwork'
 
-const getQuote = async (path: string, publicKey: string, Spinner: any) => {
+const getQuote = async (path: string, apiKey: string, Spinner: any) => {
   const spinner = new Spinner('Getting Quote...')
   spinner.start()
 
-  const quoteResponse: any = (await lighthouse.getQuote(path, publicKey)).data
+  const quoteResponse: any = (await lighthouse.getQuote(path, apiKey)).data
   spinner.stop()
   process.stdout.clearLine(-1)
   process.stdout.cursorTo(0)
@@ -139,7 +139,7 @@ export default async function (_path: string) {
       // Display Quote
       const quoteResponse = await getQuote(
         path,
-        config.get('LIGHTHOUSE_GLOBAL_PUBLICKEY') as string,
+        config.get('LIGHTHOUSE_GLOBAL_API_KEY') as string,
         Spinner
       )
 

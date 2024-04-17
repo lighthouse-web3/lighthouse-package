@@ -8,13 +8,18 @@ export type balanceResponse = {
   }
 }
 
-export default async (publicKey: string): Promise<balanceResponse> => {
+export default async (apiKey: string): Promise<balanceResponse> => {
   try {
     // Get users data usage
     const userDataUsage = (
       await axios.get(
         lighthouseConfig.lighthouseAPI +
-          `/api/user/user_data_usage?publicKey=${publicKey}`
+          `/api/user/user_data_usage`,
+          {
+            headers: {
+              Authorization: `Bearer ${apiKey}`,
+            },
+          }
       )
     ).data
     /*

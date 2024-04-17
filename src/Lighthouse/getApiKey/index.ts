@@ -14,7 +14,7 @@ export default async (
   try {
     const apiKey = (
       await axios.post(
-        lighthouseConfig.lighthouseAPI + `/api/auth/get_api_key`,
+        lighthouseConfig.lighthouseAPI + `/api/auth/create_api_key`,
         {
           publicKey: publicKey,
           signedMessage: signedMessage,
