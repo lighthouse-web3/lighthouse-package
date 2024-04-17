@@ -18,7 +18,6 @@ import revokeAccess from './revoke-access'
 import resetPassword from './reset-password'
 import uploadEncrypted from './upload-encrypted'
 import podsi from './podsi'
-import { version } from '../../package.json'
 
 const widgets = new Command('lighthouse-web3')
 
@@ -73,7 +72,7 @@ Command.prototype.helpInformation = function (context: any) {
 }
 
 widgets.addHelpText('before', 'Welcome to lighthouse-web3')
-widgets.version(version)
+widgets.version('0.3.2')
 
 widgets
   .command('wallet')
