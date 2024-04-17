@@ -2,15 +2,20 @@ import axios from 'axios'
 import { lighthouseConfig } from '../../lighthouse.config'
 
 type dealData = {
-  chainDealID: string
-  endEpoch: string
+  chainDealID: number
+  endEpoch: number
   publishCID: string
   storageProvider: string
   dealStatus: string
   bundleId: string
   dealUUID: string
-  startEpoch: string
+  startEpoch: number
+  aggregateIn: string
   providerCollateral: string
+  pieceCID: string
+  payloadCid: string
+  pieceSize: number
+  carFileSize: number
   lastUpdate: number
   dealId: number
   miner: string
@@ -29,6 +34,7 @@ export default async (cid: string): Promise<dealResponse> => {
           `/api/lighthouse/deal_status?cid=${cid}`
       )
     ).data
+    
     return { data: dealStatus }
   } catch (error: any) {
     throw new Error(error.message)

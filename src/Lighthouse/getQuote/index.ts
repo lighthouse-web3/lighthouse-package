@@ -3,11 +3,11 @@ import getBalance from '../getBalance'
 import { walk } from '../upload/files/node'
 
 // Function return cost and file metadata
-const getCosting = async (path: string, publicKey: string) => {
+const getCosting = async (path: string, apiKey: string) => {
   const fs = eval(`require`)('fs-extra')
   const mime = eval(`require`)('mime-types')
   // Get users data usage
-  const user_data_usage = (await getBalance(publicKey)).data
+  const user_data_usage = (await getBalance(apiKey)).data
   if (fs.lstatSync(path).isDirectory()) {
     // Get metadata and cid for all files
     const sources = await walk(path)
@@ -63,9 +63,9 @@ const getCosting = async (path: string, publicKey: string) => {
   }
 }
 
-export default async (path: string, publicKey: string) => {
+export default async (path: string, apiKey: string) => {
   try {
-    return await getCosting(path, publicKey)
+    return await getCosting(path, apiKey)
   } catch (error: any) {
     throw new Error(error.message)
   }
