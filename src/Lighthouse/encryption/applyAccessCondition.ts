@@ -1,4 +1,5 @@
-import { accessControl, ChainType } from '@lighthouse-web3/kavach'
+import { accessControl } from '@lighthouse-web3/kavach'
+import { ChainType } from '@lighthouse-web3/kavach/dist/types'
 
 export type accessControlResponse = {
   data: {
