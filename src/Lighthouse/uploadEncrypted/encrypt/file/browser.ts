@@ -89,12 +89,14 @@ export default async (
         Authorization: token,
       },
       onUploadProgress: function (progressEvent) {
-        const _progress = Math.round(progressEvent.loaded / progressEvent.total)
-        uploadProgressCallback({
-          progress: _progress,
-          total: progressEvent.total,
-          uploaded: progressEvent.loaded,
-        })
+        if(progressEvent.total) {
+          const _progress = Math.round(progressEvent.loaded / progressEvent.total)
+          uploadProgressCallback({
+            progress: _progress,
+            total: progressEvent.total,
+            uploaded: progressEvent.loaded,
+          })
+        }
       },
     })
     if (typeof response.data === 'string') {
