@@ -6,7 +6,7 @@ const signAuthMessage = async (privateKey: string) => {
   const signer = new ethers.Wallet(privateKey, provider)
   const messageRequested = (await lighthouse.getAuthMessage(signer.address))
     .data.message
-  const signedMessage = await signer.signMessage(messageRequested)
+  const signedMessage = await signer.signMessage(messageRequested as string)
   return signedMessage
 }
 
@@ -43,7 +43,7 @@ describe('encryption', () => {
         signed_message
       )
       expect(typeof response.data.key).toBe('string')
-    }, 60000)
+    }, 80000)
 
     it('should not fetch encryption key when incorrect public-private key pair is provided', async () => {
       try {

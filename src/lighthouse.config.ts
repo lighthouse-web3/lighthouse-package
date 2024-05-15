@@ -59,7 +59,7 @@ const defaultConfig = {
     rpc: 'https://api.node.glif.io',
     scan: 'https://filfox.info/en/message/',
     chain_id: '314',
-    lighthouse_contract_address: '0x9297A1eD441eA63257e933DCC335EE4D1E562C37',
+    lighthouse_contract_address: '0x1ed0f8B8736c7835a1ee54D791cda7ADA3cd5e94',
     usdc_contract_address: '0xEB466342C4d449BC9f53A865D5Cb90586f405215',
     usdc_contract_decimal: 6,
     native_decimal: 18,

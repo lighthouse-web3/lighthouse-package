@@ -37,12 +37,14 @@ export default async <T extends boolean>(
         'X-Deal-Parameter': dealParameters?JSON.stringify(dealParameters):'null'
       },
       onUploadProgress: function (progressEvent) {
-        const _progress = Math.round(progressEvent.loaded / progressEvent.total)
-        uploadProgressCallback({
-          progress: _progress,
-          total: progressEvent.total,
-          uploaded: progressEvent.loaded,
-        })
+        if(progressEvent.total) {
+          const _progress = Math.round(progressEvent.loaded / progressEvent.total)
+          uploadProgressCallback({
+            progress: _progress,
+            total: progressEvent.total,
+            uploaded: progressEvent.loaded,
+          })
+        }
       },
     })
 

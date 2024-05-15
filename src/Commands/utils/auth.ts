@@ -7,6 +7,6 @@ export const sign_auth_message = async (privateKey: string) => {
   const messageRequested = (
     await lighthouse.getAuthMessage(signer.address.toLocaleLowerCase())
   ).data.message
-  const signedMessage = await signer.signMessage(messageRequested)
+  const signedMessage = await signer.signMessage(messageRequested as string)
   return signedMessage
 }

@@ -3,7 +3,7 @@ import { getAuthMessage } from '@lighthouse-web3/kavach'
 
 export type authMessageResponse = {
   data: {
-    message: string
+    message: string | null
   }
 }
 

@@ -9,7 +9,7 @@ export const signAuthMessage = async (privateKey: string) => {
   const signer = new ethers.Wallet(privateKey, provider)
   const messageRequested = (await lighthouse.getAuthMessage(signer.address))
     .data.message
-  const signedMessage = await signer.signMessage(messageRequested)
+  const signedMessage = await signer.signMessage(messageRequested as string)
   return signedMessage
 }
 
