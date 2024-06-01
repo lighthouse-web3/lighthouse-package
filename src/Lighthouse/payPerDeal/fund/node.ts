@@ -1,61 +1,122 @@
 /* istanbul ignore file */
-import { ethers } from "ethers"
-import erc20 from "./abi/erc20"
-import lighthuseContract from "./abi/lighthouseContract"
-import { lighthouseConfig } from "../../../lighthouse.config"
+import { ethers } from 'ethers'
+import { EvmPriceServiceConnection } from '@pythnetwork/pyth-evm-js'
+import erc20ABI from './abi/erc20'
+import lighthouseEndowmentABI from './abi/lighthouseEndowment'
+import crosschainABI from './abi/crosschain'
+import { lighthouseConfig } from '../../../lighthouse.config'
 
-export default async (amount: number, network: string, token: string, privateKey: string|undefined) => {
+export default async (
+  amount: number,
+  network: string,
+  token: string,
+  privateKey: string | undefined
+) => {
   try {
-    if(!privateKey) {
-        throw new Error("Private Key not found!!!")
+    if (!privateKey) {
+      throw new Error('Private Key not found!!!')
     }
     const config = lighthouseConfig[network]
-    if(!config) {
-        throw new Error("Unsupported Network!!!")
+    if (!config) {
+      throw new Error('Unsupported Network!!!')
     }
     const provider = new ethers.JsonRpcProvider(config.rpc)
-    const getFeeData=await provider.getFeeData()
+    const feeData = await provider.getFeeData()
     const signer = new ethers.Wallet(privateKey, provider)
-    if(token.toLowerCase()==="native") {
-        const gasEstimate = await signer.estimateGas({
-          to: config.lighthouse_contract_address,
-          value: amount,
-        })
-        const tx = await signer.sendTransaction({
-            to: config.lighthouse_contract_address,
+    if (network == 'filecoin' || network == 'calibration') {
+      const endowmentContract = new ethers.Contract(
+        config.lighthouse_endowment_address,
+        lighthouseEndowmentABI,
+        signer
+      )
+      if (token.toLowerCase() === 'native') {
+        // for pyth offchain price update data
+        const connection = new EvmPriceServiceConnection(
+          'https://hermes.pyth.network'
+        )
+        const priceIds = [
+          '0x150ac9b959aee0051e4091f0ef5216d941f590e1c5e7f91cf7635b5c11628c0e',
+        ]
+        const offchainPriceUpdate = await connection.getPriceFeedsUpdateData(
+          priceIds
+        )
+
+        const tx = await endowmentContract.depositFund(
+          ethers.ZeroAddress,
+          amount,
+          true,
+          offchainPriceUpdate,
+          {
             value: amount,
-            gasLimit: gasEstimate,
-            gasPrice: getFeeData.gasPrice,
-        })
+            gasPrice: feeData.gasPrice,
+          }
+        )
         await tx.wait()
         return tx
-    } else{
+      } else {
         const tokenAddress = config[`${token.toLowerCase()}_contract_address`]
-        const paymentContract = new ethers.Contract(config.lighthouse_contract_address, lighthuseContract, signer)
-        const erc20Contract = new ethers.Contract(tokenAddress, erc20, signer)
-        const approvalData = erc20Contract.interface.encodeFunctionData("approve", [config.lighthouse_contract_address, amount])
-        const approvalTxObject = {
-          to: tokenAddress,
-          data: approvalData,
-        }
-        const gasEstimateForApproval = await signer.estimateGas(approvalTxObject)
-        const approvalTx = await erc20Contract.approve(config.lighthouse_contract_address, amount, {
-          gasLimit: gasEstimateForApproval,
-          gasPrice: getFeeData.gasPrice,
-        })
+        const erc20Contract = new ethers.Contract(
+          tokenAddress,
+          erc20ABI,
+          signer
+        )
+
+        const approvalTx = await erc20Contract.approve(
+          config.lighthouse_endowment_address,
+          amount,
+          {
+            gasPrice: feeData.gasPrice,
+          }
+        )
         await approvalTx.wait()
-        const transferData = paymentContract.interface.encodeFunctionData("receiveToken", [amount, tokenAddress])
-        const transferTxObject = {
-          to: config.lighthouse_contract_address,
-          data: transferData,
-        }
-        const gasEstimateForTransfer = await signer.estimateGas(transferTxObject)
-        const tx = await paymentContract.receiveToken(amount, tokenAddress, {
-          gasLimit: gasEstimateForTransfer,
-          gasPrice: getFeeData.gasPrice,
-        })
+        const tx = await endowmentContract.depositFund(
+          tokenAddress,
+          amount,
+          true,
+          [],
+          {
+            gasPrice: feeData.gasPrice,
+          }
+        )
         await tx.wait()
         return tx
+      }
+    } else {
+      const depositContract = new ethers.Contract(
+        config.crosschain_deposit_initializer,
+        crosschainABI,
+        signer
+      )
+      const tokenAddress = config[`${token.toLowerCase()}_contract_address`]
+      const erc20Contract = new ethers.Contract(tokenAddress, erc20ABI, signer)
+
+      const approvalTx = await erc20Contract.approve(
+        config.crosschain_deposit_initializer,
+        amount,
+        {
+          gasPrice: feeData.gasPrice,
+        }
+      )
+      await approvalTx.wait()
+      const encoder = ethers.AbiCoder.defaultAbiCoder()
+      const payload = encoder.encode(
+        ['address', 'address', 'uint256', 'bool'],
+        [signer.getAddress(), tokenAddress, amount, true]
+      )
+
+      const tx = await depositContract.initiateCrossChainDeposit(
+        tokenAddress,
+        amount,
+        'Filecoin',
+        lighthouseConfig.filecoin,
+        payload,
+        {
+          value: ethers.parseEther('1'), // Pass gas payment for FVM transaction
+          gasPrice: feeData.gasPrice,
+        }
+      )
+      await tx.wait()
+      return tx
     }
   } catch (error: any) {
     throw new Error(error.message)
