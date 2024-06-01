@@ -34,6 +34,7 @@
   "dependencies": {
     "@lighthouse-web3/kavach": "^0.1.6",
     "@peculiar/webcrypto": "^1.4.0",
+    "@pythnetwork/pyth-evm-js": "^1.48.0",
     "axios": "^1.6.8",
     "bls-eth-wasm": "^1.0.4",
     "cli-spinner": "^0.2.10",

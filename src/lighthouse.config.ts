@@ -22,13 +22,17 @@ const defaultConfig = {
     scan: 'https://polygonscan.com/tx/',
     chain_id: '137',
     lighthouse_contract_address: '0xaD13C488b01DbcE976B67e552Bd352e824E53E1D',
+    crosschain_deposit_initializer:
+      '0x9478202353e3b3e653719b792dCdb5BA675A476d',
+    axlusdc_contract_address: '0x750e4C4984a9e0f12978eA6742Bc1c5D248f40ed',
     usdt_contract_address: '0xc2132D05D31c914a87C6611C10748AEb04B58e8F',
     usdc_contract_address: '0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174',
     dai_contract_address: '0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063',
+    axlusdc_contract_decimal: 6,
     usdt_contract_decimal: 6,
     usdc_contract_decimal: 6,
     dai_contract_decimal: 18,
-    native_decimal: 18
+    native_decimal: 18,
   },
   binance: {
     symbol: 'BNB',
@@ -59,20 +63,21 @@ const defaultConfig = {
     rpc: 'https://api.node.glif.io',
     scan: 'https://filfox.info/en/message/',
     chain_id: '314',
-    lighthouse_contract_address: '0x1ed0f8B8736c7835a1ee54D791cda7ADA3cd5e94',
-    usdc_contract_address: '0xEB466342C4d449BC9f53A865D5Cb90586f405215',
-    usdc_contract_decimal: 6,
+    lighthouse_endowment_address: '0xa8f5F980937D2638F9B08CE4261B041F9f9C9557',
+    crosschain_deposit_receiver: '0x7a2aAf1b3FbF1daB38C00A42f19D25f528E4957d',
+    axlusdc_contract_address: '0xEB466342C4d449BC9f53A865D5Cb90586f405215', // axlUSDC
+    axlusdc_contract_decimal: 6,
     native_decimal: 18,
   },
-  'calibration': {
+  calibration: {
     symbol: 'FIL',
     rpc: 'https://api.calibration.node.glif.io/rpc/v1',
     scan: 'https://calibration.filfox.info/en/message/',
     chain_id: '314159',
-    lighthouse_contract_address: '0x808a85bbFD82369A3B0c6eFFd4Be1d475F05a6a0',
-    usdt_contract_address: '0xA471B7936906fF810865e52AF86C12B9865C850A',
-    usdt_contract_decimal: 18,
-    native_decimal: 18
+    lighthouse_endowment_address: '0xa4DC368C2b8A3b4c94433F6D49330bC92941F270',
+    axlusdc_contract_address: '0xCb7996d51Ff923b2C6076d42C065a6ca000D32A1', //aUSDC
+    axlusdc_contract_decimal: 6,
+    native_decimal: 18,
   },
   'fantom-testnet': {
     symbol: 'FTM',
