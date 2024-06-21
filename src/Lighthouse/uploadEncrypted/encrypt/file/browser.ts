@@ -1,6 +1,7 @@
 /* istanbul ignore file */
 import axios from 'axios'
-import FormData from 'form-data'
+import { FormData } from 'formdata-node';
+import { Blob } from 'buffer';
 import { generate, saveShards } from '@lighthouse-web3/kavach'
 import {
   IFileUploadedResponse,
@@ -73,7 +74,7 @@ export default async (
       })
     )
     filesParam.forEach(function (item_) {
-      return formData.append(
+      return formData.set(
         'file',
         item_.data,
         item_.fileName ? item_.fileName : 'file'

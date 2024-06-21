@@ -1,5 +1,5 @@
 import axios from 'axios'
-import FormData from 'form-data'
+import { FormData } from 'formdata-node';
 import { lighthouseConfig } from '../../../lighthouse.config'
 
 export default async (blob: any, apiKey: string, mimeType = '') => {
@@ -8,9 +8,8 @@ export default async (blob: any, apiKey: string, mimeType = '') => {
     const endpoint = lighthouseConfig.lighthouseNode + '/api/v0/add'
 
     // Upload file
-    const formData = new FormData()
-
-    formData.append('file', blob)
+    const formData = new FormData();
+    formData.set("file", blob);
     const boundary = Symbol()
 
     const response = await axios.post(endpoint, formData, {

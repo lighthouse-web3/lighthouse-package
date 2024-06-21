@@ -1,5 +1,6 @@
 import axios from 'axios'
-import FormData from 'form-data'
+import { FormData } from 'formdata-node';
+import { Blob } from 'buffer';
 import basePathConvert from '../../utils/basePathConvert'
 import { lighthouseConfig } from '../../../lighthouse.config'
 import { UploadFileReturnType, DealParameters } from '../../../types'
@@ -41,15 +42,21 @@ export default async <T extends boolean>(
     if (stats.isFile()) {
       //we need to create a single read stream instead of reading the directory recursively
       const data = new FormData()
+      const stream = createReadStream(sourcePath);
+      const buffers = [];
+      for await (const chunk of stream) {
+        buffers.push(chunk);
+      }
+      const blob = new Blob(buffers);
 
-      data.append('file', createReadStream(sourcePath))
+      data.set('file', blob)
 
       const response = await axios.post(endpoint, data, {
         withCredentials: true,
         maxContentLength: Infinity, //this is needed to prevent axios from erroring out with large directories
         maxBodyLength: Infinity,
         headers: {
-          'Content-type': `multipart/form-data; boundary= ${data.getBoundary()}`,
+          'Content-type': `multipart/form-data;`,
           Encryption: 'false',
           Authorization: token,
           'X-Deal-Parameter': dealParameters?JSON.stringify(dealParameters):'null'
@@ -67,17 +74,22 @@ export default async <T extends boolean>(
       const data = new FormData()
 
       files.forEach((file: any) => {
+        const stream = createReadStream(file);
+        const buffers: any = [];
+        (async () => {
+          for await (const chunk of stream) {
+            buffers.push(chunk);
+          }
+        })()
+        const blob = new Blob(buffers);
+
         //for each file stream, we need to include the correct relative file path
-        data.append(
+        data.set(
           'file',
-          createReadStream(file),
+          blob,
           multi
-            ? {
-                filename: path.basename(file),
-              }
-            : {
-                filepath: basePathConvert(sourcePath, file),
-              }
+            ? path.basename(file)
+            : basePathConvert(sourcePath, file),
         )
       })
 
@@ -86,7 +98,7 @@ export default async <T extends boolean>(
         maxContentLength: Infinity,
         maxBodyLength: Infinity, //this is needed to prevent axios from erroring out with large directories
         headers: {
-          'Content-type': `multipart/form-data; boundary= ${data.getBoundary()}`,
+          'Content-type': `multipart/form-data;`,
           Encryption: 'false',
           Authorization: token,
           'X-Deal-Parameter': dealParameters?JSON.stringify(dealParameters):'null'

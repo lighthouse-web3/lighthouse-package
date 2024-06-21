@@ -27,9 +27,10 @@ export default async (
 
       const fileData = fs.readFileSync(sourcePath)
       const encryptedData = await encryptFile(fileData, fileEncryptionKey)
-      formData.append(
+      const blob = new Blob([Buffer.from(encryptedData)]);
+      formData.set(
         'file',
-        Buffer.from(encryptedData),
+        blob,
         sourcePath.replace(/^.*[\\/]/, '')
       )
 
@@ -76,7 +77,8 @@ export default async (
         const fileData = fs.readFileSync(file)
         const encryptedData = await encryptFile(fileData, fileEncryptionKey)
         const filename = file.slice(sourcePath.length + 1).replaceAll('/', '-')
-        await formData.append('file', Buffer.from(encryptedData), filename)
+        const blob = new Blob([Buffer.from(encryptedData)]);
+        await formData.set('file', blob, filename)
         keyMap = { ...keyMap, [filename]: keyShards }
         return [filename, keyShards]
       })
@@ -90,7 +92,7 @@ export default async (
       maxContentLength: Infinity, //this is needed to prevent axios from erroring out with large directories
       maxBodyLength: Infinity,
       headers: {
-        'Content-type': `multipart/form-data; boundary= ${formData.getBoundary()}`,
+        'Content-type': `multipart/form-data;`,
         Encryption: 'true',
         Authorization: token,
       },

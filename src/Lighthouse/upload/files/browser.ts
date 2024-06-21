@@ -1,6 +1,6 @@
 /* istanbul ignore file */
 import axios from 'axios'
-import FormData from 'form-data'
+import { FormData } from 'formdata-node';
 import { lighthouseConfig } from '../../../lighthouse.config'
 import { IUploadProgressCallback, UploadFileReturnType, DealParameters } from '../../../types'
 import { checkDuplicateFileNames } from '../../utils/util'
@@ -22,7 +22,7 @@ export default async <T extends boolean>(
     const formData = new FormData()
     const boundary = Symbol()
     for (let i = 0; i < files.length; i++) {
-      formData.append('file', files[i])
+      formData.set('file', files[i])
     }
 
     const token = 'Bearer ' + accessToken

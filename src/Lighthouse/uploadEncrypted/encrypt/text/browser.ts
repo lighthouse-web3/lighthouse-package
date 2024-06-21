@@ -1,6 +1,6 @@
 /* istanbul ignore file */
 import axios from 'axios'
-import FormData from 'form-data'
+import { FormData } from 'formdata-node';
 import { encryptFile } from '../../encryptionBrowser'
 import { generate, saveShards } from '@lighthouse-web3/kavach'
 import { lighthouseConfig } from '../../../../lighthouse.config'
@@ -27,7 +27,7 @@ export default async (
       fileEncryptionKey
     )
 
-    formDdata.append('file', new Blob([encryptedData], {type: "text/plain"}), name)
+    formDdata.set('file', new Blob([encryptedData], { type: "text/plain" }), name)
 
     const boundary = Symbol()
     const response = await axios.post(endpoint, formDdata, {
