@@ -31,8 +31,8 @@ export default async (
         method: 'POST',
         body: formData,
         headers: {
-          'Encryption': 'true',
-          'Authorization': token,
+          Encryption: 'true',
+          Authorization: token,
         },
       })
 
@@ -40,7 +40,7 @@ export default async (
         throw new Error(`Request failed with status code ${response.status}`)
       }
 
-      const responseData = await response.json() as any
+      const responseData = (await response.json()) as any
 
       const { error } = await saveShards(
         publicKey,
@@ -83,8 +83,8 @@ export default async (
       method: 'POST',
       body: formData,
       headers: {
-        'Encryption': 'true',
-        'Authorization': token
+        Encryption: 'true',
+        Authorization: token,
       },
     })
 
