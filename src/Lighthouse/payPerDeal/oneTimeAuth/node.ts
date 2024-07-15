@@ -8,7 +8,6 @@ export default async (privateKey: string | undefined): Promise<string> => {
       throw new Error('Private key not provided!!!')
     }
     const signer = new ethers.Wallet(privateKey)
-    // Replace axios call with fetch
     const response = await fetch(
       `${lighthouseConfig.lighthouseAPI}/api/auth/get_message?publicKey=${signer.address}`
     )
