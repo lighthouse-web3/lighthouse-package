@@ -1,4 +1,3 @@
-import axios from 'axios'
 import { lighthouseConfig } from '../../../../lighthouse.config'
 import { generate, saveShards } from '@lighthouse-web3/kavach'
 import { encryptFile } from '../../encryptionNode'
@@ -9,9 +8,8 @@ export default async (
   sourcePath: any,
   apiKey: string,
   publicKey: string,
-  auth_token: string,
+  auth_token: string
 ): Promise<{ data: IFileUploadedResponse[] }> => {
-  const FormData = eval('require')('form-data')
   const fs = eval('require')('fs-extra')
   const token = 'Bearer ' + apiKey
   const endpoint =
@@ -20,34 +18,33 @@ export default async (
 
   if (stats.isFile()) {
     try {
-      // Upload file
       const formData = new FormData()
 
       const { masterKey: fileEncryptionKey, keyShards } = await generate()
 
       const fileData = fs.readFileSync(sourcePath)
       const encryptedData = await encryptFile(fileData, fileEncryptionKey)
-      const blob = new Blob([Buffer.from(encryptedData)]);
-      formData.set(
-        'file',
-        blob,
-        sourcePath.replace(/^.*[\\/]/, '')
-      )
+      const blob = new Blob([Buffer.from(encryptedData)])
+      formData.set('file', blob, sourcePath.replace(/^.*[\\/]/, ''))
 
-      const response = await axios.post(endpoint, formData, {
-        withCredentials: true,
-        maxContentLength: Infinity, //this is needed to prevent axios from erroring out with large directories
-        maxBodyLength: Infinity,
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        body: formData,
         headers: {
-          'Content-type': `multipart/form-data; boundary= ${formData.getBoundary()}`,
-          Encryption: 'true',
-          Authorization: token,
+          'Encryption': 'true',
+          'Authorization': token,
         },
       })
 
+      if (!response.ok) {
+        throw new Error(`Request failed with status code ${response.status}`)
+      }
+
+      const responseData = await response.json() as any
+
       const { error } = await saveShards(
         publicKey,
-        response.data.Hash,
+        responseData.Hash,
         auth_token,
         keyShards
       )
@@ -55,7 +52,7 @@ export default async (
         throw new Error('Error encrypting file')
       }
 
-      return { data: [response.data] }
+      return { data: [responseData] }
     } catch (error: any) {
       throw new Error(error.message)
     }
@@ -63,7 +60,7 @@ export default async (
     const files = await walk(sourcePath)
     const formData = new FormData()
 
-    if (files.length > 1 && auth_token.startsWith("0x")) {
+    if (files.length > 1 && auth_token.startsWith('0x')) {
       throw new Error(JSON.stringify(`auth_token must be a JWT`))
     }
 
@@ -71,44 +68,38 @@ export default async (
 
     await Promise.all(
       files.map(async (file: any) => {
-        // const mimeType = mime.lookup(file)
         const { masterKey: fileEncryptionKey, keyShards } = await generate()
 
         const fileData = fs.readFileSync(file)
         const encryptedData = await encryptFile(fileData, fileEncryptionKey)
         const filename = file.slice(sourcePath.length + 1).replaceAll('/', '-')
-        const blob = new Blob([Buffer.from(encryptedData)]);
-        await formData.set('file', blob, filename)
+        formData.append('file', new Blob([encryptedData]), filename)
         keyMap = { ...keyMap, [filename]: keyShards }
         return [filename, keyShards]
       })
     )
 
-    const token = 'Bearer ' + apiKey
-    const endpoint =
-      lighthouseConfig.lighthouseNode + '/api/v0/add?wrap-with-directory=false'
-    const response = await axios.post(endpoint, formData, {
-      withCredentials: true,
-      maxContentLength: Infinity, //this is needed to prevent axios from erroring out with large directories
-      maxBodyLength: Infinity,
+    const response = await fetch(endpoint, {
+      method: 'POST',
+      body: formData,
       headers: {
-        'Content-type': `multipart/form-data;`,
-        Encryption: 'true',
-        Authorization: token,
+        'Encryption': 'true',
+        'Authorization': token
       },
     })
+
+    if (!response.ok) {
+      throw new Error(`Request failed with status code ${response.status}`)
+    }
+
+    const responseText = await response.text()
     const jsondata = JSON.parse(
-      `[${response.data.slice(0, -1)}]`.split('\n').join(',')
+      `[${responseText.slice(0, -1)}]`.split('\n').join(',')
     ) as IFileUploadedResponse[]
 
     const savedKey = await Promise.all(
       jsondata.map(async (data) => {
-        return saveShards(
-          publicKey,
-          data.Hash,
-          auth_token,
-          keyMap[data.Name]
-        )
+        return saveShards(publicKey, data.Hash, auth_token, keyMap[data.Name])
       })
     )
     savedKey.forEach((_savedKey) => {

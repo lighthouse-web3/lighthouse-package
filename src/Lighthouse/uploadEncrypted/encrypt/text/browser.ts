@@ -1,6 +1,4 @@
 /* istanbul ignore file */
-import axios from 'axios'
-import { FormData } from 'formdata-node';
 import { encryptFile } from '../../encryptionBrowser'
 import { generate, saveShards } from '@lighthouse-web3/kavach'
 import { lighthouseConfig } from '../../../../lighthouse.config'
@@ -17,7 +15,7 @@ export default async (
     const endpoint = lighthouseConfig.lighthouseNode + '/api/v0/add'
 
     // Upload file
-    const formDdata = new FormData()
+    const formData = new FormData()
 
     const { masterKey: fileEncryptionKey, keyShards } = await generate()
 
@@ -27,24 +25,31 @@ export default async (
       fileEncryptionKey
     )
 
-    formDdata.set('file', new Blob([encryptedData], { type: "text/plain" }), name)
+    formData.set(
+      'file',
+      new Blob([encryptedData], { type: 'text/plain' }),
+      name
+    )
 
-    const boundary = Symbol()
-    const response = await axios.post(endpoint, formDdata, {
-      withCredentials: false,
-      maxContentLength: Infinity, //this is needed to prevent axios from erroring out with large directories
-      maxBodyLength: Infinity,
+    const response = await fetch(endpoint, {
+      method: 'POST',
+      body: formData,
       headers: {
-        'Content-type': `multipart/form-data; boundary= ${boundary.toString()}`,
         Encryption: 'true',
         'Mime-Type': 'text/plain',
         Authorization: token,
       },
     })
 
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`)
+    }
+
+    const responseData = (await response.json()) as any
+
     const { error } = await saveShards(
       publicKey,
-      response.data.Hash,
+      responseData.Hash,
       signedMessage,
       keyShards
     )
@@ -52,7 +57,7 @@ export default async (
     if (error) {
       throw new Error('Error encrypting file')
     }
-    return { data: response.data }
+    return { data: responseData }
   } catch (error: any) {
     throw new Error(error.message)
   }
