@@ -1,7 +1,5 @@
 /* istanbul ignore file */
-import axios from 'axios'
-import { FormData } from 'formdata-node';
-import { Blob } from 'buffer';
+import { Blob } from 'buffer'
 import { generate, saveShards } from '@lighthouse-web3/kavach'
 import {
   IFileUploadedResponse,
@@ -36,10 +34,6 @@ export default async (
 ): Promise<{ data: IFileUploadedResponse[] }> => {
   try {
     let keyMap = {} as any
-    // Generate fileEncryptionKey
-    // const { masterKey: fileEncryptionKey, keyShards } = await generate()
-
-    // Upload file
     let mimeType = null
     if (files.length === 1) {
       mimeType = files[0].type
@@ -54,12 +48,11 @@ export default async (
     }
     checkDuplicateFileNames(fileArr)
 
-    if (files.length > 1 && auth_token.startsWith("0x")) {
+    if (files.length > 1 && auth_token.startsWith('0x')) {
       throw new Error(JSON.stringify(`auth_token must be a JWT`))
     }
 
     const formData = new FormData()
-    const boundary = Symbol()
     const filesParam = await Promise.all(
       fileArr.map(async (f) => {
         const { masterKey: fileEncryptionKey, keyShards } = await generate()
@@ -81,41 +74,58 @@ export default async (
       )
     })
 
-    const response = await axios.post(endpoint, formData, {
-      maxContentLength: Infinity,
-      maxBodyLength: Infinity,
+    const controller = new AbortController()
+    const signal = controller.signal
+
+    const response = await fetch(endpoint, {
+      method: 'POST',
+      body: formData,
       headers: {
-        'Content-type': `multipart/form-data; boundary= ${boundary.toString()}`,
         Encryption: `${true}`,
         Authorization: token,
       },
-      onUploadProgress: function (progressEvent) {
-        if(progressEvent.total) {
-          const _progress = Math.round(progressEvent.loaded / progressEvent.total)
-          uploadProgressCallback({
-            progress: _progress,
-            total: progressEvent.total,
-            uploaded: progressEvent.loaded,
-          })
-        }
-      },
+      signal,
     })
-    if (typeof response.data === 'string') {
-      response.data = JSON.parse(
-        `[${response.data.slice(0, -1)}]`.split('\n').join(',')
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`)
+    }
+
+    const reader = response.body?.getReader()
+    const contentLength = +response.headers.get('Content-Length')!
+    let receivedLength = 0
+    let chunks = []
+    while (true) {
+      const { done, value } = await reader!.read()
+      if (done) {
+        break
+      }
+      chunks.push(value)
+      receivedLength += value.length
+      uploadProgressCallback({
+        progress: contentLength
+          ? Math.round(receivedLength / contentLength)
+          : 0,
+        total: contentLength || 0,
+        uploaded: receivedLength,
+      })
+    }
+
+    let responseData = new TextDecoder('utf-8').decode(
+      new Uint8Array(chunks.flatMap((chunk) => [...chunk]))
+    ) as any
+
+    if (typeof responseData === 'string') {
+      responseData = JSON.parse(
+        `[${responseData.slice(0, -1)}]`.split('\n').join(',')
       )
     } else {
-      response.data = [response.data]
+      responseData = [responseData]
     }
 
     const savedKey = await Promise.all(
-      response.data.map(async (data: IFileUploadedResponse) => {
-        return saveShards(
-          publicKey,
-          data.Hash,
-          auth_token,
-          keyMap[data.Name]
-        )
+      responseData.map(async (data: IFileUploadedResponse) => {
+        return saveShards(publicKey, data.Hash, auth_token, keyMap[data.Name])
       })
     )
     savedKey.forEach((_savedKey) => {
@@ -134,7 +144,8 @@ export default async (
         }]
       }
     */
-    return { data: response.data }
+
+    return { data: responseData }
   } catch (error: any) {
     return error.message
   }
