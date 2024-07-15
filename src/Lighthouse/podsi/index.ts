@@ -1,4 +1,3 @@
-import axios from 'axios'
 import { defaultConfig } from '../../lighthouse.config'
 
 type Proof = {
@@ -37,10 +36,17 @@ type PODSIData = {
 
 export default async (cid: string): Promise<{ data: PODSIData }> => {
   try {
-    const response = await axios.get(
+    const response = await fetch(
       defaultConfig.lighthouseAPI + `/api/lighthouse/get_proof?cid=${cid}`
     )
-    return { data: response.data }
+    if (!response.ok) {
+      if (response.status === 400) {
+        throw new Error("Proof Doesn't exist yet")
+      }
+      throw new Error(`Request failed with status code ${response.status}`)
+    }
+    const data = (await response.json()) as PODSIData
+    return { data }
   } catch (error: any) {
     if (error?.response?.status === 400) {
       throw new Error("Proof Doesn't exist yet")
