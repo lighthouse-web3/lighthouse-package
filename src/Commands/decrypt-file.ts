@@ -1,10 +1,8 @@
 import { red } from 'kleur'
 import fs from 'fs'
 import { ethers } from 'ethers'
-import axios from 'axios'
 import lighthouse from '../Lighthouse'
 import readInput from './utils/readInput'
-import { lighthouseConfig } from '../lighthouse.config'
 import { config } from './utils/getNetwork'
 import { sign_auth_message } from './utils/auth'
 
@@ -15,11 +13,7 @@ export default async function (cid: string, dynamicData = {}) {
     }
 
     // get file details
-    const fileDetails = (
-      await axios.get(
-        lighthouseConfig.lighthouseAPI + '/api/lighthouse/file_info?cid=' + cid
-      )
-    ).data
+    const fileDetails = (await lighthouse.getFileInfo(cid)).data
     if (!fileDetails) {
       throw new Error('Unable to get CID details.')
     }
