@@ -11,11 +11,11 @@ export interface IFileUploadedResponse {
 }
 
 export type DealParameters = {
-  miner: string[],
-  num_copies: number,
-  repair_threshold: number,
-  renew_threshold: number,
-  deal_duration: number,
+  miner: string[]
+  num_copies: number
+  repair_threshold: number
+  renew_threshold: number
+  deal_duration: number
   network: string
 }
 
