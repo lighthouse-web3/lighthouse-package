@@ -2,7 +2,6 @@ import chalk from 'kleur'
 import { ethers } from 'ethers'
 import { Spinner } from 'cli-spinner'
 import lighthouse from '../Lighthouse'
-import byteToSize from './utils/byteToSize'
 import { getNetwork, config } from './utils/getNetwork'
 import readInput from './utils/readInput'
 
