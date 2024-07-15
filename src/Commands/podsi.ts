@@ -32,9 +32,11 @@ export default async function (cid: any, options: any) {
         data.dealInfo[0].proof.inclusionProof.proofSubtree.index
       )
       console.log(green('Paths:'))
-      data.dealInfo[0].proof.inclusionProof.proofSubtree.path.forEach((path) => {
-        console.log(yellow('  -'), path)
-      })
+      data.dealInfo[0].proof.inclusionProof.proofSubtree.path.forEach(
+        (path) => {
+          console.log(yellow('  -'), path)
+        }
+      )
 
       console.log('\n' + bold().cyan('Deal Info:'))
       data.dealInfo.forEach((deal) => {
