@@ -14,10 +14,10 @@ export default async (password: string): Promise<createWalletResponse> => {
       lighthouseConfig.lighthouseAPI +
         `/api/auth/get_auth_message?publicKey=${wallet.address}`
     )
-    
+
     await response.json()
     if (!response.ok) {
-      throw new Error(`Error: ${response.json()}`);
+      throw new Error(`Error: ${response.json()}`)
     }
 
     const encryptedWallet = await wallet.encrypt(password)
