@@ -1,4 +1,3 @@
-import axios from 'axios'
 import { ethers } from 'ethers'
 import { lighthouseConfig } from '../../lighthouse.config'
 
@@ -11,10 +10,16 @@ export type createWalletResponse = {
 export default async (password: string): Promise<createWalletResponse> => {
   try {
     const wallet = ethers.Wallet.createRandom()
-    const _ = await axios.get(
+    const response = await fetch(
       lighthouseConfig.lighthouseAPI +
-        `/api/auth/get_message?publicKey=${wallet.address}`
+        `/api/auth/get_auth_message?publicKey=${wallet.address}`
     )
+    
+    await response.json()
+    if (!response.ok) {
+      throw new Error(`Error: ${response.json()}`);
+    }
+
     const encryptedWallet = await wallet.encrypt(password)
     /*
       return:
