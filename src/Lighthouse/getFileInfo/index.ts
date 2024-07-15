@@ -1,4 +1,3 @@
-import axios from 'axios'
 import { isCID } from '../utils/util'
 import { lighthouseConfig } from '../../lighthouse.config'
 
@@ -20,11 +19,13 @@ export default async (cid: string): Promise<fileInfoType> => {
     }
 
     // get file info
-    const fileInfo = (
-      await axios.get(
-        lighthouseConfig.lighthouseAPI + `/api/lighthouse/file_info?cid=${cid}`
-      )
-    ).data
+    const response = await fetch(
+      `${lighthouseConfig.lighthouseAPI}/api/lighthouse/file_info?cid=${cid}`
+    )
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`)
+    }
+    const fileInfo = (await response.json()) as any
     /*
       return:
         {

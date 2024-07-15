@@ -1,4 +1,3 @@
-import axios from 'axios'
 import { lighthouseConfig } from '../../lighthouse.config'
 
 export type balanceResponse = {
@@ -11,17 +10,20 @@ export type balanceResponse = {
 export default async (apiKey: string): Promise<balanceResponse> => {
   try {
     // Get users data usage
-    const userDataUsage = (
-      await axios.get(
-        lighthouseConfig.lighthouseAPI +
-          `/api/user/user_data_usage`,
-          {
-            headers: {
-              Authorization: `Bearer ${apiKey}`,
-            },
-          }
-      )
-    ).data
+    const response = await fetch(
+      lighthouseConfig.lighthouseAPI + `/api/user/user_data_usage`,
+      {
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+        },
+      }
+    )
+
+    if (!response.ok) {
+      throw new Error(`Request failed with status code ${response.status}`)
+    }
+
+    const userDataUsage = (await response.json()) as any
     /*
       return:
         { data: { dataLimit: 1073741824, dataUsed: 1062512300 } }

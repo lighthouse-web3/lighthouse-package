@@ -3,22 +3,32 @@ import { lighthouseConfig } from '../../lighthouse.config'
 
 export type publishRecordResponse = {
   data: {
-    Name: string,
+    Name: string
     Value: string
   }
 }
 
-export default async (cid: string, key: string, apiKey: string): Promise<publishRecordResponse> => {
+export default async (
+  cid: string,
+  key: string,
+  apiKey: string
+): Promise<publishRecordResponse> => {
   try {
-    const response = await axios.get(
+    const url =
       lighthouseConfig.lighthouseAPI +
-        `/api/ipns/publish_record?cid=${cid}&keyName=${key}`,
-      {
-        headers: {
-          Authorization: `Bearer ${apiKey}`,
-        },
-      }
-    )
+      `/api/ipns/publish_record?cid=${cid}&keyName=${key}`
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+      },
+    })
+
+    if (!response.ok) {
+      throw new Error(`Request failed with status code ${response.status}`)
+    }
+
+    const data = (await response.json()) as any
     /*
       return:
         {
@@ -28,7 +38,7 @@ export default async (cid: string, key: string, apiKey: string): Promise<publish
           }
         }
     */
-    return { data: response.data }
+    return { data: data }
   } catch (error: any) {
     throw new Error(error.message)
   }

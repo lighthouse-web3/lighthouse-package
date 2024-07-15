@@ -15,15 +15,19 @@ export type keyDataResponse = {
 
 export default async (apiKey: string): Promise<keyDataResponse> => {
   try {
-    const response = await axios.get(
-      lighthouseConfig.lighthouseAPI +
-        `/api/ipns/get_ipns_records`,
+    const response = await fetch(
+      lighthouseConfig.lighthouseAPI + `/api/ipns/get_ipns_records`,
       {
         headers: {
           Authorization: `Bearer ${apiKey}`,
+          'Content-Type': 'application/json',
         },
       }
     )
+    if (!response.ok) {
+      throw new Error(`Request failed with status code ${response.status}`)
+    }
+    const data = (await response.json()) as ipnsObject[]
     /*
       return:
         {
@@ -38,7 +42,7 @@ export default async (apiKey: string): Promise<keyDataResponse> => {
           ]
         }
     */
-    return { data: response.data }
+    return { data: data }
   } catch (error: any) {
     throw new Error(error.message)
   }
