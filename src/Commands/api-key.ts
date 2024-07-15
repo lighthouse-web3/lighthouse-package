@@ -1,4 +1,3 @@
-import axios from 'axios'
 import { yellow, green, red } from 'kleur'
 import { ethers } from 'ethers'
 import lighthouse from '../Lighthouse'
@@ -37,23 +36,25 @@ export default async (data: any, options: any) => {
             password.trim()
           )
 
-          const verificationMessage = (
-            await axios.get(
-              lighthouseConfig.lighthouseAPI +
-                `/api/auth/get_message?publicKey=${decryptedWallet.address}`
-            )
-          ).data
+          const response = await fetch(
+            lighthouseConfig.lighthouseAPI +
+              `/api/auth/get_message?publicKey=${decryptedWallet.address}`
+          )
+          if (!response.ok) {
+            throw new Error(`Request failed with status ${response.status}`)
+          }
+          const verificationMessage = (await response.json()) as string
           const signedMessage = await decryptedWallet.signMessage(
             verificationMessage
           )
 
-          const response = await lighthouse.getApiKey(
+          const keyResponse = await lighthouse.getApiKey(
             decryptedWallet.address,
             signedMessage
           )
 
-          config.set('LIGHTHOUSE_GLOBAL_API_KEY', response.data.apiKey)
-          console.log(yellow('\r\nApi Key: ') + response.data.apiKey)
+          config.set('LIGHTHOUSE_GLOBAL_API_KEY', keyResponse.data.apiKey)
+          console.log(yellow('\r\nApi Key: ') + keyResponse.data.apiKey)
         }
       } catch (error: any) {
         console.log(red(error.message))
