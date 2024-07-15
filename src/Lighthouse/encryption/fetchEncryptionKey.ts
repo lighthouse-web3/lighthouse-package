@@ -13,7 +13,13 @@ export default async (
   dynamicData = {},
   shardCount = 3
 ): Promise<fetchEncryptionKeyResponse> => {
-  const { error, shards } = await recoverShards(publicKey, cid, signedMessage, shardCount, dynamicData)
+  const { error, shards } = await recoverShards(
+    publicKey,
+    cid,
+    signedMessage,
+    shardCount,
+    dynamicData
+  )
   if (error) {
     throw error
   }
