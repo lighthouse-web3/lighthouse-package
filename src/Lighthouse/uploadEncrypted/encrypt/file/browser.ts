@@ -1,5 +1,4 @@
 /* istanbul ignore file */
-import { Blob } from 'buffer'
 import { generate, saveShards } from '@lighthouse-web3/kavach'
 import {
   IFileUploadedResponse,

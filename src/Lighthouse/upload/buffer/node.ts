@@ -1,4 +1,3 @@
-import { Blob } from 'buffer'
 import { lighthouseConfig } from '../../../lighthouse.config'
 
 export default async (buffer: any, apiKey: string, mimeType = '') => {
