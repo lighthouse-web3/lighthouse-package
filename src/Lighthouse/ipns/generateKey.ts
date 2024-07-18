@@ -1,24 +1,27 @@
-import axios from 'axios'
 import { lighthouseConfig } from '../../lighthouse.config'
 
 export type generateKeyResponse = {
   data: {
-    ipnsName: string,
+    ipnsName: string
     ipnsId: string
   }
 }
 
 export default async (apiKey: string): Promise<generateKeyResponse> => {
   try {
-    const key = await axios.get(
-      lighthouseConfig.lighthouseAPI +
-        `/api/ipns/generate_key`,
+    const response = await fetch(
+      lighthouseConfig.lighthouseAPI + `/api/ipns/generate_key`,
       {
         headers: {
           Authorization: `Bearer ${apiKey}`,
+          'Content-Type': 'application/json', // Ensure headers are set for JSON
         },
       }
     )
+    if (!response.ok) {
+      throw new Error(`Request failed with status code ${response.status}`)
+    }
+    const key = (await response.json()) as any
     /*
       return:
         {
@@ -28,7 +31,7 @@ export default async (apiKey: string): Promise<generateKeyResponse> => {
           }
         }
     */
-    return { data: key.data }
+    return { data: key }
   } catch (error: any) {
     throw new Error(error.message)
   }

@@ -1,5 +1,3 @@
-import axios from 'axios'
-import FormData from 'form-data'
 import { lighthouseConfig } from '../../../lighthouse.config'
 
 export default async (blob: any, apiKey: string, mimeType = '') => {
@@ -9,23 +7,25 @@ export default async (blob: any, apiKey: string, mimeType = '') => {
 
     // Upload file
     const formData = new FormData()
+    formData.set('file', blob)
 
-    formData.append('file', blob)
-    const boundary = Symbol()
-
-    const response = await axios.post(endpoint, formData, {
-      withCredentials: false,
-      maxContentLength: Infinity, //this is needed to prevent axios from erroring out with large directories
-      maxBodyLength: Infinity,
+    const response = await fetch(endpoint, {
+      method: 'POST',
+      body: formData,
       headers: {
-        'Content-type': `multipart/form-data; boundary= ${boundary.toString()}`,
         Encryption: 'false',
         'Mime-Type': mimeType,
         Authorization: token,
       },
     })
 
-    return { data: response.data }
+    if (!response.ok) {
+      throw new Error(`Request failed with status code ${response.status}`)
+    }
+
+    const data = await response.json()
+
+    return { data }
   } catch (error: any) {
     throw new Error(error?.message)
   }

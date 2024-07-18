@@ -1,4 +1,3 @@
-import axios from 'axios'
 import { ethers } from 'ethers'
 import { lighthouseConfig } from '../../lighthouse.config'
 import lighthouse from '..'
@@ -10,13 +9,19 @@ describe('getApiKey', () => {
   let verificationMessage: any
 
   it('should get verification message from server using public key', async () => {
-    verificationMessage = await axios.get(
-      lighthouseConfig.lighthouseAPI +
-        `/api/auth/get_message?publicKey=${publicKey}`
+    verificationMessage = await fetch(
+      `${lighthouseConfig.lighthouseAPI}/api/auth/get_auth_message?publicKey=${publicKey}`,
+      {
+        method: 'GET',
+      }
     )
 
-    expect(verificationMessage.status).toEqual(200)
-    expect(verificationMessage.data).toMatch(/^Please prove you are the owner/)
+    if (!verificationMessage.ok) {
+      throw new Error(`HTTP error! status: ${verificationMessage.status}`)
+    }
+
+    verificationMessage = await verificationMessage.json()
+    expect(verificationMessage).toMatch(/^Please prove you are the owner/)
   }, 60000)
 
   it('should not allow random private key to sign message and get API Key', async () => {

@@ -1,4 +1,3 @@
-import axios from 'axios'
 import { lighthouseConfig } from '../../lighthouse.config'
 
 export type getAccessConditionResponse = {
@@ -7,12 +6,16 @@ export type getAccessConditionResponse = {
 
 export default async (cid: string): Promise<getAccessConditionResponse> => {
   try {
-    const conditions = await axios.get(
+    const response = await fetch(
       lighthouseConfig.lighthouseBLSNode +
         `/api/fileAccessConditions/get/${cid}`
     )
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`)
+    }
+    const conditions = await response.json()
 
-    return { data: conditions.data }
+    return { data: conditions }
   } catch (error: any) {
     throw new Error(error.message)
   }

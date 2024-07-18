@@ -1,4 +1,3 @@
-import axios from 'axios'
 import { lighthouseConfig } from '../../lighthouse.config'
 
 type ipnsObject = {
@@ -8,21 +7,28 @@ type ipnsObject = {
 
 export type removeRecordResponse = {
   data: {
-    Keys: ipnsObject[],
+    Keys: ipnsObject[]
   }
 }
 
-export default async (key: string, apiKey: string): Promise<removeRecordResponse> => {
+export default async (
+  key: string,
+  apiKey: string
+): Promise<removeRecordResponse> => {
   try {
-    const response = await axios.delete(
-      lighthouseConfig.lighthouseAPI +
-        `/api/ipns/remove_key?keyName=${key}`,
-      {
-        headers: {
-          Authorization: `Bearer ${apiKey}`,
-        },
-      }
-    )
+    const url =
+      lighthouseConfig.lighthouseAPI + `/api/ipns/remove_key?keyName=${key}`
+    const response = await fetch(url, {
+      method: 'DELETE',
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+      },
+    })
+
+    if (!response.ok) {
+      throw new Error(`Request failed with status code ${response.status}`)
+    }
+    const data = (await response.json()) as any
     /*
       return:
         {
@@ -36,7 +42,7 @@ export default async (key: string, apiKey: string): Promise<removeRecordResponse
           }
         }
     */
-    return { data: response.data }
+    return { data: data }
   } catch (error: any) {
     throw new Error(error.message)
   }

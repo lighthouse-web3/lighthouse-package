@@ -28,7 +28,7 @@ const defaultConfig = {
     usdt_contract_decimal: 6,
     usdc_contract_decimal: 6,
     dai_contract_decimal: 18,
-    native_decimal: 18
+    native_decimal: 18,
   },
   binance: {
     symbol: 'BNB',
@@ -64,7 +64,7 @@ const defaultConfig = {
     usdc_contract_decimal: 6,
     native_decimal: 18,
   },
-  'calibration': {
+  calibration: {
     symbol: 'FIL',
     rpc: 'https://api.calibration.node.glif.io/rpc/v1',
     scan: 'https://calibration.filfox.info/en/message/',
@@ -72,7 +72,7 @@ const defaultConfig = {
     lighthouse_contract_address: '0x808a85bbFD82369A3B0c6eFFd4Be1d475F05a6a0',
     usdt_contract_address: '0xA471B7936906fF810865e52AF86C12B9865C850A',
     usdt_contract_decimal: 18,
-    native_decimal: 18
+    native_decimal: 18,
   },
   'fantom-testnet': {
     symbol: 'FTM',

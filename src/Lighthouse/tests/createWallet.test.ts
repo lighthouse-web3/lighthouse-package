@@ -31,7 +31,9 @@ describe('createWallet', () => {
       )
     } catch (error) {
       // console.log(error.message)
-      expect(error.message).toEqual('incorrect password (argument=\"password\", value=\"[ REDACTED ]\", code=INVALID_ARGUMENT, version=6.8.1)')
+      expect(error.message).toEqual(
+        'incorrect password (argument="password", value="[ REDACTED ]", code=INVALID_ARGUMENT, version=6.8.1)'
+      )
     }
   }, 20000)
 

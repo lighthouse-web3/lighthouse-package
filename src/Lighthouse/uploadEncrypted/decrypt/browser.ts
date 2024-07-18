@@ -1,5 +1,4 @@
 /* istanbul ignore file */
-import axios from 'axios'
 import { decryptFile } from '../encryptionBrowser'
 import { lighthouseConfig } from '../../../lighthouse.config'
 
@@ -8,16 +7,20 @@ export default async (
   fileEncryptionKey: string,
   mimeType: string
 ) => {
-  const result = await axios.post(
+  const response = await fetch(
     lighthouseConfig.lighthouseGateway + '/api/v0/cat/' + cid,
-    null,
     {
-      responseType: 'blob',
+      method: 'POST',
     }
   )
 
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`)
+  }
+
+  const result = await response.blob()
   const decrypted = await decryptFile(
-    await result.data.arrayBuffer(),
+    await result.arrayBuffer(),
     fileEncryptionKey
   )
 

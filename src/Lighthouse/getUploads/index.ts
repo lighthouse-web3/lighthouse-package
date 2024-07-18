@@ -1,4 +1,3 @@
-import axios from 'axios'
 import { lighthouseConfig } from '../../lighthouse.config'
 
 type fileObject = {
@@ -24,20 +23,25 @@ export type uploadsResponseType = {
 
 export default async (
   authToken: string,
-  lastKey: string|null = null
+  lastKey: string | null = null
 ): Promise<uploadsResponseType> => {
   try {
-    const uploads = (
-      await axios.get(
-        lighthouseConfig.lighthouseAPI +
-          `/api/user/files_uploaded?lastKey=${lastKey}`,
-        {
-          headers: {
-            Authorization: `Bearer ${authToken}`,
-          },
-        }
-      )
-    ).data
+    const response = await fetch(
+      lighthouseConfig.lighthouseAPI +
+        `/api/user/files_uploaded?lastKey=${lastKey}`,
+      {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+          'Content-Type': 'application/json',
+        },
+      }
+    )
+
+    if (!response.ok) {
+      throw new Error(`Request failed with status code ${response.status}`)
+    }
+
+    const uploads = (await response.json()) as any
 
     /*
       {

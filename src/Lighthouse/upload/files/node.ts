@@ -1,5 +1,3 @@
-import axios from 'axios'
-import FormData from 'form-data'
 import basePathConvert from '../../utils/basePathConvert'
 import { lighthouseConfig } from '../../../lighthouse.config'
 import { UploadFileReturnType, DealParameters } from '../../../types'
@@ -27,7 +25,7 @@ export default async <T extends boolean>(
   sourcePath: string,
   apiKey: string,
   multi: boolean,
-  dealParameters: DealParameters|undefined,
+  dealParameters: DealParameters | undefined
 ): Promise<{ data: UploadFileReturnType<T> }> => {
   const { createReadStream, lstatSync } = eval(`require`)('fs-extra')
   const path = eval(`require`)('path')
@@ -39,81 +37,93 @@ export default async <T extends boolean>(
       lighthouseConfig.lighthouseNode +
       `/api/v0/add?wrap-with-directory=${multi}`
     if (stats.isFile()) {
-      //we need to create a single read stream instead of reading the directory recursively
       const data = new FormData()
+      const stream = createReadStream(sourcePath)
+      const buffers = []
+      for await (const chunk of stream) {
+        buffers.push(chunk)
+      }
+      const blob = new Blob(buffers)
 
-      data.append('file', createReadStream(sourcePath))
+      data.set('file', blob, path.basename(sourcePath))
 
-      const response = await axios.post(endpoint, data, {
-        withCredentials: true,
-        maxContentLength: Infinity, //this is needed to prevent axios from erroring out with large directories
-        maxBodyLength: Infinity,
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        body: data,
+        credentials: 'include',
         headers: {
-          'Content-type': `multipart/form-data; boundary= ${data.getBoundary()}`,
           Encryption: 'false',
           Authorization: token,
-          'X-Deal-Parameter': dealParameters?JSON.stringify(dealParameters):'null'
+          'X-Deal-Parameter': dealParameters
+            ? JSON.stringify(dealParameters)
+            : 'null',
         },
       })
 
-      if (multi) {
-        const temp = response.data.split('\n')
-        response.data = JSON.parse(temp[temp.length - 2])
+      if (!response.ok) {
+        throw new Error(`Request failed with status code ${response.status}`)
       }
 
-      return { data: response.data }
+      let responseData = (await response.text()) as any
+      console.log(responseData)
+      if (multi) {
+        const temp = responseData.split('\n')
+        responseData = JSON.parse(temp[temp.length - 2])
+      } else {
+        responseData = JSON.parse(responseData)
+      }
+
+      return { data: responseData }
     } else {
       const files = await walk(sourcePath)
       const data = new FormData()
 
-      files.forEach((file: any) => {
-        //for each file stream, we need to include the correct relative file path
-        data.append(
-          'file',
-          createReadStream(file),
-          multi
-            ? {
-                filename: path.basename(file),
-              }
-            : {
-                filepath: basePathConvert(sourcePath, file),
-              }
-        )
-      })
+      for (const file of files) {
+        const stream = createReadStream(file)
+        const buffers: any = []
+        for await (const chunk of stream) {
+          buffers.push(chunk)
+        }
+        const blob = new Blob(buffers)
 
-      const response = await axios.post(endpoint, data, {
-        withCredentials: true,
-        maxContentLength: Infinity,
-        maxBodyLength: Infinity, //this is needed to prevent axios from erroring out with large directories
+        data.set(
+          'file',
+          blob,
+          multi ? path.basename(file) : basePathConvert(sourcePath, file)
+        )
+      }
+
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        body: data,
+        credentials: 'include',
         headers: {
-          'Content-type': `multipart/form-data; boundary= ${data.getBoundary()}`,
           Encryption: 'false',
           Authorization: token,
-          'X-Deal-Parameter': dealParameters?JSON.stringify(dealParameters):'null'
+          'X-Deal-Parameter': dealParameters
+            ? JSON.stringify(dealParameters)
+            : 'null',
         },
       })
 
-      if (typeof response.data === 'string') {
-        if(multi){
-          response.data = JSON.parse(
-            `[${response.data.slice(0, -1)}]`.split('\n').join(',')
+      if (!response.ok) {
+        throw new Error(`Request failed with status code ${response.status}`)
+      }
+
+      let responseData = (await response.text()) as any
+
+      if (typeof responseData === 'string') {
+        if (multi) {
+          responseData = JSON.parse(
+            `[${responseData.slice(0, -1)}]`.split('\n').join(',')
           )
         } else {
-          const temp = response.data.split('\n')
-          response.data = JSON.parse(temp[temp.length - 2])
+          const temp = responseData.split('\n')
+          responseData = JSON.parse(temp[temp.length - 2])
         }
       }
 
-      /*
-        {
-          data: {
-            Name: 'flow1.png',
-            Hash: 'QmUHDKv3NNL1mrg4NTW4WwJqetzwZbGNitdjr2G6Z5Xe6s',
-            Size: '31735' 
-          }
-        }
-      */
-      return { data: response.data }
+      return { data: responseData }
     }
   } catch (error: any) {
     throw new Error(error.message)

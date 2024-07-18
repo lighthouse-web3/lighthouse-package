@@ -1,4 +1,3 @@
-import axios from 'axios'
 import { lighthouseConfig } from '../../lighthouse.config'
 
 type dealData = {
@@ -28,13 +27,14 @@ export type dealResponse = {
 
 export default async (cid: string): Promise<dealResponse> => {
   try {
-    const dealStatus = (
-      await axios.get(
-        lighthouseConfig.lighthouseAPI +
-          `/api/lighthouse/deal_status?cid=${cid}`
-      )
-    ).data
-    
+    const response = await fetch(
+      `${lighthouseConfig.lighthouseAPI}/api/lighthouse/deal_status?cid=${cid}`
+    )
+    if (!response.ok) {
+      throw new Error(`Request failed with status code ${response.status}`)
+    }
+    const dealStatus: dealData[] = (await response.json()) as dealData[]
+
     return { data: dealStatus }
   } catch (error: any) {
     throw new Error(error.message)

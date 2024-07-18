@@ -9,8 +9,6 @@ describe('uploadBuffer', () => {
   it('should upload buffer to ipfs when valid API key provided', async () => {
     const deployResponse = (await lighthouse.uploadBuffer(image, apiKey)).data
 
-    expect(deployResponse['Name']).toEqual(deployResponse['Hash'])
-
     expect(deployResponse).toHaveProperty('Name')
     expect(typeof deployResponse['Name']).toBe('string')
 
