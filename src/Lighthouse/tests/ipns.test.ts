@@ -1,7 +1,4 @@
-import { ethers } from 'ethers'
-import axios from 'axios'
 import lighthouse from '../../Lighthouse'
-import { lighthouseConfig } from '../../lighthouse.config'
 import 'dotenv/config'
 
 describe('ipns', () => {
