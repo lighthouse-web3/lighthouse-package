@@ -46,7 +46,7 @@ export default async <T extends boolean>(
       }
       const blob = new Blob(buffers)
 
-      data.set('file', blob, path.basename(sourcePath))
+      data.append('file', blob, path.basename(sourcePath))
 
       const response = await retryFetch(endpoint, {
         method: 'POST',

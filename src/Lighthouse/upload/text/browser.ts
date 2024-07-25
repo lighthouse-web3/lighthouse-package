@@ -9,7 +9,7 @@ export default async (text: string, apiKey: string, name: string) => {
     // Upload file
     const formData = new FormData()
     const blob = new Blob([text], { type: 'text/plain' })
-    formData.set('file', blob, name)
+    formData.append('file', blob, name)
 
     const response = await retryFetch(endpoint, {
       method: 'POST',

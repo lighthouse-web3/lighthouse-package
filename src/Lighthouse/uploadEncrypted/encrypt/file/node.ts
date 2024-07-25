@@ -26,7 +26,7 @@ export default async (
       const fileData = fs.readFileSync(sourcePath)
       const encryptedData = await encryptFile(fileData, fileEncryptionKey)
       const blob = new Blob([Buffer.from(encryptedData)])
-      formData.set('file', blob, sourcePath.replace(/^.*[\\/]/, ''))
+      formData.append('file', blob, sourcePath.replace(/^.*[\\/]/, ''))
 
       const response = await retryFetch(endpoint, {
         method: 'POST',

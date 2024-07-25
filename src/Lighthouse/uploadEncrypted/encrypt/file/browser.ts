@@ -66,7 +66,7 @@ export default async (
       })
     )
     filesParam.forEach(function (item_) {
-      return formData.set(
+      return formData.append(
         'file',
         item_.data,
         item_.fileName ? item_.fileName : 'file'

@@ -10,7 +10,7 @@ export default async (text: string, apiKey: string, name: string) => {
     const formData = new FormData()
     const blob = new Blob([Buffer.from(text)])
 
-    formData.set('file', blob, name)
+    formData.append('file', blob, name)
 
     const response = await retryFetch(endpoint, {
       method: 'POST',

@@ -25,7 +25,7 @@ export default async (
       fileEncryptionKey
     )
     const blob = new Blob([Buffer.from(encryptedData)])
-    formData.set('file', blob, name)
+    formData.append('file', blob, name)
 
     const response = await retryFetch(endpoint, {
       method: 'POST',

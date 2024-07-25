@@ -26,7 +26,7 @@ export default async (
       fileEncryptionKey
     )
 
-    formData.set(
+    formData.append(
       'file',
       new Blob([encryptedData], { type: 'text/plain' }),
       name
