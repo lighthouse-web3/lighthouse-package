@@ -2,6 +2,7 @@
 import { encryptFile } from '../../encryptionNode'
 import { generate, saveShards } from '@lighthouse-web3/kavach'
 import { lighthouseConfig } from '../../../../lighthouse.config'
+import { retryFetch } from '../../../utils/util'
 
 export default async (
   text: string,
@@ -26,10 +27,11 @@ export default async (
     const blob = new Blob([Buffer.from(encryptedData)])
     formData.set('file', blob, name)
 
-    const response = await fetch(endpoint, {
+    const response = await retryFetch(endpoint, {
       method: 'POST',
       body: formData,
       credentials: 'include',
+      timeout: 7200000,
       headers: {
         Encryption: 'true',
         'Mime-Type': 'text/plain',

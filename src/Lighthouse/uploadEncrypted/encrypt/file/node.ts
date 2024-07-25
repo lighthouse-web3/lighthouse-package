@@ -3,6 +3,7 @@ import { generate, saveShards } from '@lighthouse-web3/kavach'
 import { encryptFile } from '../../encryptionNode'
 import { walk } from '../../../upload/files/node'
 import { IFileUploadedResponse } from '../../../../types'
+import { retryFetch } from '../../../utils/util'
 
 export default async (
   sourcePath: any,
@@ -27,9 +28,10 @@ export default async (
       const blob = new Blob([Buffer.from(encryptedData)])
       formData.set('file', blob, sourcePath.replace(/^.*[\\/]/, ''))
 
-      const response = await fetch(endpoint, {
+      const response = await retryFetch(endpoint, {
         method: 'POST',
         body: formData,
+        timeout: 7200000,
         headers: {
           Encryption: 'true',
           Authorization: token,
@@ -79,9 +81,10 @@ export default async (
       })
     )
 
-    const response = await fetch(endpoint, {
+    const response = await retryFetch(endpoint, {
       method: 'POST',
       body: formData,
+      timeout: 7200000,
       headers: {
         Encryption: 'true',
         Authorization: token,
