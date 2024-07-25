@@ -1,4 +1,5 @@
 import { lighthouseConfig } from '../../../lighthouse.config'
+import { retryFetch } from '../../utils/util'
 
 export default async (text: string, apiKey: string, name: string) => {
   try {
@@ -8,11 +9,12 @@ export default async (text: string, apiKey: string, name: string) => {
     // Upload file
     const formData = new FormData()
     const blob = new Blob([text], { type: 'text/plain' })
-    formData.set('file', blob, name)
+    formData.append('file', blob, name)
 
-    const response = await fetch(endpoint, {
+    const response = await retryFetch(endpoint, {
       method: 'POST',
       body: formData,
+      timeout: 7200000,
       headers: {
         Encryption: 'false',
         'Mime-Type': 'text/plain',

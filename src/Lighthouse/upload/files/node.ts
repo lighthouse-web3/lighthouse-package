@@ -1,6 +1,7 @@
 import basePathConvert from '../../utils/basePathConvert'
 import { lighthouseConfig } from '../../../lighthouse.config'
 import { UploadFileReturnType, DealParameters } from '../../../types'
+import { retryFetch } from '../../utils/util'
 
 export async function walk(dir: string) {
   const { readdir, stat } = eval(`require`)('fs-extra')
@@ -39,18 +40,19 @@ export default async <T extends boolean>(
     if (stats.isFile()) {
       const data = new FormData()
       const stream = createReadStream(sourcePath)
-      const buffers = []
+      const buffers: Buffer[] = []
       for await (const chunk of stream) {
         buffers.push(chunk)
       }
       const blob = new Blob(buffers)
 
-      data.set('file', blob, path.basename(sourcePath))
+      data.append('file', blob, path.basename(sourcePath))
 
-      const response = await fetch(endpoint, {
+      const response = await retryFetch(endpoint, {
         method: 'POST',
         body: data,
         credentials: 'include',
+        timeout: 7200000,
         headers: {
           Encryption: 'false',
           Authorization: token,
@@ -65,7 +67,6 @@ export default async <T extends boolean>(
       }
 
       let responseData = (await response.text()) as any
-      console.log(responseData)
       if (multi) {
         const temp = responseData.split('\n')
         responseData = JSON.parse(temp[temp.length - 2])
@@ -80,23 +81,24 @@ export default async <T extends boolean>(
 
       for (const file of files) {
         const stream = createReadStream(file)
-        const buffers: any = []
+        const buffers: Buffer[] = []
         for await (const chunk of stream) {
           buffers.push(chunk)
         }
         const blob = new Blob(buffers)
 
-        data.set(
+        data.append(
           'file',
           blob,
           multi ? path.basename(file) : basePathConvert(sourcePath, file)
         )
       }
 
-      const response = await fetch(endpoint, {
+      const response = await retryFetch(endpoint, {
         method: 'POST',
         body: data,
         credentials: 'include',
+        timeout: 7200000,
         headers: {
           Encryption: 'false',
           Authorization: token,

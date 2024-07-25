@@ -6,7 +6,7 @@ import {
 } from '../../../../types'
 import { encryptFile } from '../../encryptionBrowser'
 import { lighthouseConfig } from '../../../../lighthouse.config'
-import { checkDuplicateFileNames } from '../../../utils/util'
+import { checkDuplicateFileNames, retryFetch } from '../../../utils/util'
 
 declare const FileReader: any
 
@@ -66,7 +66,7 @@ export default async (
       })
     )
     filesParam.forEach(function (item_) {
-      return formData.set(
+      return formData.append(
         'file',
         item_.data,
         item_.fileName ? item_.fileName : 'file'
@@ -75,17 +75,16 @@ export default async (
 
     const controller = new AbortController()
     const signal = controller.signal
-
-    const response = await fetch(endpoint, {
+    const response = await retryFetch(endpoint, {
       method: 'POST',
       body: formData,
+      timeout: 7200000,
       headers: {
         Encryption: `${true}`,
         Authorization: token,
       },
       signal,
     })
-
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`)
     }

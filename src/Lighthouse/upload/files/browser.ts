@@ -5,7 +5,7 @@ import {
   UploadFileReturnType,
   DealParameters,
 } from '../../../types'
-import { checkDuplicateFileNames } from '../../utils/util'
+import { checkDuplicateFileNames, retryFetch } from '../../utils/util'
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 export default async <T extends boolean>(
@@ -35,10 +35,11 @@ export default async <T extends boolean>(
         : 'null',
     })
 
-    const response = await fetch(endpoint, {
+    const response = await retryFetch(endpoint, {
       method: 'POST',
       body: formData,
       headers: headers,
+      timeout: 7200000,
     })
 
     if (!response.ok) {
