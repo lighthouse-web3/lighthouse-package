@@ -2,6 +2,7 @@ import { ethers } from 'ethers'
 
 interface FetchOptions extends RequestInit {
   timeout?: number
+  onProgress?: (progress: number) => void
 }
 
 const isCID = (cid: string) => {
@@ -41,17 +42,85 @@ async function fetchWithTimeout(
   resource: string,
   options: FetchOptions
 ): Promise<Response> {
-  const { timeout = 8000, ...rest } = options
+  const { timeout = 8000, onProgress, ...rest } = options
 
   const controller = new AbortController()
   const id = setTimeout(() => controller.abort(), timeout)
+
   try {
-    const response = await fetch(resource, {
-      ...rest,
-      signal: controller.signal,
-    })
-    clearTimeout(id)
-    return response
+    if (onProgress && rest.body instanceof FormData) {
+      return new Promise<Response>((resolve, reject) => {
+        const xhr = new XMLHttpRequest()
+        xhr.open(rest.method || 'GET', resource)
+
+        if (rest.headers) {
+          if (rest.headers instanceof Headers) {
+            rest.headers.forEach((value, key) => {
+              xhr.setRequestHeader(key, value)
+            })
+          } else if (typeof rest.headers === 'object') {
+            for (const [key, value] of Object.entries(rest.headers)) {
+              xhr.setRequestHeader(key, value as string)
+            }
+          }
+        }
+
+        xhr.timeout = timeout
+        xhr.onload = () => {
+          const headers = new Headers()
+          xhr
+            .getAllResponseHeaders()
+            .trim()
+            .split(/[\r\n]+/)
+            .forEach((line) => {
+              const parts = line.split(': ')
+              const header = parts.shift()
+              const value = parts.join(': ')
+              if (header) headers.set(header, value)
+            })
+
+          resolve(
+            new Response(xhr.response, {
+              status: xhr.status,
+              statusText: xhr.statusText,
+              headers: headers,
+            })
+          )
+        }
+        xhr.onerror = () => reject(new Error('Network error'))
+        xhr.ontimeout = () => reject(new Error('Request timed out'))
+        xhr.upload.onprogress = (event: ProgressEvent) => {
+          if (event.lengthComputable) {
+            onProgress(event.loaded / event.total)
+          }
+        }
+
+        // Handle different body types
+        if (rest.body instanceof FormData) {
+          xhr.send(rest.body)
+        } else if (rest.body instanceof ReadableStream) {
+          // Convert ReadableStream to Blob and then send
+          new Response(rest.body).blob().then((blob) => xhr.send(blob))
+        } else if (
+          typeof rest.body === 'string' ||
+          rest.body instanceof Blob ||
+          rest.body instanceof ArrayBuffer
+        ) {
+          xhr.send(rest.body)
+        } else if (rest.body == null) {
+          xhr.send()
+        } else {
+          reject(new Error('Unsupported body type'))
+        }
+      })
+    } else {
+      const response = await fetch(resource, {
+        ...rest,
+        signal: controller.signal,
+      })
+      clearTimeout(id)
+      return response
+    }
   } catch (error) {
     clearTimeout(id)
     throw error
