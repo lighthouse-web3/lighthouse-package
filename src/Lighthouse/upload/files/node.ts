@@ -67,7 +67,6 @@ export default async <T extends boolean>(
       }
 
       let responseData = (await response.text()) as any
-      console.log(responseData)
       if (multi) {
         const temp = responseData.split('\n')
         responseData = JSON.parse(temp[temp.length - 2])
@@ -88,7 +87,7 @@ export default async <T extends boolean>(
         }
         const blob = new Blob(buffers)
 
-        data.set(
+        data.append(
           'file',
           blob,
           multi ? path.basename(file) : basePathConvert(sourcePath, file)
