@@ -132,17 +132,7 @@ async function retryFetch(
   options: FetchOptions,
   retries = 3
 ): Promise<Response> {
-  for (let i = 0; i < retries; i++) {
-    try {
-      return await fetchWithTimeout(resource, options)
-    } catch (error) {
-      if (i < retries - 1) {
-      } else {
-        throw error
-      }
-    }
-  }
-  throw new Error('fetch failed')
+  return await fetchWithTimeout(resource, options)
 }
 
 export {
