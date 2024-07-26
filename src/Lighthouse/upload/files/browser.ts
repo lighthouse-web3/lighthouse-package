@@ -44,8 +44,6 @@ export default async <T extends boolean>(
           onProgress: (progress) => {
             uploadProgressCallback({
               progress: progress,
-              total: 100, // We don't have the total size here, so we're using 100 as a percentage
-              uploaded: progress * 100,
             })
           },
         })

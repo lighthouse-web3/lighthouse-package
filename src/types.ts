@@ -1,7 +1,5 @@
 export interface IUploadProgressCallback {
   progress: number
-  total: number
-  uploaded: number
 }
 
 export interface IFileUploadedResponse {

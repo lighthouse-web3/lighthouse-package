@@ -29,7 +29,7 @@ export default async (
   apiKey: string,
   publicKey: string,
   auth_token: string,
-  uploadProgressCallback: (data: IUploadProgressCallback) => void
+  uploadProgressCallback?: (data: IUploadProgressCallback) => void
 ): Promise<{ data: IFileUploadedResponse[] }> => {
   try {
     let keyMap = {} as any
@@ -73,25 +73,35 @@ export default async (
       )
     })
 
-    const controller = new AbortController()
-    const signal = controller.signal
-    const response = await retryFetch(endpoint, {
-      method: 'POST',
-      body: formData,
-      timeout: 7200000,
-      headers: {
-        Encryption: `${true}`,
-        Authorization: token,
-      },
-      signal,
-    })
+    const response = uploadProgressCallback
+      ? await retryFetch(endpoint, {
+          method: 'POST',
+          body: formData,
+          timeout: 7200000,
+          headers: {
+            Encryption: `${true}`,
+            Authorization: token,
+          },
+          onProgress: (progress) => {
+            uploadProgressCallback({
+              progress: progress,
+            })
+          },
+        })
+      : await retryFetch(endpoint, {
+          method: 'POST',
+          body: formData,
+          timeout: 7200000,
+          headers: {
+            Encryption: `${true}`,
+            Authorization: token,
+          },
+        })
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`)
     }
 
     const reader = response.body?.getReader()
-    const contentLength = +response.headers.get('Content-Length')!
-    let receivedLength = 0
     let chunks = []
     while (true) {
       const { done, value } = await reader!.read()
@@ -99,14 +109,6 @@ export default async (
         break
       }
       chunks.push(value)
-      receivedLength += value.length
-      uploadProgressCallback({
-        progress: contentLength
-          ? Math.round(receivedLength / contentLength)
-          : 0,
-        total: contentLength || 0,
-        uploaded: receivedLength,
-      })
     }
 
     let responseData = new TextDecoder('utf-8').decode(
