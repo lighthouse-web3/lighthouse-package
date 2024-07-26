@@ -41,10 +41,7 @@ async function uploadFiles(
         apiKey,
         true,
         dealParameters,
-        uploadProgressCallback ||
-          (() => {
-            return
-          })
+        uploadProgressCallback
       )
     }
   } else {
@@ -57,10 +54,7 @@ async function uploadFiles(
         apiKey,
         false,
         dealParameters,
-        uploadProgressCallback ||
-          (() => {
-            return
-          })
+        uploadProgressCallback
       )
     }
   }

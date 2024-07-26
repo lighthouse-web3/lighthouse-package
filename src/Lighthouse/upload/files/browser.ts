@@ -13,7 +13,7 @@ export default async <T extends boolean>(
   accessToken: string,
   multi: boolean,
   dealParameters: DealParameters | undefined,
-  uploadProgressCallback: (data: IUploadProgressCallback) => void
+  uploadProgressCallback?: (data: IUploadProgressCallback) => void
 ): Promise<{ data: UploadFileReturnType<T> }> => {
   try {
     const endpoint =
@@ -35,35 +35,30 @@ export default async <T extends boolean>(
         : 'null',
     })
 
-    const response = await retryFetch(endpoint, {
-      method: 'POST',
-      body: formData,
-      headers: headers,
-      timeout: 7200000,
-    })
+    const response = uploadProgressCallback
+      ? await retryFetch(endpoint, {
+          method: 'POST',
+          body: formData,
+          headers: headers,
+          timeout: 7200000,
+          onProgress: (progress) => {
+            uploadProgressCallback({
+              progress: progress,
+            })
+          },
+        })
+      : await retryFetch(endpoint, {
+          method: 'POST',
+          body: formData,
+          headers: headers,
+          timeout: 7200000,
+        })
 
     if (!response.ok) {
       throw new Error(`Request failed with status code ${response.status}`)
     }
 
-    const reader = response.body?.getReader()
-    const decoder = new TextDecoder()
-    let responseText = ''
-
-    if (reader) {
-      let totalBytes = 0
-      while (true) {
-        const { done, value } = await reader.read()
-        if (done) break
-        totalBytes += value?.length || 0
-        responseText += decoder.decode(value, { stream: true })
-        uploadProgressCallback({
-          progress: 1, // We can't accurately calculate progress without knowing the total size
-          total: totalBytes,
-          uploaded: totalBytes,
-        })
-      }
-    }
+    const responseText = await response.text()
 
     let data
     if (typeof responseText === 'string') {

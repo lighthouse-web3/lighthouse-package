@@ -2,13 +2,11 @@
   "compilerOptions": {
     "outDir": "dist",
     "target": "es2022",
-    "lib": [
-      "es2019"
-    ],
+    "lib": ["es2019", "es6", "dom"],
     "module": "commonjs",
     "sourceMap": false,
     "strict": true,
-    "esModuleInterop": true,  
+    "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "experimentalDecorators": true,
@@ -19,5 +17,11 @@
     "resolveJsonModule": true
   },
   "include": ["src"],
-  "exclude": ["node_modules", "**/*.spec.ts","**/*.test.ts",".vscode",".d.ts"]
+  "exclude": [
+    "node_modules",
+    "**/*.spec.ts",
+    "**/*.test.ts",
+    ".vscode",
+    ".d.ts"
+  ]
 }
