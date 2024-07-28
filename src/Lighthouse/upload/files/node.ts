@@ -53,7 +53,6 @@ export default async <T extends boolean>(
         credentials: 'include',
         timeout: 7200000,
         headers: {
-          Encryption: 'false',
           Authorization: token,
           'X-Deal-Parameter': dealParameters
             ? JSON.stringify(dealParameters)
@@ -94,7 +93,6 @@ export default async <T extends boolean>(
         credentials: 'include',
         timeout: 7200000,
         headers: {
-          Encryption: 'false',
           Authorization: token,
           'X-Deal-Parameter': dealParameters
             ? JSON.stringify(dealParameters)
