@@ -1,5 +1,5 @@
 import { lighthouseConfig } from '../../../lighthouse.config'
-import { retryFetch } from '../../utils/util'
+import { fetchWithTimeout } from '../../utils/util'
 
 export default async (text: string, apiKey: string, name: string) => {
   try {
@@ -12,7 +12,7 @@ export default async (text: string, apiKey: string, name: string) => {
 
     formData.append('file', blob, name)
 
-    const response = await retryFetch(endpoint, {
+    const response = await fetchWithTimeout(endpoint, {
       method: 'POST',
       body: formData,
       credentials: 'include',
