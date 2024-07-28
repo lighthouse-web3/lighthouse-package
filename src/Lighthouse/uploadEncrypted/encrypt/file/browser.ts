@@ -6,7 +6,7 @@ import {
 } from '../../../../types'
 import { encryptFile } from '../../encryptionBrowser'
 import { lighthouseConfig } from '../../../../lighthouse.config'
-import { checkDuplicateFileNames, retryFetch } from '../../../utils/util'
+import { checkDuplicateFileNames, fetchWithTimeout } from '../../../utils/util'
 
 declare const FileReader: any
 
@@ -74,7 +74,7 @@ export default async (
     })
 
     const response = uploadProgressCallback
-      ? await retryFetch(endpoint, {
+      ? await fetchWithTimeout(endpoint, {
           method: 'POST',
           body: formData,
           timeout: 7200000,
@@ -88,7 +88,7 @@ export default async (
             })
           },
         })
-      : await retryFetch(endpoint, {
+      : await fetchWithTimeout(endpoint, {
           method: 'POST',
           body: formData,
           timeout: 7200000,
@@ -115,13 +115,7 @@ export default async (
       new Uint8Array(chunks.flatMap((chunk) => [...chunk]))
     ) as any
 
-    if (typeof responseData === 'string') {
-      responseData = JSON.parse(
-        `[${responseData.slice(0, -1)}]`.split('\n').join(',')
-      )
-    } else {
-      responseData = [responseData]
-    }
+    responseData = JSON.parse(responseData)
 
     const savedKey = await Promise.all(
       responseData.map(async (data: IFileUploadedResponse) => {
