@@ -5,7 +5,6 @@ import {
   UploadFileReturnType,
   DealParameters,
 } from '../../../types'
-import file from '../../uploadEncrypted/encrypt/file'
 import { fetchWithTimeout } from '../../utils/util'
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -16,7 +15,7 @@ export default async <T extends boolean>(
   uploadProgressCallback?: (data: IUploadProgressCallback) => void
 ): Promise<{ data: UploadFileReturnType<T> }> => {
   try {
-    const isDirectory = files.length === 1 && files[0].webkitRelativePath
+    const isDirectory = [...files].some(file => file.webkitRelativePath)
     let endpoint = lighthouseConfig.lighthouseNode + `/api/v0/add?wrap-with-directory=false`
 
     if(!isDirectory && files.length > 1) {
@@ -61,9 +60,6 @@ export default async <T extends boolean>(
     }
 
     const responseText = await response.text()
-    console.log(responseText)
-    console.log(typeof(responseText))
-
     return { data: JSON.parse(responseText) }
   } catch (error: any) {
     throw new Error(error?.message)

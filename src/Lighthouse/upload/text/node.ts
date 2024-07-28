@@ -18,7 +18,6 @@ export default async (text: string, apiKey: string, name: string) => {
       credentials: 'include',
       timeout: 7200000,
       headers: {
-        Encryption: 'false',
         'Mime-Type': 'text/plain',
         Authorization: token,
       },
