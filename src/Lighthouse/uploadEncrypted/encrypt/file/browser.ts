@@ -6,7 +6,7 @@ import {
 } from '../../../../types'
 import { encryptFile } from '../../encryptionBrowser'
 import { lighthouseConfig } from '../../../../lighthouse.config'
-import { checkDuplicateFileNames, retryFetch } from '../../../utils/util'
+import { checkDuplicateFileNames, fetchWithTimeout } from '../../../utils/util'
 
 declare const FileReader: any
 
@@ -74,7 +74,7 @@ export default async (
     })
 
     const response = uploadProgressCallback
-      ? await retryFetch(endpoint, {
+      ? await fetchWithTimeout(endpoint, {
           method: 'POST',
           body: formData,
           timeout: 7200000,
@@ -88,7 +88,7 @@ export default async (
             })
           },
         })
-      : await retryFetch(endpoint, {
+      : await fetchWithTimeout(endpoint, {
           method: 'POST',
           body: formData,
           timeout: 7200000,
@@ -101,30 +101,26 @@ export default async (
       throw new Error(`HTTP error! status: ${response.status}`)
     }
 
-    const reader = response.body?.getReader()
-    let chunks = []
-    while (true) {
-      const { done, value } = await reader!.read()
-      if (done) {
-        break
-      }
-      chunks.push(value)
-    }
+    // const reader = response.body?.getReader()
+    // let chunks = []
+    // while (true) {
+    //   const { done, value } = await reader!.read()
+    //   if (done) {
+    //     break
+    //   }
+    //   chunks.push(value)
+    // }
 
-    let responseData = new TextDecoder('utf-8').decode(
-      new Uint8Array(chunks.flatMap((chunk) => [...chunk]))
-    ) as any
+    // let responseData = new TextDecoder('utf-8').decode(
+    //   new Uint8Array(chunks.flatMap((chunk) => [...chunk]))
+    // ) as any
+    const responseText = await response.text()
+    const jsondata = JSON.parse(responseText) as IFileUploadedResponse[]
 
-    if (typeof responseData === 'string') {
-      responseData = JSON.parse(
-        `[${responseData.slice(0, -1)}]`.split('\n').join(',')
-      )
-    } else {
-      responseData = [responseData]
-    }
+    // responseData = JSON.parse(responseData)
 
     const savedKey = await Promise.all(
-      responseData.map(async (data: IFileUploadedResponse) => {
+      jsondata.map(async (data: IFileUploadedResponse) => {
         return saveShards(publicKey, data.Hash, auth_token, keyMap[data.Name])
       })
     )
@@ -145,7 +141,7 @@ export default async (
       }
     */
 
-    return { data: responseData }
+    return { data: jsondata }
   } catch (error: any) {
     return error.message
   }

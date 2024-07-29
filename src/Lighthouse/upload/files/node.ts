@@ -1,7 +1,7 @@
 import basePathConvert from '../../utils/basePathConvert'
 import { lighthouseConfig } from '../../../lighthouse.config'
 import { UploadFileReturnType, DealParameters } from '../../../types'
-import { retryFetch } from '../../utils/util'
+import { fetchWithTimeout } from '../../utils/util'
 
 export async function walk(dir: string) {
   const { readdir, stat } = eval(`require`)('fs-extra')
@@ -25,7 +25,6 @@ export async function walk(dir: string) {
 export default async <T extends boolean>(
   sourcePath: string,
   apiKey: string,
-  multi: boolean,
   dealParameters: DealParameters | undefined
 ): Promise<{ data: UploadFileReturnType<T> }> => {
   const { createReadStream, lstatSync } = eval(`require`)('fs-extra')
@@ -36,7 +35,7 @@ export default async <T extends boolean>(
   try {
     const endpoint =
       lighthouseConfig.lighthouseNode +
-      `/api/v0/add?wrap-with-directory=${multi}`
+      `/api/v0/add?wrap-with-directory=false`
     if (stats.isFile()) {
       const data = new FormData()
       const stream = createReadStream(sourcePath)
@@ -48,13 +47,11 @@ export default async <T extends boolean>(
 
       data.append('file', blob, path.basename(sourcePath))
 
-      const response = await retryFetch(endpoint, {
+      const response = await fetchWithTimeout(endpoint, {
         method: 'POST',
         body: data,
-        credentials: 'include',
         timeout: 7200000,
         headers: {
-          Encryption: 'false',
           Authorization: token,
           'X-Deal-Parameter': dealParameters
             ? JSON.stringify(dealParameters)
@@ -67,12 +64,7 @@ export default async <T extends boolean>(
       }
 
       let responseData = (await response.text()) as any
-      if (multi) {
-        const temp = responseData.split('\n')
-        responseData = JSON.parse(temp[temp.length - 2])
-      } else {
-        responseData = JSON.parse(responseData)
-      }
+      responseData = JSON.parse(responseData)
 
       return { data: responseData }
     } else {
@@ -90,17 +82,15 @@ export default async <T extends boolean>(
         data.append(
           'file',
           blob,
-          multi ? path.basename(file) : basePathConvert(sourcePath, file)
+          basePathConvert(sourcePath, file)
         )
       }
 
-      const response = await retryFetch(endpoint, {
+      const response = await fetchWithTimeout(endpoint, {
         method: 'POST',
         body: data,
-        credentials: 'include',
         timeout: 7200000,
         headers: {
-          Encryption: 'false',
           Authorization: token,
           'X-Deal-Parameter': dealParameters
             ? JSON.stringify(dealParameters)
@@ -113,17 +103,7 @@ export default async <T extends boolean>(
       }
 
       let responseData = (await response.text()) as any
-
-      if (typeof responseData === 'string') {
-        if (multi) {
-          responseData = JSON.parse(
-            `[${responseData.slice(0, -1)}]`.split('\n').join(',')
-          )
-        } else {
-          const temp = responseData.split('\n')
-          responseData = JSON.parse(temp[temp.length - 2])
-        }
-      }
+      responseData = JSON.parse(responseData)
 
       return { data: responseData }
     }

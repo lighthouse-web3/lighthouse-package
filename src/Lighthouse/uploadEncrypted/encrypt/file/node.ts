@@ -3,7 +3,7 @@ import { generate, saveShards } from '@lighthouse-web3/kavach'
 import { encryptFile } from '../../encryptionNode'
 import { walk } from '../../../upload/files/node'
 import { IFileUploadedResponse } from '../../../../types'
-import { retryFetch } from '../../../utils/util'
+import { fetchWithTimeout } from '../../../utils/util'
 
 export default async (
   sourcePath: any,
@@ -28,7 +28,7 @@ export default async (
       const blob = new Blob([Buffer.from(encryptedData)])
       formData.append('file', blob, sourcePath.replace(/^.*[\\/]/, ''))
 
-      const response = await retryFetch(endpoint, {
+      const response = await fetchWithTimeout(endpoint, {
         method: 'POST',
         body: formData,
         timeout: 7200000,
@@ -46,7 +46,7 @@ export default async (
 
       const { error } = await saveShards(
         publicKey,
-        responseData.Hash,
+        responseData[0].Hash,
         auth_token,
         keyShards
       )
@@ -54,7 +54,7 @@ export default async (
         throw new Error('Error encrypting file')
       }
 
-      return { data: [responseData] }
+      return { data: responseData }
     } catch (error: any) {
       throw new Error(error.message)
     }
@@ -81,7 +81,7 @@ export default async (
       })
     )
 
-    const response = await retryFetch(endpoint, {
+    const response = await fetchWithTimeout(endpoint, {
       method: 'POST',
       body: formData,
       timeout: 7200000,
@@ -96,9 +96,7 @@ export default async (
     }
 
     const responseText = await response.text()
-    const jsondata = JSON.parse(
-      `[${responseText.slice(0, -1)}]`.split('\n').join(',')
-    ) as IFileUploadedResponse[]
+    const jsondata = JSON.parse(responseText) as IFileUploadedResponse[]
 
     const savedKey = await Promise.all(
       jsondata.map(async (data) => {

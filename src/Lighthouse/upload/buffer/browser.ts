@@ -13,7 +13,6 @@ export default async (blob: any, apiKey: string, mimeType = '') => {
       method: 'POST',
       body: formData,
       headers: {
-        Encryption: 'false',
         'Mime-Type': mimeType,
         Authorization: token,
       },

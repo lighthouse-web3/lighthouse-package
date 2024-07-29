@@ -39,7 +39,7 @@ function checkDuplicateFileNames(files: any[]) {
 }
 
 async function fetchWithTimeout(
-  resource: string,
+  endpointURL: string,
   options: FetchOptions
 ): Promise<Response> {
   const { timeout = 8000, onProgress, ...rest } = options
@@ -51,7 +51,7 @@ async function fetchWithTimeout(
     if (onProgress && rest.body instanceof FormData) {
       return new Promise<Response>((resolve, reject) => {
         const xhr = new XMLHttpRequest()
-        xhr.open(rest.method || 'GET', resource)
+        xhr.open(rest.method || 'GET', endpointURL)
 
         if (rest.headers) {
           if (rest.headers instanceof Headers) {
@@ -114,7 +114,7 @@ async function fetchWithTimeout(
         }
       })
     } else {
-      const response = await fetch(resource, {
+      const response = await fetch(endpointURL, {
         ...rest,
         signal: controller.signal,
       })
@@ -127,28 +127,10 @@ async function fetchWithTimeout(
   }
 }
 
-async function retryFetch(
-  resource: string,
-  options: FetchOptions,
-  retries = 3
-): Promise<Response> {
-  for (let i = 0; i < retries; i++) {
-    try {
-      return await fetchWithTimeout(resource, options)
-    } catch (error) {
-      if (i < retries - 1) {
-      } else {
-        throw error
-      }
-    }
-  }
-  throw new Error('fetch failed')
-}
-
 export {
   isCID,
   isPrivateKey,
   addressValidator,
   checkDuplicateFileNames,
-  retryFetch,
+  fetchWithTimeout,
 }

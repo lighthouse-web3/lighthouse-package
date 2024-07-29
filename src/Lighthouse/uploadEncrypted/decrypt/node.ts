@@ -1,11 +1,11 @@
 /* istanbul ignore file */
 import { decryptFile } from '../encryptionNode'
 import { lighthouseConfig } from '../../../lighthouse.config'
-import { retryFetch } from '../../utils/util'
+import { fetchWithTimeout } from '../../utils/util'
 
 export default async (cid: string, fileEncryptionKey: any) => {
   try {
-    const response = await retryFetch(
+    const response = await fetchWithTimeout(
       lighthouseConfig.lighthouseGateway + '/api/v0/cat/' + cid,
       {
         method: 'POST',

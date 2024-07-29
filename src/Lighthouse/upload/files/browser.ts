@@ -5,21 +5,22 @@ import {
   UploadFileReturnType,
   DealParameters,
 } from '../../../types'
-import { checkDuplicateFileNames, retryFetch } from '../../utils/util'
+import { fetchWithTimeout } from '../../utils/util'
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 export default async <T extends boolean>(
   files: any,
   accessToken: string,
-  multi: boolean,
   dealParameters: DealParameters | undefined,
   uploadProgressCallback?: (data: IUploadProgressCallback) => void
 ): Promise<{ data: UploadFileReturnType<T> }> => {
   try {
-    const endpoint =
-      lighthouseConfig.lighthouseNode +
-      `/api/v0/add?wrap-with-directory=${multi}`
-    checkDuplicateFileNames(files)
+    const isDirectory = [...files].some(file => file.webkitRelativePath)
+    let endpoint = lighthouseConfig.lighthouseNode + `/api/v0/add?wrap-with-directory=false`
+
+    if(!isDirectory && files.length > 1) {
+      endpoint = lighthouseConfig.lighthouseNode + `/api/v0/add?wrap-with-directory=true`
+    }
 
     const formData = new FormData()
     for (let i = 0; i < files.length; i++) {
@@ -36,7 +37,7 @@ export default async <T extends boolean>(
     })
 
     const response = uploadProgressCallback
-      ? await retryFetch(endpoint, {
+      ? await fetchWithTimeout(endpoint, {
           method: 'POST',
           body: formData,
           headers: headers,
@@ -47,7 +48,7 @@ export default async <T extends boolean>(
             })
           },
         })
-      : await retryFetch(endpoint, {
+      : await fetchWithTimeout(endpoint, {
           method: 'POST',
           body: formData,
           headers: headers,
@@ -59,20 +60,7 @@ export default async <T extends boolean>(
     }
 
     const responseText = await response.text()
-
-    let data
-    if (typeof responseText === 'string') {
-      if (multi) {
-        data = JSON.parse(
-          `[${responseText.slice(0, -1)}]`.split('\n').join(',')
-        )
-      } else {
-        const temp = responseText.split('\n')
-        data = JSON.parse(temp[temp.length - 2])
-      }
-    }
-
-    return { data }
+    return { data: JSON.parse(responseText) }
   } catch (error: any) {
     throw new Error(error?.message)
   }
