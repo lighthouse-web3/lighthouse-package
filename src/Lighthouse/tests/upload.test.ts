@@ -11,7 +11,7 @@ describe('uploadFiles', () => {
       'src/Lighthouse/tests/testImages/testImage1.svg'
     )
     const fileName = path.split('/').slice(-1)[0]
-    const deployResponse = (await lighthouse.upload(path, apiKey, false)).data
+    const deployResponse = (await lighthouse.upload(path, apiKey)).data
 
     expect(deployResponse).toHaveProperty('Name')
     expect(deployResponse).toHaveProperty('Hash')
@@ -24,11 +24,10 @@ describe('uploadFiles', () => {
 
   it('should upload folder to ipfs when correct path is provided', async () => {
     const path = resolve(process.cwd(), 'src/Lighthouse/tests/testImages')
-    const full_deployResponse = (await lighthouse.upload(path, apiKey, true))
+    const full_deployResponse = (await lighthouse.upload(path, apiKey))
       .data
 
-    expect(full_deployResponse.length).toBeGreaterThan(1)
-    const deployResponse = full_deployResponse[0]
+    const deployResponse = full_deployResponse
     expect(deployResponse).toHaveProperty('Name')
     expect(deployResponse).toHaveProperty('Hash')
     expect(deployResponse).toHaveProperty('Size')
@@ -41,7 +40,7 @@ describe('uploadFiles', () => {
   it('should not upload to ipfs when incorrect path is provided', async () => {
     try {
       const path = 'invalid/path/img.svg'
-      const deployResponse = await lighthouse.upload(path, apiKey, false)
+      const deployResponse = await lighthouse.upload(path, apiKey)
     } catch (error) {
       expect(error.code).toBe('ENOENT')
     }
