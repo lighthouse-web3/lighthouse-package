@@ -46,7 +46,7 @@ export default async (
 
       const { error } = await saveShards(
         publicKey,
-        responseData.Hash,
+        responseData[0].Hash,
         auth_token,
         keyShards
       )
@@ -54,7 +54,7 @@ export default async (
         throw new Error('Error encrypting file')
       }
 
-      return { data: [responseData] }
+      return { data: responseData }
     } catch (error: any) {
       throw new Error(error.message)
     }

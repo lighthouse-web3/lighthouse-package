@@ -50,7 +50,6 @@ export default async <T extends boolean>(
       const response = await fetchWithTimeout(endpoint, {
         method: 'POST',
         body: data,
-        credentials: 'include',
         timeout: 7200000,
         headers: {
           Authorization: token,
@@ -90,7 +89,6 @@ export default async <T extends boolean>(
       const response = await fetchWithTimeout(endpoint, {
         method: 'POST',
         body: data,
-        credentials: 'include',
         timeout: 7200000,
         headers: {
           Authorization: token,
