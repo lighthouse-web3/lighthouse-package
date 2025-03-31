@@ -96,7 +96,14 @@ export default async (
     }
 
     const responseText = await response.text()
-    const jsondata = JSON.parse(responseText) as IFileUploadedResponse[]
+    let jsondata: IFileUploadedResponse[] = []
+
+    const match = responseText.match(/\[.*\]$/s)
+    if (match) {
+      jsondata = JSON.parse(match[0])
+    } else {
+      throw new Error('No JSON array found in response')
+    }
 
     const savedKey = await Promise.all(
       jsondata.map(async (data) => {
