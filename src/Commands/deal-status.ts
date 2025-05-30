@@ -6,11 +6,7 @@ const showResponse = (cid: string, dealStatus: any) => {
   console.log(
     yellow('\r\nCID:') +
       Array(9).fill('\xa0').join('') +
-      cid +
-      yellow('\r\nSize:') +
-      Array(8).fill('\xa0').join('') +
-      bytesToSize(dealStatus[0]['content']) +
-      '\r\n'
+      cid
   )
 
   console.log(
@@ -21,19 +17,19 @@ const showResponse = (cid: string, dealStatus: any) => {
   )
 
   for (let i = 0; i < dealStatus.length; i++) {
-    const gap = 10 + (8 - dealStatus[i]['miner'].length)
+    const gap = 10 + (8 - dealStatus[i]['Provider'].length)
     console.log(
       Array(20).fill('\xa0').join('') +
-        dealStatus[i]['miner'] +
+        dealStatus[i]['Provider'] +
         Array(gap).fill('\xa0').join('') +
-        dealStatus[i]['dealId']
+        dealStatus[i]['DealID']
     )
   }
   console.log(
     green('\r\nView deals at filfox URL:\r\n') +
       Array(4).fill('\xa0').join('') +
       'https://filfox.info/en/deal/' +
-      dealStatus[0]['dealId']
+      dealStatus[0]['DealID']
   )
 }
 
