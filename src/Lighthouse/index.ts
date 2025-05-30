@@ -21,7 +21,6 @@ import getAccessConditions from './encryption/getAccessConditions'
 
 // Upload
 import upload from './upload/files'
-import uploadCar from './upload/carfile'
 import uploadText from './upload/text'
 import uploadBuffer from './upload/buffer'
 import decryptFile from './uploadEncrypted/decrypt'
@@ -55,7 +54,6 @@ export {
   applyAccessCondition,
   getAccessConditions,
   upload,
-  uploadCar,
   uploadText,
   uploadBuffer,
   uploadEncrypted,
@@ -86,7 +84,6 @@ export default {
   applyAccessCondition,
   getAccessConditions,
   upload,
-  uploadCar,
   uploadText,
   uploadBuffer,
   uploadEncrypted,
