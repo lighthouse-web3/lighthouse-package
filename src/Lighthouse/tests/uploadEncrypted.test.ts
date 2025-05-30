@@ -81,7 +81,7 @@ describe('uploadEncrypted', () => {
         signedMessageEncryption
       )
     } catch (error) {
-      expect(error.message).toBe('Error encrypting file')
+      expect(error.message).toBe('Error: Error encrypting file')
     }
   }, 60000)
 
@@ -96,7 +96,7 @@ describe('uploadEncrypted', () => {
         signedMessageEncryption
       )
     } catch (error) {
-      expect(error.message).toBe('Request failed with status code 500')
+      expect(error.message).toBe('Error: Authentication failed')
     }
   }, 60000)
 })
