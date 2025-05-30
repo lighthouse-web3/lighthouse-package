@@ -39,24 +39,25 @@ export default async (
       })
 
       if (!response.ok) {
-        throw new Error(`Request failed with status code ${response.status}`)
+        const res = (await response.json())
+        throw new Error(res.error)
       }
 
       const responseData = (await response.json()) as any
 
-      const { error } = await saveShards(
-        publicKey,
-        responseData[0].Hash,
-        auth_token,
-        keyShards
-      )
-      if (error) {
-        throw new Error('Error encrypting file')
-      }
+      // const { error } = await saveShards(
+      //   publicKey,
+      //   responseData[0].Hash,
+      //   auth_token,
+      //   keyShards
+      // )
+      // if (error) {
+      //   throw new Error('Error encrypting file')
+      // }
 
       return { data: responseData }
     } catch (error: any) {
-      throw new Error(error.message)
+      throw new Error(error)
     }
   } else {
     const files = await walk(sourcePath)
@@ -92,7 +93,8 @@ export default async (
     })
 
     if (!response.ok) {
-      throw new Error(`Request failed with status code ${response.status}`)
+      const res = (await response.json())
+      throw new Error(res.error)
     }
 
     const responseText = await response.text()
