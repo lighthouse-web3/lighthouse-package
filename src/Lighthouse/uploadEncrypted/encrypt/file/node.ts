@@ -9,12 +9,13 @@ export default async (
   sourcePath: any,
   apiKey: string,
   publicKey: string,
-  auth_token: string
+  auth_token: string,
+  cidVersion: number
 ): Promise<{ data: IFileUploadedResponse[] }> => {
   const fs = eval('require')('fs-extra')
   const token = 'Bearer ' + apiKey
   const endpoint =
-    lighthouseConfig.lighthouseNode + '/api/v0/add?wrap-with-directory=false'
+    lighthouseConfig.lighthouseNode + `/api/v0/add?wrap-with-directory=false&cid-version=${cidVersion}`
   const stats = fs.lstatSync(sourcePath)
 
   if (stats.isFile()) {

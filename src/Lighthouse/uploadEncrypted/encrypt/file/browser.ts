@@ -29,6 +29,7 @@ export default async (
   apiKey: string,
   publicKey: string,
   auth_token: string,
+  cidVersion: number,
   uploadProgressCallback?: (data: IUploadProgressCallback) => void
 ): Promise<{ data: IFileUploadedResponse[] }> => {
   try {
@@ -38,7 +39,7 @@ export default async (
       mimeType = files[0].type
     }
     const endpoint =
-      lighthouseConfig.lighthouseNode + '/api/v0/add?wrap-with-directory=false'
+      lighthouseConfig.lighthouseNode + `/api/v0/add?wrap-with-directory=false&cid-version=${cidVersion}`
     const token = 'Bearer ' + apiKey
 
     const fileArr = []

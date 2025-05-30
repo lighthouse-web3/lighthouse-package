@@ -1,10 +1,10 @@
 import { lighthouseConfig } from '../../../lighthouse.config'
 import { fetchWithTimeout } from '../../utils/util'
 
-export default async (text: string, apiKey: string, name: string) => {
+export default async (text: string, apiKey: string, name: string, cidVersion: number) => {
   try {
     const token = 'Bearer ' + apiKey
-    const endpoint = lighthouseConfig.lighthouseNode + '/api/v0/add'
+    const endpoint = lighthouseConfig.lighthouseNode + `/api/v0/add?cid-version=${cidVersion}`
 
     // Upload file
     const formData = new FormData()

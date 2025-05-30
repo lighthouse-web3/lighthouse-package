@@ -1,8 +1,7 @@
 import basePathConvert from '../../utils/basePathConvert'
 import { lighthouseConfig } from '../../../lighthouse.config'
-import { UploadFileReturnType } from '../../../types'
 import { fetchWithTimeout } from '../../utils/util'
-
+import { IFileUploadedResponse } from '../../../types'
 export async function walk(dir: string) {
   const { readdir, stat } = eval(`require`)('fs-extra')
   let results: string[] = []
@@ -22,10 +21,11 @@ export async function walk(dir: string) {
   return results
 }
 
-export default async <T extends boolean>(
+export default async (
   sourcePath: string,
-  apiKey: string
-): Promise<{ data: UploadFileReturnType<T> }> => {
+  apiKey: string,
+  cidVersion: number
+): Promise<{ data: IFileUploadedResponse }> => {
   const { createReadStream, lstatSync } = eval(`require`)('fs-extra')
   const path = eval(`require`)('path')
 
@@ -34,7 +34,7 @@ export default async <T extends boolean>(
   try {
     const endpoint =
       lighthouseConfig.lighthouseNode +
-      `/api/v0/add?wrap-with-directory=false`
+      `/api/v0/add?wrap-with-directory=false&cid-version=${cidVersion}`
     if (stats.isFile()) {
       const data = new FormData()
       const stream = createReadStream(sourcePath)

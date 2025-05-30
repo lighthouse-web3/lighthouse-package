@@ -2,22 +2,23 @@
 import { lighthouseConfig } from '../../../lighthouse.config'
 import {
   IUploadProgressCallback,
-  UploadFileReturnType
+  IFileUploadedResponse
 } from '../../../types'
 import { fetchWithTimeout } from '../../utils/util'
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
-export default async <T extends boolean>(
+export default async (
   files: any,
   accessToken: string,
+  cidVersion: number,
   uploadProgressCallback?: (data: IUploadProgressCallback) => void
-): Promise<{ data: UploadFileReturnType<T> }> => {
+): Promise<{ data: IFileUploadedResponse }>  => {
   try {
     const isDirectory = [...files].some(file => file.webkitRelativePath)
-    let endpoint = lighthouseConfig.lighthouseNode + `/api/v0/add?wrap-with-directory=false`
+    let endpoint = lighthouseConfig.lighthouseNode + `/api/v0/add?wrap-with-directory=false&cid-version=${cidVersion}`
 
     if(!isDirectory && files.length > 1) {
-      endpoint = lighthouseConfig.lighthouseNode + `/api/v0/add?wrap-with-directory=true`
+      endpoint = lighthouseConfig.lighthouseNode + `/api/v0/add?wrap-with-directory=true&cid-version=${cidVersion}`
     }
 
     const formData = new FormData()
