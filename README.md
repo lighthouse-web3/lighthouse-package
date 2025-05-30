@@ -11,52 +11,64 @@ npm install -g @lighthouse-web3/sdk
 ## CLI Usage
 
 ```bash
-# create-wallet
-lighthouse-web3 create-wallet
+# Wallet management
+lighthouse-web3 create-wallet                   # Create a new wallet
+lighthouse-web3 import-wallet --key <private_key> # Import an existing wallet
+lighthouse-web3 wallet-forget                   # Remove previously saved wallet
+lighthouse-web3 reset-password                  # Change password of your wallet
+lighthouse-web3 wallet                          # Returns wallet public address
 
-# import-wallet
-lighthouse-web3 import-wallet --key <private_key>
+# API Key management
+lighthouse-web3 api-key --new                   # Generate a new API key
+lighthouse-web3 api-key --import <key>          # Import an existing API key
 
-# wallet-forget
-lighthouse-web3 wallet-forget
+# Storage and uploads
+lighthouse-web3 upload <path>                   # Upload a file
+lighthouse-web3 upload-encrypted <path>         # Upload a file encrypted
+lighthouse-web3 decrypt-file <cid>              # Decrypt and download a file
 
-# api-key
-lighthouse-web3 api-key --new
+# Data usage and balance
+lighthouse-web3 balance                         # Get your data usage
 
-# balance
-lighthouse-web3 balance
+# File and deal status
+lighthouse-web3 deal-status <cid>               # Get filecoin deal status of a CID
 
-# upload
-lighthouse-web3 upload <path>
+# File management
+lighthouse-web3 get-uploads                     # Get details of files uploaded
 
-# status
-lighthouse-web3 status <cid>
+# Sharing and access control
+lighthouse-web3 share-file <cid> <address>      # Share access to another user
+lighthouse-web3 revoke-access <cid> <address>   # Revoke access on a file
 
-# get-uploads
-lighthouse-web3 get-uploads
+# IPNS (InterPlanetary Naming System)
+lighthouse-web3 ipns --generate-key             # Generate IPNS Key
+lighthouse-web3 ipns --publish --cid <cid> --key <key> # Publish CID to IPNS
+lighthouse-web3 ipns --list                     # List all IPNS keys
+lighthouse-web3 ipns --remove <key>             # Remove an IPNS key
 
-# wallet
-lighthouse-web3 wallet
+# Proof of Data Segment Inclusion (PODSI)
+lighthouse-web3 podsi <cid>                     # Show Proof of Data Segment Inclusion for a CID
 ```
 
 ## NodeJs Example
 
 ```javascript
-import lighthouse from "@lighthouse-web3/sdk";
+import lighthouse from '@lighthouse-web3/sdk'
 
 // Create wallet
-const wallet = await lighthouse.createWallet(
-  "Password for wallet encryption"
-);
+const wallet = await lighthouse.createWallet('Password for wallet encryption')
 
 // Get wallet balance
-const balance = await lighthouse.getBalance(publicKey);
+const balance = await lighthouse.getBalance(wallet.data.publicKey)
 
 // Upload File
-const uploadResponse = await lighthouse.upload('/home/cosmos/Desktop/wow.jpg', 'YOUR_API_KEY');
+const uploadResponse = await lighthouse.upload(
+  '/home/cosmos/Desktop/wow.jpg',
+  'YOUR_API_KEY'
+)
+```
 
-
-Refer [GitBook](https://docs.lighthouse.storage/lighthouse-1/)
+> Refer to the [GitBook documentation](https://docs.lighthouse.storage/lighthouse-1/) for more details and advanced usage.
 
 ## Contributing
 

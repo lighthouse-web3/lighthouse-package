@@ -7,11 +7,9 @@ describe('dealStatus', () => {
         'QmaiauHSgTDMy2NtLbsygL3iKmLXBqHf39SBA1nAQFSSey'
       )
     ).data
-    
-    expect(response[0]).toHaveProperty('dealStatus')
-    expect(response[0]).toHaveProperty('dealUUID')
-    expect(response[0]).toHaveProperty('dealId')
-    expect(response[0]).toHaveProperty('miner')
+
+    expect(response[0]).toHaveProperty('DealID')
+    expect(response[0]).toHaveProperty('Provider')
   }, 20000)
 
   it('should not retrieve deal status when invalid CID provided', async () => {

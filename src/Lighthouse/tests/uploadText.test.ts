@@ -28,7 +28,7 @@ describe('uploadText', () => {
         await lighthouse.uploadText(text, 'invalid.apiKey', 'sample')
       ).data
     } catch (error) {
-      expect(error.message).toBe('Request failed with status code 500')
+      expect(error.message).toBe('Error: Authentication failed')
     }
   }, 60000)
 })

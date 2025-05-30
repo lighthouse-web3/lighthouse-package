@@ -15,7 +15,8 @@ export default async (
   const fs = eval('require')('fs-extra')
   const token = 'Bearer ' + apiKey
   const endpoint =
-    lighthouseConfig.lighthouseNode + `/api/v0/add?wrap-with-directory=false&cid-version=${cidVersion}`
+    lighthouseConfig.lighthouseNode +
+    `/api/v0/add?wrap-with-directory=false&cid-version=${cidVersion}`
   const stats = fs.lstatSync(sourcePath)
 
   if (stats.isFile()) {
@@ -40,21 +41,21 @@ export default async (
       })
 
       if (!response.ok) {
-        const res = (await response.json())
+        const res = await response.json()
         throw new Error(res.error)
       }
 
       const responseData = (await response.json()) as any
 
-      // const { error } = await saveShards(
-      //   publicKey,
-      //   responseData[0].Hash,
-      //   auth_token,
-      //   keyShards
-      // )
-      // if (error) {
-      //   throw new Error('Error encrypting file')
-      // }
+      const { error } = await saveShards(
+        publicKey,
+        responseData[0].Hash,
+        auth_token,
+        keyShards
+      )
+      if (error) {
+        throw new Error('Error encrypting file')
+      }
 
       return { data: responseData }
     } catch (error: any) {
@@ -94,7 +95,7 @@ export default async (
     })
 
     if (!response.ok) {
-      const res = (await response.json())
+      const res = await response.json()
       throw new Error(res.error)
     }
 
