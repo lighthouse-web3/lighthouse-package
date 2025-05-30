@@ -66,9 +66,8 @@ const uploadResponse = await lighthouse.upload(
   '/home/cosmos/Desktop/wow.jpg',
   'YOUR_API_KEY'
 )
-```
 
-> Refer to the [GitBook documentation](https://docs.lighthouse.storage/lighthouse-1/) for more details and advanced usage.
+> Refer [GitBook](https://docs.lighthouse.storage/lighthouse-1/)
 
 ## Contributing
 
