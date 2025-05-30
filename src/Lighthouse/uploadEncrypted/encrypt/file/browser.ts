@@ -29,6 +29,7 @@ export default async (
   apiKey: string,
   publicKey: string,
   auth_token: string,
+  cidVersion: number,
   uploadProgressCallback?: (data: IUploadProgressCallback) => void
 ): Promise<{ data: IFileUploadedResponse[] }> => {
   try {
@@ -38,7 +39,7 @@ export default async (
       mimeType = files[0].type
     }
     const endpoint =
-      lighthouseConfig.lighthouseNode + '/api/v0/add?wrap-with-directory=false'
+      lighthouseConfig.lighthouseNode + `/api/v0/add?wrap-with-directory=false&cid-version=${cidVersion}`
     const token = 'Bearer ' + apiKey
 
     const fileArr = []
@@ -98,26 +99,12 @@ export default async (
           },
         })
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`)
+      const res = (await response.json())
+      throw new Error(res.error)
     }
-
-    // const reader = response.body?.getReader()
-    // let chunks = []
-    // while (true) {
-    //   const { done, value } = await reader!.read()
-    //   if (done) {
-    //     break
-    //   }
-    //   chunks.push(value)
-    // }
-
-    // let responseData = new TextDecoder('utf-8').decode(
-    //   new Uint8Array(chunks.flatMap((chunk) => [...chunk]))
-    // ) as any
+    
     const responseText = await response.text()
     const jsondata = JSON.parse(responseText) as IFileUploadedResponse[]
-
-    // responseData = JSON.parse(responseData)
 
     const savedKey = await Promise.all(
       jsondata.map(async (data: IFileUploadedResponse) => {

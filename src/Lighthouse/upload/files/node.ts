@@ -1,8 +1,7 @@
 import basePathConvert from '../../utils/basePathConvert'
 import { lighthouseConfig } from '../../../lighthouse.config'
-import { UploadFileReturnType, DealParameters } from '../../../types'
 import { fetchWithTimeout } from '../../utils/util'
-
+import { IFileUploadedResponse } from '../../../types'
 export async function walk(dir: string) {
   const { readdir, stat } = eval(`require`)('fs-extra')
   let results: string[] = []
@@ -22,11 +21,11 @@ export async function walk(dir: string) {
   return results
 }
 
-export default async <T extends boolean>(
+export default async (
   sourcePath: string,
   apiKey: string,
-  dealParameters: DealParameters | undefined
-): Promise<{ data: UploadFileReturnType<T> }> => {
+  cidVersion: number
+): Promise<{ data: IFileUploadedResponse }> => {
   const { createReadStream, lstatSync } = eval(`require`)('fs-extra')
   const path = eval(`require`)('path')
 
@@ -35,7 +34,7 @@ export default async <T extends boolean>(
   try {
     const endpoint =
       lighthouseConfig.lighthouseNode +
-      `/api/v0/add?wrap-with-directory=false`
+      `/api/v0/add?wrap-with-directory=false&cid-version=${cidVersion}`
     if (stats.isFile()) {
       const data = new FormData()
       const stream = createReadStream(sourcePath)
@@ -52,20 +51,16 @@ export default async <T extends boolean>(
         body: data,
         timeout: 7200000,
         headers: {
-          Authorization: token,
-          'X-Deal-Parameter': dealParameters
-            ? JSON.stringify(dealParameters)
-            : 'null',
+          Authorization: token
         },
       })
 
       if (!response.ok) {
-        throw new Error(`Request failed with status code ${response.status}`)
+        const res = (await response.json())
+        throw new Error(res.error)
       }
 
-      let responseData = (await response.text()) as any
-      responseData = JSON.parse(responseData)
-
+      const responseData = (await response.json())
       return { data: responseData }
     } else {
       const files = await walk(sourcePath)
@@ -91,23 +86,19 @@ export default async <T extends boolean>(
         body: data,
         timeout: 7200000,
         headers: {
-          Authorization: token,
-          'X-Deal-Parameter': dealParameters
-            ? JSON.stringify(dealParameters)
-            : 'null',
+          Authorization: token
         },
       })
 
       if (!response.ok) {
-        throw new Error(`Request failed with status code ${response.status}`)
+        const res = (await response.json())
+        throw new Error(res.error)
       }
 
-      let responseData = (await response.text()) as any
-      responseData = JSON.parse(responseData)
-
+      const responseData = (await response.json())
       return { data: responseData }
     }
   } catch (error: any) {
-    throw new Error(error.message)
+    throw new Error(error)
   }
 }

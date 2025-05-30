@@ -25,7 +25,7 @@ describe('uploadBuffer', () => {
         await lighthouse.uploadBuffer(image, 'invalid.apiKey')
       ).data
     } catch (error) {
-      expect(error.message).toBe('Request failed with status code 500')
+      expect(error.message).toBe('Error: Authentication failed')
     }
   }, 60000)
 })

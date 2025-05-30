@@ -2,24 +2,23 @@
 import { lighthouseConfig } from '../../../lighthouse.config'
 import {
   IUploadProgressCallback,
-  UploadFileReturnType,
-  DealParameters,
+  IFileUploadedResponse
 } from '../../../types'
 import { fetchWithTimeout } from '../../utils/util'
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
-export default async <T extends boolean>(
+export default async (
   files: any,
   accessToken: string,
-  dealParameters: DealParameters | undefined,
+  cidVersion: number,
   uploadProgressCallback?: (data: IUploadProgressCallback) => void
-): Promise<{ data: UploadFileReturnType<T> }> => {
+): Promise<{ data: IFileUploadedResponse }>  => {
   try {
     const isDirectory = [...files].some(file => file.webkitRelativePath)
-    let endpoint = lighthouseConfig.lighthouseNode + `/api/v0/add?wrap-with-directory=false`
+    let endpoint = lighthouseConfig.lighthouseNode + `/api/v0/add?wrap-with-directory=false&cid-version=${cidVersion}`
 
     if(!isDirectory && files.length > 1) {
-      endpoint = lighthouseConfig.lighthouseNode + `/api/v0/add?wrap-with-directory=true`
+      endpoint = lighthouseConfig.lighthouseNode + `/api/v0/add?wrap-with-directory=true&cid-version=${cidVersion}`
     }
 
     const formData = new FormData()
@@ -30,10 +29,7 @@ export default async <T extends boolean>(
     const token = 'Bearer ' + accessToken
 
     const headers = new Headers({
-      Authorization: token,
-      'X-Deal-Parameter': dealParameters
-        ? JSON.stringify(dealParameters)
-        : 'null',
+      Authorization: token
     })
 
     const response = uploadProgressCallback
@@ -56,12 +52,13 @@ export default async <T extends boolean>(
         })
 
     if (!response.ok) {
-      throw new Error(`Request failed with status code ${response.status}`)
+      const res = (await response.json())
+      throw new Error(res.error)
     }
 
-    const responseText = await response.text()
-    return { data: JSON.parse(responseText) }
+    const responseData = (await response.json())
+    return { data: responseData }
   } catch (error: any) {
-    throw new Error(error?.message)
+    throw new Error(error)
   }
 }

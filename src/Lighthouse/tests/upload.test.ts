@@ -24,8 +24,7 @@ describe('uploadFiles', () => {
 
   it('should upload folder to ipfs when correct path is provided', async () => {
     const path = resolve(process.cwd(), 'src/Lighthouse/tests/testImages')
-    const full_deployResponse = (await lighthouse.upload(path, apiKey))
-      .data
+    const full_deployResponse = (await lighthouse.upload(path, apiKey)).data
 
     const deployResponse = full_deployResponse
     expect(deployResponse).toHaveProperty('Name')
@@ -54,7 +53,7 @@ describe('uploadFiles', () => {
       )
       await lighthouse.upload(path, 'random apiKey')
     } catch (error) {
-      expect(error.message).toBe('Request failed with status code 500')
+      expect(error.message).toBe('Error: Authentication failed')
     }
   }, 60000)
 })

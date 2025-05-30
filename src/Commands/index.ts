@@ -17,7 +17,6 @@ import importWallet from './import-wallet'
 import revokeAccess from './revoke-access'
 import resetPassword from './reset-password'
 import uploadEncrypted from './upload-encrypted'
-import podsi from './podsi'
 
 const widgets = new Command('lighthouse-web3')
 
@@ -72,7 +71,7 @@ Command.prototype.helpInformation = function (context: any) {
 }
 
 widgets.addHelpText('before', 'Welcome to lighthouse-web3')
-widgets.version('0.3.7')
+widgets.version('0.4.0')
 
 widgets
   .command('wallet')
@@ -115,12 +114,6 @@ widgets
   .option('-c, --cid <cid>', 'Publish CID argument')
   .description('IPNS service')
   .action(ipns)
-
-widgets
-  .command('podsi')
-  .description('Show Proof of data segment inclusion')
-  .argument('<cid>', 'CID of the file previously uploaded')
-  .action(podsi)
 
 widgets
   .command('upload')

@@ -13,21 +13,23 @@ const signAuthMessage = async (privateKey: string) => {
 describe('encryption', () => {
   describe('getAuthMessage', () => {
     it('should get auth message when valid public key is provided', async () => {
+      console.log('testing getAuthMessage')
       const response = await lighthouse.getAuthMessage(
         '0x1Ec09D4B3Cb565b7CCe2eEAf71CC90c9b46c5c26'
       )
       expect(response.data.message).toMatch(
         /^Please sign this message to prove/
       )
-    }, 60000)
+    }, 6000)
 
     it('should not get auth message when invalid public key is provided', async () => {
       try {
+        console.log('testing getAuthMessage with invalid public key')
         const response = await lighthouse.getAuthMessage('invalidPublicKey')
       } catch (error) {
         expect(error.message).toBe('Invalid public Key')
       }
-    }, 60000)
+    }, 6000)
   })
   describe('fetchEncryptionKey', () => {
     const publicKey = '0xa3c960b3ba29367ecbcaf1430452c6cd7516f588'
@@ -36,6 +38,7 @@ describe('encryption', () => {
     const cid = 'QmVkHgHnYVUfvTXsaJisHRgc89zsrgVL6ATh9mSiegRYrX'
 
     it('should fetch encryption key when correct public-private key pair is provided', async () => {
+      console.log('testing fetchEncryptionKey')
       const signed_message = await signAuthMessage(privateKey)
       const response = await lighthouse.fetchEncryptionKey(
         cid,
@@ -43,10 +46,11 @@ describe('encryption', () => {
         signed_message
       )
       expect(typeof response.data.key).toBe('string')
-    }, 80000)
+    }, 8000)
 
     it('should not fetch encryption key when incorrect public-private key pair is provided', async () => {
       try {
+        console.log('testing fetchEncryptionKey with incorrect key pair')
         const randomPublicKey = '0x1ccEF158Dcbe6643F1cC577F236af79993F4D066'
         const signed_message = await signAuthMessage(privateKey)
         const response = await lighthouse.fetchEncryptionKey(
@@ -57,7 +61,7 @@ describe('encryption', () => {
       } catch (error) {
         expect(typeof error.message).toBe('string')
       }
-    }, 60000)
+    }, 6000)
 
     it('should not fetch encryption key when incorrect CID is provided', async () => {
       try {
@@ -72,7 +76,7 @@ describe('encryption', () => {
       } catch (error) {
         expect(error).toBe('cid not found')
       }
-    }, 60000)
+    }, 6000)
 
     it('should not fetch encryption key when incorrect signature is provided', async () => {
       try {
@@ -86,7 +90,7 @@ describe('encryption', () => {
       } catch (error) {
         expect(error.message).toBe('Invalid Signature')
       }
-    }, 60000)
+    }, 6000)
   })
   describe('shareFile', () => {
     const publicKey = '0x969e19A952A9aeF004e4F711eE481D72A59470B1'
@@ -105,7 +109,7 @@ describe('encryption', () => {
       expect(response.data.cid).toEqual(cid)
       expect(response.data.shareTo).toEqual(shareTo)
       expect(response.data.status).toBe('Success')
-    }, 60000)
+    }, 10000)
 
     it('should deny access for sharing file uploaded by other account', async () => {
       try {
@@ -118,9 +122,9 @@ describe('encryption', () => {
           signed_message
         )
       } catch (error) {
-        expect(error.message).toEqual('Access Denied')
+        expect(error.message.message.message).toEqual('access denied')
       }
-    }, 60000)
+    }, 10000)
   })
   describe('applyAccessCondition', () => {
     const publicKey = '0x969e19A952A9aeF004e4F711eE481D72A59470B1'
@@ -162,7 +166,7 @@ describe('encryption', () => {
       )
       expect(response.data.status).toEqual('Success')
       expect(response.data.cid).toEqual(cid)
-    }, 60000)
+    }, 10000)
   })
   describe('revokeFileAccess', () => {
     it('should revoke file access to provided public address', async () => {
@@ -182,7 +186,7 @@ describe('encryption', () => {
       expect(response.data.cid).toEqual(cid)
       expect(response.data.status).toEqual('Success')
       expect(response.data.revokeTo).toEqual(revokeTo)
-    }, 20000)
+    }, 10000)
   })
   describe('getAccessConditions', () => {
     it('should retrieve access conditions from provided cid', async () => {
@@ -194,6 +198,6 @@ describe('encryption', () => {
       expect(response.data).toHaveProperty('conditions')
       expect(response.data).toHaveProperty('sharedTo')
       expect(response.data.cid).toEqual(cid)
-    }, 20000)
+    }, 10000)
   })
 })

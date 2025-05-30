@@ -9,12 +9,14 @@ export default async (
   sourcePath: any,
   apiKey: string,
   publicKey: string,
-  auth_token: string
+  auth_token: string,
+  cidVersion: number
 ): Promise<{ data: IFileUploadedResponse[] }> => {
   const fs = eval('require')('fs-extra')
   const token = 'Bearer ' + apiKey
   const endpoint =
-    lighthouseConfig.lighthouseNode + '/api/v0/add?wrap-with-directory=false'
+    lighthouseConfig.lighthouseNode +
+    `/api/v0/add?wrap-with-directory=false&cid-version=${cidVersion}`
   const stats = fs.lstatSync(sourcePath)
 
   if (stats.isFile()) {
@@ -39,7 +41,8 @@ export default async (
       })
 
       if (!response.ok) {
-        throw new Error(`Request failed with status code ${response.status}`)
+        const res = await response.json()
+        throw new Error(res.error)
       }
 
       const responseData = (await response.json()) as any
@@ -56,7 +59,7 @@ export default async (
 
       return { data: responseData }
     } catch (error: any) {
-      throw new Error(error.message)
+      throw new Error(error)
     }
   } else {
     const files = await walk(sourcePath)
@@ -92,11 +95,19 @@ export default async (
     })
 
     if (!response.ok) {
-      throw new Error(`Request failed with status code ${response.status}`)
+      const res = await response.json()
+      throw new Error(res.error)
     }
 
     const responseText = await response.text()
-    const jsondata = JSON.parse(responseText) as IFileUploadedResponse[]
+    let jsondata: IFileUploadedResponse[] = []
+
+    const match = responseText.match(/\[.*\]$/s)
+    if (match) {
+      jsondata = JSON.parse(match[0])
+    } else {
+      throw new Error('No JSON array found in response')
+    }
 
     const savedKey = await Promise.all(
       jsondata.map(async (data) => {

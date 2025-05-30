@@ -34,3 +34,4 @@ yarn.lock
 yarn-error.log
 dist/
 src/coverage/
+.DS_Store
