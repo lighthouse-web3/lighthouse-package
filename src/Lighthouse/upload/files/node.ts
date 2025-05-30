@@ -1,6 +1,6 @@
 import basePathConvert from '../../utils/basePathConvert'
 import { lighthouseConfig } from '../../../lighthouse.config'
-import { UploadFileReturnType, DealParameters } from '../../../types'
+import { UploadFileReturnType } from '../../../types'
 import { fetchWithTimeout } from '../../utils/util'
 
 export async function walk(dir: string) {
@@ -24,8 +24,7 @@ export async function walk(dir: string) {
 
 export default async <T extends boolean>(
   sourcePath: string,
-  apiKey: string,
-  dealParameters: DealParameters | undefined
+  apiKey: string
 ): Promise<{ data: UploadFileReturnType<T> }> => {
   const { createReadStream, lstatSync } = eval(`require`)('fs-extra')
   const path = eval(`require`)('path')
@@ -52,20 +51,16 @@ export default async <T extends boolean>(
         body: data,
         timeout: 7200000,
         headers: {
-          Authorization: token,
-          'X-Deal-Parameter': dealParameters
-            ? JSON.stringify(dealParameters)
-            : 'null',
+          Authorization: token
         },
       })
 
       if (!response.ok) {
-        throw new Error(`Request failed with status code ${response.status}`)
+        const res = (await response.json())
+        throw new Error(res.error)
       }
 
-      let responseData = (await response.text()) as any
-      responseData = JSON.parse(responseData)
-
+      const responseData = (await response.json())
       return { data: responseData }
     } else {
       const files = await walk(sourcePath)
@@ -91,23 +86,19 @@ export default async <T extends boolean>(
         body: data,
         timeout: 7200000,
         headers: {
-          Authorization: token,
-          'X-Deal-Parameter': dealParameters
-            ? JSON.stringify(dealParameters)
-            : 'null',
+          Authorization: token
         },
       })
 
       if (!response.ok) {
-        throw new Error(`Request failed with status code ${response.status}`)
+        const res = (await response.json())
+        throw new Error(res.error)
       }
 
-      let responseData = (await response.text()) as any
-      responseData = JSON.parse(responseData)
-
+      const responseData = (await response.json())
       return { data: responseData }
     }
   } catch (error: any) {
-    throw new Error(error.message)
+    throw new Error(error)
   }
 }

@@ -14,17 +14,18 @@ export default async (buffer: any, apiKey: string, mimeType = '') => {
       method: 'POST',
       body: formData,
       headers: {
-        Authorization: token,
-        'Mime-Type': mimeType,
+        Authorization: token
       },
     })
 
-    if (!response.ok)
-      throw new Error(`Request failed with status code ${response.status}`)
+    if (!response.ok) {
+      const res = (await response.json())
+      throw new Error(res.error)
+    }
 
     const data = await response.json()
     return { data }
   } catch (error: any) {
-    throw new Error(error?.message)
+    throw new Error(error)
   }
 }
