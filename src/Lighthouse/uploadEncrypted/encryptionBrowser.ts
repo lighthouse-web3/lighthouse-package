@@ -1,3 +1,5 @@
+import { EncryptionError, DecryptionError, InvalidPasswordError, CorruptedDataError } from '../../errors/EncryptionErrors';
+
 /* istanbul ignore file */
 declare const window: any
 const importKeyFromBytes = async (keyBytes: any) =>
@@ -50,14 +52,17 @@ export const encryptFile = async (fileArrayBuffer: any, password: any) => {
 
     return resultBytes
   } catch (error) {
-    console.error('Error encrypting file')
-    console.error(error)
-    throw error
+    console.error('Error encrypting file:', error);
+    throw new EncryptionError('Failed to encrypt file', error as Error);
   }
 }
 
 export const decryptFile = async (cipher: any, password: any) => {
   try {
+    if (!cipher || cipher.byteLength < 28) {
+      throw new CorruptedDataError('Invalid or corrupted encrypted data');
+    }
+
     const cipherBytes = new Uint8Array(cipher)
     const passwordBytes = new TextEncoder().encode(password)
 
@@ -72,19 +77,27 @@ export const decryptFile = async (cipher: any, password: any) => {
       hash: 'SHA-256',
     })
 
-    const decryptedContent = await window.crypto.subtle.decrypt(
-      {
-        name: 'AES-GCM',
-        iv: iv,
-      },
-      aesKey,
-      data
-    )
-
-    return decryptedContent
+    try {
+      const decryptedContent = await window.crypto.subtle.decrypt(
+        {
+          name: 'AES-GCM',
+          iv: iv,
+        },
+        aesKey,
+        data
+      )
+      return decryptedContent
+    } catch (error: any) {                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
+      if (error.name === 'OperationError') {
+        throw new InvalidPasswordError();
+      }
+      throw error;
+    }
   } catch (error) {
-    console.error('Error decrypting file')
-    console.error(error)
-    return
+    console.error('Error decrypting file:', error);
+    if (error instanceof DecryptionError) {
+      throw error;
+    }
+    throw new DecryptionError('Failed to decrypt file', error as Error);
   }
 }
