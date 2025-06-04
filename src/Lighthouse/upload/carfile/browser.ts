@@ -1,10 +1,14 @@
 /* istanbul ignore file */
 import { lighthouseConfig } from '../../../lighthouse.config'
-import { DealParameters, IUploadProgressCallback } from '../../../types'
+import {
+  DealParameters,
+  IUploadProgressCallback,
+  IFileUploadedResponse,
+} from '../../../types'
 import { fetchWithTimeout } from '../../utils/util'
 
 export default async (
-  carFile: File,
+  file: File,
   apiKey: string,
   dealParameters?: DealParameters,
   uploadProgressCallback?: (data: IUploadProgressCallback) => void
@@ -13,8 +17,11 @@ export default async (
     const endpoint = lighthouseConfig.lighthouseNode + `/api/v0/dag/import`
     const token = 'Bearer ' + apiKey
 
+    const arrayBuffer = await file.arrayBuffer()
+    const blob = new Blob([arrayBuffer], { type: file.type })
+
     const formData = new FormData()
-    formData.append('file', carFile)
+    formData.append('file', blob, file.name)
 
     const headers = new Headers({
       Authorization: token,
@@ -28,11 +35,9 @@ export default async (
           method: 'POST',
           body: formData,
           headers: headers,
-          timeout: 7200000, // 2 hour timeout
+          timeout: 7200000,
           onProgress: (progress) => {
-            uploadProgressCallback({
-              progress: progress,
-            })
+            uploadProgressCallback({ progress })
           },
         })
       : await fetchWithTimeout(endpoint, {
@@ -43,11 +48,14 @@ export default async (
         })
 
     if (!response.ok) {
-      throw new Error(`CAR upload failed: ${response.status}`)
+      throw new Error(`CAR upload failed with status code ${response.status}`)
     }
 
-    const res = await response.json()
-    return { data: res }
+    const responseText = await response.text()
+    const result: IFileUploadedResponse | IFileUploadedResponse[] =
+      JSON.parse(responseText)
+
+    return result
   } catch (error: any) {
     throw new Error(error?.message)
   }
