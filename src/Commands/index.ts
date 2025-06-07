@@ -17,6 +17,10 @@ import importWallet from './import-wallet'
 import revokeAccess from './revoke-access'
 import resetPassword from './reset-password'
 import uploadEncrypted from './upload-encrypted'
+import storageStats from './storage-stats'
+import quotaUsage from './quota-usage'
+import bandwidthUsage from './bandwidth-usage'
+import costEstimate from './cost-estimate'
 
 const widgets = new Command('lighthouse-web3')
 
@@ -157,6 +161,27 @@ widgets
   .command('get-uploads')
   .description('Get details of file uploaded')
   .action(getUploads)
+
+widgets
+  .command('storage-stats')
+  .description('Show detailed storage statistics')
+  .action(storageStats)
+
+widgets
+  .command('quota-usage')
+  .description('Show storage quota usage')
+  .action(quotaUsage)
+
+widgets
+  .command('bandwidth-usage')
+  .description('Show bandwidth usage')
+  .action(bandwidthUsage)
+
+widgets
+  .command('cost-estimate')
+  .argument('<size>', 'Size to estimate (e.g., 1GB, 500MB, 1TB)')
+  .description('Estimate storage cost')
+  .action(costEstimate)
 
 widgets.addHelpText(
   'after',
