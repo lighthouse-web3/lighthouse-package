@@ -17,6 +17,11 @@ import importWallet from './import-wallet'
 import revokeAccess from './revoke-access'
 import resetPassword from './reset-password'
 import uploadEncrypted from './upload-encrypted'
+import moveFile from './move'
+import copyFile from './copy'
+import listFiles from './list-files'
+import searchFiles from './search-files'
+import fileInfo from './file-info'
 
 const widgets = new Command('lighthouse-web3')
 
@@ -157,6 +162,40 @@ widgets
   .command('get-uploads')
   .description('Get details of file uploaded')
   .action(getUploads)
+
+widgets
+  .command('move')
+  .description('Move/rename uploaded file')
+  .argument('<cid>', 'File CID')
+  .argument('<new-location>', 'New location/name for the file')
+  .action(moveFile)
+
+widgets
+  .command('copy')
+  .description('Copy file to new location')
+  .argument('<cid>', 'File CID')
+  .argument('<new-location>', 'New location for the copy')
+  .action(copyFile)
+
+widgets
+  .command('list-files')
+  .description('List files with filtering options')
+  .option('--type <type>', 'Filter by file type')
+  .option('--size <size>', 'Filter by size (format: gt:1000000)')
+  .option('--date <date>', 'Filter by date (ISO format)')
+  .action(listFiles)
+
+widgets
+  .command('search-files')
+  .description('Search through uploaded files')
+  .argument('<query>', 'Search query')
+  .action(searchFiles)
+
+widgets
+  .command('file-info')
+  .description('Get detailed file information')
+  .argument('<cid>', 'File CID')
+  .action(fileInfo)
 
 widgets.addHelpText(
   'after',
