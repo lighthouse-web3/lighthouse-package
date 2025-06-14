@@ -55,6 +55,7 @@
     "@types/jest": "^29.5.0",
     "@types/mime-types": "^2.1.1",
     "@types/node": "^20.5.3",
+    "@types/progress": "^2.0.7",
     "@types/read": "^0.0.29",
     "@typescript-eslint/eslint-plugin": "^5.57.1",
     "@typescript-eslint/parser": "^5.57.1",

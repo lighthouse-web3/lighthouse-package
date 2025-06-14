@@ -17,6 +17,9 @@ import importWallet from './import-wallet'
 import revokeAccess from './revoke-access'
 import resetPassword from './reset-password'
 import uploadEncrypted from './upload-encrypted'
+import usageStats from './usage-stats'
+import downloadCommand from './download'
+
 
 const widgets = new Command('lighthouse-web3')
 
@@ -158,6 +161,11 @@ widgets
   .description('Get details of file uploaded')
   .action(getUploads)
 
+widgets
+  .command('usage-stats')
+  .description('Get usage stats')
+  .action(usageStats)
+
 widgets.addHelpText(
   'after',
   '\r\nExample:' +
@@ -171,5 +179,7 @@ widgets.addHelpText(
     Array(17).fill('\xa0').join('') +
     'lighthouse-web3 import-wallet --key 0x7e9fd9a....a8600\r\n'
 )
+
+downloadCommand(widgets)
 
 widgets.parse(process.argv)
