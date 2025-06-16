@@ -17,6 +17,7 @@ import importWallet from './import-wallet'
 import revokeAccess from './revoke-access'
 import resetPassword from './reset-password'
 import uploadEncrypted from './upload-encrypted'
+import { walletBackup, walletRestore, walletInfo } from './wallet-management'
 
 const widgets = new Command('lighthouse-web3')
 
@@ -157,6 +158,22 @@ widgets
   .command('get-uploads')
   .description('Get details of file uploaded')
   .action(getUploads)
+
+widgets
+  .command('wallet-backup')
+  .description('Create a backup of wallet configuration')
+  .action(walletBackup)
+
+widgets
+  .command('wallet-restore')
+  .description('Restore wallet from backup')
+  .argument('<backupPath>', 'Path to backup file')
+  .action(walletRestore)
+
+widgets
+  .command('wallet-info')
+  .description('Display detailed wallet information')
+  .action(walletInfo)
 
 widgets.addHelpText(
   'after',
