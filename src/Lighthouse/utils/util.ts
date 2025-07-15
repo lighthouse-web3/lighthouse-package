@@ -5,6 +5,13 @@ interface FetchOptions extends RequestInit {
   onProgress?: (progress: number) => void
 }
 
+interface DirectStreamOptions {
+  method?: string
+  headers?: Record<string, string>
+  timeout?: number
+  onProgress?: (progress: number) => void
+}
+
 const isCID = (cid: string) => {
   return /^(Qm[1-9A-HJ-NP-Za-km-z]{44}|b[A-Za-z2-7]{58}|B[A-Z2-7]{58}|z[1-9A-HJ-NP-Za-km-z]{48}|F[0-9A-F]{50})*$/.test(
     cid
@@ -127,10 +134,112 @@ async function fetchWithTimeout(
   }
 }
 
+async function fetchWithDirectStream(
+  endpointURL: string,
+  options: DirectStreamOptions,
+  streamData: {
+    boundary: string
+    files: Array<{
+      stream: any
+      filename: string
+    }>
+  }
+): Promise<{ data: any }> {
+  const { method = 'POST', headers = {}, timeout = 7200000 } = options
+
+  const http = eval(`require`)('http')
+  const https = eval(`require`)('https')
+  const url = eval(`require`)('url')
+
+  const parsedUrl = url.parse(endpointURL)
+  const isHttps = parsedUrl.protocol === 'https:'
+  const client = isHttps ? https : http
+
+  return new Promise((resolve, reject) => {
+    const requestOptions = {
+      hostname: parsedUrl.hostname,
+      port: parsedUrl.port || (isHttps ? 443 : 80),
+      path: parsedUrl.path,
+      method,
+      headers: {
+        ...headers,
+        'Content-Type': `multipart/form-data; boundary=${streamData.boundary}`,
+      },
+    }
+
+    const req = client.request(requestOptions, (res: any) => {
+      let data = ''
+      res.on('data', (chunk: any) => {
+        data += chunk
+      })
+      res.on('end', () => {
+        if (res.statusCode && res.statusCode >= 200 && res.statusCode < 300) {
+          try {
+            const responseData = JSON.parse(data)
+            resolve({ data: responseData })
+          } catch (error) {
+            reject(new Error('Invalid JSON response'))
+          }
+        } else {
+          reject(new Error(`Request failed with status code ${res.statusCode}`))
+        }
+      })
+    })
+
+    req.on('error', (error: any) => {
+      reject(new Error(error.message))
+    })
+
+    // Handle timeout
+    const timeoutId = setTimeout(() => {
+      req.destroy()
+      reject(new Error('Request timed out'))
+    }, timeout)
+
+    req.on('close', () => {
+      clearTimeout(timeoutId)
+    })
+
+    // Stream files
+    let fileIndex = 0
+
+    const processNextFile = () => {
+      if (fileIndex >= streamData.files.length) {
+        req.write(`\r\n--${streamData.boundary}--\r\n`)
+        req.end()
+        return
+      }
+
+      const file = streamData.files[fileIndex]
+      const stream = file.stream
+
+      req.write(`--${streamData.boundary}\r\n`)
+      req.write(
+        `Content-Disposition: form-data; name="file"; filename="${file.filename}"\r\n`
+      )
+      req.write(`Content-Type: application/octet-stream\r\n\r\n`)
+
+      stream.pipe(req, { end: false })
+
+      stream.on('end', () => {
+        fileIndex++
+        processNextFile()
+      })
+
+      stream.on('error', (error: any) => {
+        reject(new Error(`File stream error: ${error.message}`))
+      })
+    }
+
+    processNextFile()
+  })
+}
+
 export {
   isCID,
   isPrivateKey,
   addressValidator,
   checkDuplicateFileNames,
   fetchWithTimeout,
+  fetchWithDirectStream,
 }
