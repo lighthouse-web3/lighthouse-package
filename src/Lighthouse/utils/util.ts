@@ -200,38 +200,69 @@ async function fetchWithDirectStream(
       clearTimeout(timeoutId)
     })
 
-    // Stream files
-    let fileIndex = 0
-
-    const processNextFile = () => {
-      if (fileIndex >= streamData.files.length) {
-        req.write(`\r\n--${streamData.boundary}--\r\n`)
-        req.end()
-        return
-      }
-
-      const file = streamData.files[fileIndex]
-      const stream = file.stream
-
-      req.write(`--${streamData.boundary}\r\n`)
-      req.write(
-        `Content-Disposition: form-data; name="file"; filename="${file.filename}"\r\n`
-      )
-      req.write(`Content-Type: application/octet-stream\r\n\r\n`)
-
-      stream.pipe(req, { end: false })
-
-      stream.on('end', () => {
-        fileIndex++
-        processNextFile()
-      })
-
-      stream.on('error', (error: any) => {
-        reject(new Error(`File stream error: ${error.message}`))
+    // Stream files sequentially with backpressure handling and proper part delimiters
+    const writeAsync = (data: string | Buffer): Promise<void> => {
+      return new Promise((resolve) => {
+        const canWrite = req.write(data)
+        if (canWrite) {
+          resolve()
+        } else {
+          req.once('drain', () => resolve())
+        }
       })
     }
 
-    processNextFile()
+    const pumpStream = (stream: any): Promise<void> => {
+      return new Promise((resolve, rejectPump) => {
+        const onData = (chunk: any) => {
+          const canWrite = req.write(chunk)
+          if (!canWrite) {
+            stream.pause()
+            req.once('drain', () => stream.resume())
+          }
+        }
+        const onEnd = () => {
+          cleanup()
+          resolve()
+        }
+        const onError = (err: any) => {
+          cleanup()
+          rejectPump(new Error(`File stream error: ${err?.message || err}`))
+        }
+        const cleanup = () => {
+          stream.off('data', onData)
+          stream.off('end', onEnd)
+          stream.off('error', onError)
+        }
+        stream.on('data', onData)
+        stream.on('end', onEnd)
+        stream.on('error', onError)
+      })
+    }
+
+    ;(async () => {
+      try {
+        for (let idx = 0; idx < streamData.files.length; idx++) {
+          const file = streamData.files[idx]
+          const headersPart =
+            `--${streamData.boundary}\r\n` +
+            `Content-Disposition: form-data; name="file"; filename="${file.filename}"\r\n` +
+            `Content-Type: application/octet-stream\r\n\r\n`
+
+          await writeAsync(headersPart)
+          await pumpStream(file.stream)
+          await writeAsync(`\r\n`)
+        }
+
+        await writeAsync(`--${streamData.boundary}--\r\n`)
+        req.end()
+      } catch (err: any) {
+        if (req && !req.destroyed) {
+          req.destroy()
+        }
+        reject(new Error(err?.message || String(err)))
+      }
+    })()
   })
 }
 

@@ -70,13 +70,15 @@ export default async (
       // Handle directory upload
       const files = await walk(sourcePath)
 
-      const streamData = {
+      const createStreamData = () => ({
         boundary,
         files: files.map((file) => ({
           stream: createReadStream(file),
           filename: basePathConvert(sourcePath, file),
         })),
-      }
+      })
+
+      const streamData = createStreamData()
 
       const response = await fetchWithDirectStream(
         endpoint,
