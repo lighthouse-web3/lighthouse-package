@@ -1,7 +1,7 @@
 import basePathConvert from '../../utils/basePathConvert'
 import { lighthouseConfig } from '../../../lighthouse.config'
 import { fetchWithDirectStream } from '../../utils/util'
-import { IFileUploadedResponse } from '../../../types'
+import { IFileUploadedResponse, IUploadProgressCallback } from '../../../types'
 export async function walk(dir: string) {
   const { readdir, stat } = eval(`require`)('fs-extra')
   let results: string[] = []
@@ -24,7 +24,8 @@ export async function walk(dir: string) {
 export default async (
   sourcePath: string,
   apiKey: string,
-  cidVersion: number
+  cidVersion: number,
+  uploadProgressCallback?: (data: IUploadProgressCallback) => void
 ): Promise<{ data: IFileUploadedResponse }> => {
   const { createReadStream, lstatSync } = eval(`require`)('fs-extra')
   const path = eval(`require`)('path')
@@ -51,6 +52,7 @@ export default async (
           {
             stream,
             filename: path.basename(sourcePath),
+            size: stats.size,
           },
         ],
       }
@@ -61,6 +63,9 @@ export default async (
           method: 'POST',
           headers,
           timeout: 7200000,
+          onProgress: uploadProgressCallback
+            ? (data: { progress: number }) => uploadProgressCallback(data)
+            : undefined,
         },
         streamData
       )
@@ -72,10 +77,14 @@ export default async (
 
       const createStreamData = () => ({
         boundary,
-        files: files.map((file) => ({
-          stream: createReadStream(file),
-          filename: basePathConvert(sourcePath, file),
-        })),
+        files: files.map((file) => {
+          const fileStats = lstatSync(file)
+          return {
+            stream: createReadStream(file),
+            filename: basePathConvert(sourcePath, file),
+            size: fileStats.size,
+          }
+        }),
       })
 
       const streamData = createStreamData()
@@ -86,6 +95,9 @@ export default async (
           method: 'POST',
           headers,
           timeout: 7200000,
+          onProgress: uploadProgressCallback
+            ? (data: { progress: number }) => uploadProgressCallback(data)
+            : undefined,
         },
         streamData
       )

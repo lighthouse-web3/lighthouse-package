@@ -9,7 +9,7 @@ interface DirectStreamOptions {
   method?: string
   headers?: Record<string, string>
   timeout?: number
-  onProgress?: (progress: number) => void
+  onProgress?: (data: { progress: number }) => void
 }
 
 const isCID = (cid: string) => {
@@ -142,10 +142,16 @@ async function fetchWithDirectStream(
     files: Array<{
       stream: any
       filename: string
+      size: number
     }>
   }
 ): Promise<{ data: any }> {
-  const { method = 'POST', headers = {}, timeout = 7200000 } = options
+  const {
+    method = 'POST',
+    headers = {},
+    timeout = 7200000,
+    onProgress,
+  } = options
 
   const http = eval(`require`)('http')
   const https = eval(`require`)('https')
@@ -200,6 +206,17 @@ async function fetchWithDirectStream(
       clearTimeout(timeoutId)
     })
 
+    // Track total bytes for progress calculation
+    let totalBytesUploaded = 0
+    let totalBytesToUpload = 0
+
+    // Calculate total size for progress tracking
+    if (onProgress) {
+      for (const file of streamData.files) {
+        totalBytesToUpload += file.size
+      }
+    }
+
     // Stream files sequentially with backpressure handling and proper part delimiters
     const writeAsync = (data: string | Buffer): Promise<void> => {
       return new Promise((resolve) => {
@@ -215,6 +232,16 @@ async function fetchWithDirectStream(
     const pumpStream = (stream: any): Promise<void> => {
       return new Promise((resolve, rejectPump) => {
         const onData = (chunk: any) => {
+          // Update progress if callback is provided
+          if (onProgress && totalBytesToUpload > 0) {
+            totalBytesUploaded += chunk.length
+            const progress = Math.min(
+              (totalBytesUploaded / totalBytesToUpload) * 100,
+              100
+            )
+            onProgress({ progress })
+          }
+
           const canWrite = req.write(chunk)
           if (!canWrite) {
             stream.pause()
