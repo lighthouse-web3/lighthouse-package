@@ -14,7 +14,7 @@ async function uploadFiles(
   // Upload File to IPFS
   //@ts-ignore
   if (typeof window === 'undefined') {
-    return await uploadFile(path, apiKey, cidVersion)
+    return await uploadFile(path, apiKey, cidVersion, uploadProgressCallback)
   } else {
     return await uploadFileBrowser(
       path,
