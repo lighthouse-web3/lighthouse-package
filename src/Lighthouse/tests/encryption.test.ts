@@ -13,7 +13,6 @@ const signAuthMessage = async (privateKey: string) => {
 describe('encryption', () => {
   describe('getAuthMessage', () => {
     it('should get auth message when valid public key is provided', async () => {
-      console.log('testing getAuthMessage')
       const response = await lighthouse.getAuthMessage(
         '0x1Ec09D4B3Cb565b7CCe2eEAf71CC90c9b46c5c26'
       )
@@ -24,7 +23,6 @@ describe('encryption', () => {
 
     it('should not get auth message when invalid public key is provided', async () => {
       try {
-        console.log('testing getAuthMessage with invalid public key')
         const response = await lighthouse.getAuthMessage('invalidPublicKey')
       } catch (error) {
         expect(error.message).toBe('Invalid public Key')
@@ -38,7 +36,6 @@ describe('encryption', () => {
     const cid = 'QmVkHgHnYVUfvTXsaJisHRgc89zsrgVL6ATh9mSiegRYrX'
 
     it('should fetch encryption key when correct public-private key pair is provided', async () => {
-      console.log('testing fetchEncryptionKey')
       const signed_message = await signAuthMessage(privateKey)
       const response = await lighthouse.fetchEncryptionKey(
         cid,
@@ -50,7 +47,6 @@ describe('encryption', () => {
 
     it('should not fetch encryption key when incorrect public-private key pair is provided', async () => {
       try {
-        console.log('testing fetchEncryptionKey with incorrect key pair')
         const randomPublicKey = '0x1ccEF158Dcbe6643F1cC577F236af79993F4D066'
         const signed_message = await signAuthMessage(privateKey)
         const response = await lighthouse.fetchEncryptionKey(
@@ -122,7 +118,7 @@ describe('encryption', () => {
           signed_message
         )
       } catch (error) {
-        expect(error.message.message.message).toEqual('access denied')
+        expect(error.message[0].message.message).toEqual('access denied')
       }
     }, 10000)
   })

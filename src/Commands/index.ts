@@ -71,7 +71,7 @@ Command.prototype.helpInformation = function (context: any) {
 }
 
 widgets.addHelpText('before', 'Welcome to lighthouse-web3')
-widgets.version('0.4.0')
+widgets.version('0.4.1')
 
 widgets
   .command('wallet')

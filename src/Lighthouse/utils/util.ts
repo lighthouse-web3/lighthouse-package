@@ -5,6 +5,13 @@ interface FetchOptions extends RequestInit {
   onProgress?: (progress: number) => void
 }
 
+interface DirectStreamOptions {
+  method?: string
+  headers?: Record<string, string>
+  timeout?: number
+  onProgress?: (data: { progress: number }) => void
+}
+
 const isCID = (cid: string) => {
   return /^(Qm[1-9A-HJ-NP-Za-km-z]{44}|b[A-Za-z2-7]{58}|B[A-Z2-7]{58}|z[1-9A-HJ-NP-Za-km-z]{48}|F[0-9A-F]{50})*$/.test(
     cid
@@ -127,10 +134,170 @@ async function fetchWithTimeout(
   }
 }
 
+async function fetchWithDirectStream(
+  endpointURL: string,
+  options: DirectStreamOptions,
+  streamData: {
+    boundary: string
+    files: Array<{
+      stream: any
+      filename: string
+      size: number
+    }>
+  }
+): Promise<{ data: any }> {
+  const {
+    method = 'POST',
+    headers = {},
+    timeout = 7200000,
+    onProgress,
+  } = options
+
+  const http = eval(`require`)('http')
+  const https = eval(`require`)('https')
+  const url = eval(`require`)('url')
+
+  const parsedUrl = url.parse(endpointURL)
+  const isHttps = parsedUrl.protocol === 'https:'
+  const client = isHttps ? https : http
+
+  return new Promise((resolve, reject) => {
+    const requestOptions = {
+      hostname: parsedUrl.hostname,
+      port: parsedUrl.port || (isHttps ? 443 : 80),
+      path: parsedUrl.path,
+      method,
+      headers: {
+        ...headers,
+        'Content-Type': `multipart/form-data; boundary=${streamData.boundary}`,
+      },
+    }
+
+    const req = client.request(requestOptions, (res: any) => {
+      let data = ''
+      res.on('data', (chunk: any) => {
+        data += chunk
+      })
+      res.on('end', () => {
+        if (res.statusCode && res.statusCode >= 200 && res.statusCode < 300) {
+          try {
+            const responseData = JSON.parse(data)
+            resolve({ data: responseData })
+          } catch (error) {
+            reject(new Error('Invalid JSON response'))
+          }
+        } else {
+          reject(new Error(`Request failed with status code ${res.statusCode}`))
+        }
+      })
+    })
+
+    req.on('error', (error: any) => {
+      reject(new Error(error.message))
+    })
+
+    // Handle timeout
+    const timeoutId = setTimeout(() => {
+      req.destroy()
+      reject(new Error('Request timed out'))
+    }, timeout)
+
+    req.on('close', () => {
+      clearTimeout(timeoutId)
+    })
+
+    // Track total bytes for progress calculation
+    let totalBytesUploaded = 0
+    let totalBytesToUpload = 0
+
+    // Calculate total size for progress tracking
+    if (onProgress) {
+      for (const file of streamData.files) {
+        totalBytesToUpload += file.size
+      }
+    }
+
+    // Stream files sequentially with backpressure handling and proper part delimiters
+    const writeAsync = (data: string | Buffer): Promise<void> => {
+      return new Promise((resolve) => {
+        const canWrite = req.write(data)
+        if (canWrite) {
+          resolve()
+        } else {
+          req.once('drain', () => resolve())
+        }
+      })
+    }
+
+    const pumpStream = (stream: any): Promise<void> => {
+      return new Promise((resolve, rejectPump) => {
+        const onData = (chunk: any) => {
+          // Update progress if callback is provided
+          if (onProgress && totalBytesToUpload > 0) {
+            totalBytesUploaded += chunk.length
+            const progress = Math.min(
+              (totalBytesUploaded / totalBytesToUpload) * 100,
+              100
+            )
+            onProgress({ progress })
+          }
+
+          const canWrite = req.write(chunk)
+          if (!canWrite) {
+            stream.pause()
+            req.once('drain', () => stream.resume())
+          }
+        }
+        const onEnd = () => {
+          cleanup()
+          resolve()
+        }
+        const onError = (err: any) => {
+          cleanup()
+          rejectPump(new Error(`File stream error: ${err?.message || err}`))
+        }
+        const cleanup = () => {
+          stream.off('data', onData)
+          stream.off('end', onEnd)
+          stream.off('error', onError)
+        }
+        stream.on('data', onData)
+        stream.on('end', onEnd)
+        stream.on('error', onError)
+      })
+    }
+
+    ;(async () => {
+      try {
+        for (let idx = 0; idx < streamData.files.length; idx++) {
+          const file = streamData.files[idx]
+          const headersPart =
+            `--${streamData.boundary}\r\n` +
+            `Content-Disposition: form-data; name="file"; filename="${file.filename}"\r\n` +
+            `Content-Type: application/octet-stream\r\n\r\n`
+
+          await writeAsync(headersPart)
+          await pumpStream(file.stream)
+          await writeAsync(`\r\n`)
+        }
+
+        await writeAsync(`--${streamData.boundary}--\r\n`)
+        req.end()
+      } catch (err: any) {
+        if (req && !req.destroyed) {
+          req.destroy()
+        }
+        reject(new Error(err?.message || String(err)))
+      }
+    })()
+  })
+}
+
 export {
   isCID,
   isPrivateKey,
   addressValidator,
   checkDuplicateFileNames,
   fetchWithTimeout,
+  fetchWithDirectStream,
 }

@@ -26,8 +26,14 @@ export default async (
     chainType
   )
 
-  if (error) {
-    throw error
+  if (!isSuccess || error) {
+    const errorMessage =
+      typeof error === 'string'
+        ? error
+        : error instanceof Error
+        ? error.message
+        : JSON.stringify(error)
+    throw new Error(errorMessage)
   }
   return { data: { cid: cid, status: 'Success' } }
 }

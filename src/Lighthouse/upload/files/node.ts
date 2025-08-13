@@ -1,7 +1,7 @@
 import basePathConvert from '../../utils/basePathConvert'
 import { lighthouseConfig } from '../../../lighthouse.config'
-import { fetchWithTimeout } from '../../utils/util'
-import { IFileUploadedResponse } from '../../../types'
+import { fetchWithDirectStream } from '../../utils/util'
+import { IFileUploadedResponse, IUploadProgressCallback } from '../../../types'
 export async function walk(dir: string) {
   const { readdir, stat } = eval(`require`)('fs-extra')
   let results: string[] = []
@@ -24,79 +24,85 @@ export async function walk(dir: string) {
 export default async (
   sourcePath: string,
   apiKey: string,
-  cidVersion: number
+  cidVersion: number,
+  uploadProgressCallback?: (data: IUploadProgressCallback) => void
 ): Promise<{ data: IFileUploadedResponse }> => {
   const { createReadStream, lstatSync } = eval(`require`)('fs-extra')
   const path = eval(`require`)('path')
 
   const token = 'Bearer ' + apiKey
   const stats = lstatSync(sourcePath)
+
   try {
     const endpoint =
       lighthouseConfig.lighthouseNode +
       `/api/v0/add?wrap-with-directory=false&cid-version=${cidVersion}`
+    const boundary =
+      '----WebKitFormBoundary' + Math.random().toString(16).substr(2)
+
+    const headers = {
+      Authorization: token,
+    }
+
     if (stats.isFile()) {
-      const data = new FormData()
       const stream = createReadStream(sourcePath)
-      const buffers: Buffer[] = []
-      for await (const chunk of stream) {
-        buffers.push(chunk)
+      const streamData = {
+        boundary,
+        files: [
+          {
+            stream,
+            filename: path.basename(sourcePath),
+            size: stats.size,
+          },
+        ],
       }
-      const blob = new Blob(buffers)
 
-      data.append('file', blob, path.basename(sourcePath))
-
-      const response = await fetchWithTimeout(endpoint, {
-        method: 'POST',
-        body: data,
-        timeout: 7200000,
-        headers: {
-          Authorization: token
+      const response = await fetchWithDirectStream(
+        endpoint,
+        {
+          method: 'POST',
+          headers,
+          timeout: 7200000,
+          onProgress: uploadProgressCallback
+            ? (data: { progress: number }) => uploadProgressCallback(data)
+            : undefined,
         },
-      })
+        streamData
+      )
 
-      if (!response.ok) {
-        const res = (await response.json())
-        throw new Error(res.error)
-      }
-
-      const responseData = (await response.json())
-      return { data: responseData }
+      return response
     } else {
+      // Handle directory upload
       const files = await walk(sourcePath)
-      const data = new FormData()
 
-      for (const file of files) {
-        const stream = createReadStream(file)
-        const buffers: Buffer[] = []
-        for await (const chunk of stream) {
-          buffers.push(chunk)
-        }
-        const blob = new Blob(buffers)
-
-        data.append(
-          'file',
-          blob,
-          basePathConvert(sourcePath, file)
-        )
-      }
-
-      const response = await fetchWithTimeout(endpoint, {
-        method: 'POST',
-        body: data,
-        timeout: 7200000,
-        headers: {
-          Authorization: token
-        },
+      const createStreamData = () => ({
+        boundary,
+        files: files.map((file) => {
+          const fileStats = lstatSync(file)
+          return {
+            stream: createReadStream(file),
+            filename: basePathConvert(sourcePath, file),
+            size: fileStats.size,
+          }
+        }),
       })
 
-      if (!response.ok) {
-        const res = (await response.json())
-        throw new Error(res.error)
-      }
+      const streamData = createStreamData()
 
-      const responseData = (await response.json())
-      return { data: responseData }
+      const response = await fetchWithDirectStream(
+        endpoint,
+        {
+          method: 'POST',
+          headers,
+          timeout: 7200000,
+          onProgress: uploadProgressCallback
+            ? (data: { progress: number }) => uploadProgressCallback(data)
+            : undefined,
+        },
+        streamData
+      )
+
+      return response
     }
   } catch (error: any) {
     throw new Error(error)
