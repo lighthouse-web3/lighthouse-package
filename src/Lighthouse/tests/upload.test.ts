@@ -53,7 +53,7 @@ describe('uploadFiles', () => {
       )
       await lighthouse.upload(path, 'random apiKey')
     } catch (error) {
-      expect(error.message).toBe('Error: Authentication failed')
+      expect(error.message).toBe('Error: Request failed with status code 401')
     }
   }, 60000)
 })
