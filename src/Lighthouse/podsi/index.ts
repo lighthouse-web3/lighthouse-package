@@ -1,4 +1,6 @@
 import { defaultConfig } from '../../lighthouse.config'
+import { resilientFetch } from '../utils/resilientFetch'
+import { defaultApiConfig } from '../utils/apiConfig'
 
 type Proof = {
   verifierData: {
@@ -36,19 +38,27 @@ type PODSIData = {
 
 export default async (cid: string): Promise<{ data: PODSIData }> => {
   try {
-    const response = await fetch(
-      defaultConfig.lighthouseAPI + `/api/lighthouse/get_proof?cid=${cid}`
-    )
-    if (!response.ok) {
-      if (response.status === 400) {
-        throw new Error("Proof Doesn't exist yet")
+    const response = await resilientFetch(
+      defaultConfig.lighthouseAPI + `/api/lighthouse/get_proof?cid=${cid}`,
+      {
+        retryOptions: {
+          ...defaultApiConfig.retryOptions,
+          retryCondition: (error: any) => {
+            // Don't retry on 400 errors for PODSI - proof might not exist yet
+            if (error.status === 400) return false
+            // Use default retry logic for other errors
+            return error.status === 429 || error.status >= 502
+          }
+        },
+        rateLimiter: defaultApiConfig.rateLimiter,
+        timeout: defaultApiConfig.timeout,
       }
-      throw new Error(`Request failed with status code ${response.status}`)
-    }
+    )
+    
     const data = (await response.json()) as PODSIData
     return { data }
   } catch (error: any) {
-    if (error?.response?.status === 400) {
+    if (error.status === 400) {
       throw new Error("Proof Doesn't exist yet")
     }
     throw new Error(error.message)

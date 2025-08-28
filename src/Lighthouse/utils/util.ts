@@ -1,4 +1,6 @@
 import { ethers } from 'ethers'
+import { resilientFetch, ResilientFetchOptions } from './resilientFetch'
+import { RateLimiter } from './rateLimiter'
 
 interface FetchOptions extends RequestInit {
   timeout?: number
@@ -300,4 +302,7 @@ export {
   checkDuplicateFileNames,
   fetchWithTimeout,
   fetchWithDirectStream,
+  resilientFetch,
+  RateLimiter,
 }
+export type { ResilientFetchOptions }
