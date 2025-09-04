@@ -9,6 +9,7 @@ import apiKey from './api-key'
 import balance from './balance'
 import shareFile from './share-file'
 import getUploads from './get-uploads'
+import deleteFile from './delete-file'
 import dealStatus from './deal-status'
 import decryptFile from './decrypt-file'
 import createWallet from './create-wallet'
@@ -71,7 +72,7 @@ Command.prototype.helpInformation = function (context: any) {
 }
 
 widgets.addHelpText('before', 'Welcome to lighthouse-web3')
-widgets.version('0.4.1')
+widgets.version('0.4.2')
 
 widgets
   .command('wallet')
@@ -157,6 +158,12 @@ widgets
   .command('get-uploads')
   .description('Get details of file uploaded')
   .action(getUploads)
+
+widgets
+  .command('delete-file')
+  .description('Delete a file')
+  .argument('<fileID>', 'File ID')
+  .action(deleteFile)
 
 widgets.addHelpText(
   'after',

@@ -1,4 +1,4 @@
-# Lighthouse <img src="https://img.shields.io/badge/v0.4.1-green"/>
+# Lighthouse <img src="https://img.shields.io/badge/v0.4.2-green"/>
 
 Lighthouse is a permanent decentralized file storage protocol that allows the ability to pay once and store forever. While traditionally, users need to repeatedly keep track and pay for their storage after every fixed amount of time, Lighthouse manages this for them and makes sure that user files are stored forever. The aim is to move users from a rent-based cost model where they are renting their own files on cloud storage to a permanent ownership model. It is built on top of IPFS, Filecoin, and Polygon. It uses the existing miner network and storage capacity of the filecoin network.
 
@@ -35,6 +35,7 @@ lighthouse-web3 deal-status <cid>               # Get filecoin deal status of a 
 
 # File management
 lighthouse-web3 get-uploads                     # Get details of files uploaded
+lighthouse-web3 delete-file <fileID>            # Delete a file
 
 # Sharing and access control
 lighthouse-web3 share-file <cid> <address>      # Share access to another user
@@ -80,3 +81,4 @@ This project is tested with [BrowserStack](https://www.browserstack.com/).
 ## License
 
 [MIT](https://choosealicense.com/licenses/mit/)
+```
