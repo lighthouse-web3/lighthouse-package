@@ -5,6 +5,7 @@ import dealStatus from './dealStatus'
 import getUploads from './getUploads'
 import getFileInfo from './getFileInfo'
 import createWallet from './createWallet'
+import deleteFile from './deleteFile'
 
 // Pay per deal
 import fund from './payPerDeal/fund'
@@ -64,6 +65,7 @@ export {
   getAllKeys,
   removeKey,
   posdi,
+  deleteFile,
 }
 
 export default {
@@ -94,4 +96,5 @@ export default {
   getAllKeys,
   removeKey,
   posdi,
+  deleteFile,
 }
