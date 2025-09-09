@@ -6,7 +6,14 @@ describe('deleteFile', () => {
   const fileId = process.env.TEST_FILE_ID as string
 
   it('should delete a file with correct API key and file ID', async () => {
-    const res = await lighthouse.deleteFile(apiKey, fileId)
+    const uploadsRes = await lighthouse.getUploads(apiKey)
+    const fileList = uploadsRes.data.fileList
+    expect(fileList.length).toBeGreaterThan(0)
+
+    const firstFileId = fileList[0].id
+    expect(typeof firstFileId).toBe('string')
+
+    const res = await lighthouse.deleteFile(apiKey, firstFileId)
     expect(res.data.message).toBe('File deleted successfully.')
   }, 60000)
 
