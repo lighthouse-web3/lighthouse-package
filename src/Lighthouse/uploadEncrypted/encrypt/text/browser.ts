@@ -51,7 +51,7 @@ export default async (
 
     const { error } = await saveShards(
       publicKey,
-      responseData.Hash,
+      responseData[0].Hash,
       signedMessage,
       keyShards
     )
