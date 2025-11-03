@@ -1,5 +1,5 @@
 ---
-name: "Production Release Checklist"
+name: "Production Release Checklist Readme"
 about: "Use this checklist when pushing new SDK / Backend / Frontend updates to production."
 title: "Release: vX.Y.Z"
 labels: [release, deployment]
