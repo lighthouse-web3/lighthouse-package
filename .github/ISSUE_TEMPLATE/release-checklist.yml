@@ -1,0 +1,28 @@
+name: "Production Release Checklist"
+description: "Use this checklist when pushing new SDK / Backend / Frontend updates to production."
+title: "Release: vX.Y.Z"
+labels: ["release", "deployment"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        # 🚀 Production Release Checklist (SDK / Backend / Frontend)
+
+        Use this issue when preparing a new release. Tick each item before marking complete.
+
+  - type: checkboxes
+    attributes:
+      label: Release Steps
+      options:
+        - label: Confirm scope & rollback plan — define what’s shipping, owner, and rollback path.
+        - label: Run full tests — unit, integration, and key end-to-end flows must pass.
+        - label: Verify backward compatibility — old SDKs, APIs, and UI still function.
+        - label: Update version numbers — follow Semantic Versioning (`major.minor.patch`).
+        - label: Check migrations & data safety — backups verified, rollback ready.
+        - label: Staging validation — test login, payments, uploads, core flows.
+        - label: Prepare release notes — summary, breaking changes, docs link.
+        - label: Notify users/community — Email, Discord, Telegram, X post.
+        - label: Deploy in correct order — Backend → SDK → Frontend; monitor metrics.
+        - label: Post-deploy sanity check — test live app, monitor 24–48 hrs.
+        - label: Announce live release — pin message, share changelog link.
+        - label: Cleanup & reflect — remove temp flags, document learnings.
