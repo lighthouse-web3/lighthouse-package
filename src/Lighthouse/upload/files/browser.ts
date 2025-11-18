@@ -4,7 +4,7 @@ import {
   IUploadProgressCallback,
   IFileUploadedResponse
 } from '../../../types'
-import { fetchWithTimeout } from '../../utils/util'
+import { resilientUpload } from '../../utils/resilientUpload'
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 export default async (
@@ -32,24 +32,16 @@ export default async (
       Authorization: token
     })
 
-    const response = uploadProgressCallback
-      ? await fetchWithTimeout(endpoint, {
-          method: 'POST',
-          body: formData,
-          headers: headers,
-          timeout: 7200000,
-          onProgress: (progress) => {
-            uploadProgressCallback({
-              progress: progress,
-            })
-          },
+    const response = await resilientUpload(endpoint, {
+      method: 'POST',
+      body: formData,
+      headers: headers,
+      onProgress: uploadProgressCallback ? (progress) => {
+        uploadProgressCallback({
+          progress: progress,
         })
-      : await fetchWithTimeout(endpoint, {
-          method: 'POST',
-          body: formData,
-          headers: headers,
-          timeout: 7200000,
-        })
+      } : undefined,
+    })
 
     if (!response.ok) {
       const res = (await response.json())

@@ -1,4 +1,6 @@
 import { lighthouseConfig } from '../../lighthouse.config'
+import { resilientFetch } from '../utils/resilientFetch'
+import { quickApiConfig } from '../utils/apiConfig'
 
 type ipnsObject = {
   ipnsName: string
@@ -14,18 +16,19 @@ export type keyDataResponse = {
 
 export default async (apiKey: string): Promise<keyDataResponse> => {
   try {
-    const response = await fetch(
+    const response = await resilientFetch(
       lighthouseConfig.lighthouseAPI + `/api/ipns/get_ipns_records`,
       {
         headers: {
           Authorization: `Bearer ${apiKey}`,
           'Content-Type': 'application/json',
         },
+        retryOptions: quickApiConfig.retryOptions,
+        rateLimiter: quickApiConfig.rateLimiter,
+        timeout: quickApiConfig.timeout,
       }
     )
-    if (!response.ok) {
-      throw new Error(`Request failed with status code ${response.status}`)
-    }
+    
     const data = (await response.json()) as ipnsObject[]
     /*
       return:
