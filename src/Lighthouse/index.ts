@@ -7,12 +7,6 @@ import getFileInfo from './getFileInfo'
 import createWallet from './createWallet'
 import deleteFile from './deleteFile'
 
-// Pay per deal
-import fund from './payPerDeal/fund'
-import getPrice from './payPerDeal/getPrice'
-import oneTimeAuth from './payPerDeal/oneTimeAuth'
-
-// Encryption
 import shareFile from './encryption/shareFile'
 import getAuthMessage from './encryption/getAuthMessage'
 import revokeFileAccess from './encryption/revokeFileAccess'
@@ -20,27 +14,20 @@ import fetchEncryptionKey from './encryption/fetchEncryptionKey'
 import applyAccessCondition from './encryption/applyAccessCondition'
 import getAccessConditions from './encryption/getAccessConditions'
 
-// Upload
 import upload from './upload/files'
 import uploadText from './upload/text'
 import uploadBuffer from './upload/buffer'
+import uploadCAR from './upload/car'
 import decryptFile from './uploadEncrypted/decrypt'
 import uploadEncrypted from './uploadEncrypted/encrypt/file'
 import textUploadEncrypted from './uploadEncrypted/encrypt/text'
 
-// IPNS
 import generateKey from './ipns/generateKey'
 import publishRecord from './ipns/publishRecord'
 import getAllKeys from './ipns/getAllKeys'
 import removeKey from './ipns/removeKey'
 
-//PODSI
-import posdi from './podsi'
-
 export {
-  fund,
-  getPrice,
-  oneTimeAuth,
   getQuote,
   getApiKey,
   getBalance,
@@ -57,6 +44,7 @@ export {
   upload,
   uploadText,
   uploadBuffer,
+  uploadCAR,
   uploadEncrypted,
   textUploadEncrypted,
   decryptFile,
@@ -64,14 +52,10 @@ export {
   publishRecord,
   getAllKeys,
   removeKey,
-  posdi,
   deleteFile,
 }
 
 export default {
-  fund,
-  getPrice,
-  oneTimeAuth,
   getQuote,
   getApiKey,
   getBalance,
@@ -88,6 +72,7 @@ export default {
   upload,
   uploadText,
   uploadBuffer,
+  uploadCAR,
   uploadEncrypted,
   textUploadEncrypted,
   decryptFile,
@@ -95,6 +80,5 @@ export default {
   publishRecord,
   getAllKeys,
   removeKey,
-  posdi,
   deleteFile,
 }

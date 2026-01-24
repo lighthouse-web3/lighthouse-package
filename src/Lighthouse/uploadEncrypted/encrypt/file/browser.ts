@@ -3,6 +3,7 @@ import { generate, saveShards } from '@lighthouse-web3/kavach'
 import {
   IFileUploadedResponse,
   IUploadProgressCallback,
+  Headers,
 } from '../../../../types'
 import { encryptFile } from '../../encryptionBrowser'
 import { lighthouseConfig } from '../../../../lighthouse.config'
@@ -30,7 +31,8 @@ export default async (
   publicKey: string,
   auth_token: string,
   cidVersion: number,
-  uploadProgressCallback?: (data: IUploadProgressCallback) => void
+  optionsHeaders?: Headers,
+  uploadProgressCallback?: (data: IUploadProgressCallback) => void,
 ): Promise<{ data: IFileUploadedResponse[] }> => {
   try {
     let keyMap = {} as any
@@ -41,6 +43,7 @@ export default async (
     const endpoint =
       lighthouseConfig.lighthouseNode + `/api/v0/add?wrap-with-directory=false&cid-version=${cidVersion}`
     const token = 'Bearer ' + apiKey
+    const storageType = optionsHeaders?.storageType
 
     const fileArr = []
     for (let i = 0; i < files.length; i++) {
@@ -82,6 +85,7 @@ export default async (
           headers: {
             Encryption: `${true}`,
             Authorization: token,
+            ...(storageType ? { 'X-Storage-Type': storageType } : {}),
           },
           onProgress: (progress) => {
             uploadProgressCallback({
@@ -96,6 +100,7 @@ export default async (
           headers: {
             Encryption: `${true}`,
             Authorization: token,
+            ...(storageType ? { 'X-Storage-Type': storageType } : {}),
           },
         })
     if (!response.ok) {

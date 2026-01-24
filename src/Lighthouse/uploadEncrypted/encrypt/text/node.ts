@@ -3,17 +3,22 @@ import { encryptFile } from '../../encryptionNode'
 import { generate, saveShards } from '@lighthouse-web3/kavach'
 import { lighthouseConfig } from '../../../../lighthouse.config'
 import { fetchWithTimeout } from '../../../utils/util'
+import type { Headers } from '../../../../types'
 
 export default async (
   text: string,
   apiKey: string,
   publicKey: string,
   signedMessage: string,
-  name: string
+  name: string,
+  cidVersion: number,
+  headers?: Headers,
 ) => {
   try {
     const token = 'Bearer ' + apiKey
-    const endpoint = lighthouseConfig.lighthouseNode + '/api/v0/add'
+    const endpoint =
+      lighthouseConfig.lighthouseNode + `/api/v0/add?cid-version=${cidVersion}`
+    const storageType = headers?.storageType
 
     // Upload file
     const formData = new FormData()
@@ -36,6 +41,7 @@ export default async (
         Encryption: 'true',
         'Mime-Type': 'text/plain',
         Authorization: token,
+        ...(storageType ? { 'X-Storage-Type': storageType } : {}),
       },
     })
 

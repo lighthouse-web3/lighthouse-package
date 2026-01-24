@@ -25,7 +25,8 @@ export default async (
   sourcePath: string,
   apiKey: string,
   cidVersion: number,
-  uploadProgressCallback?: (data: IUploadProgressCallback) => void
+  optionsHeaders?: { storageType?: string },
+  uploadProgressCallback?: (data: IUploadProgressCallback) => void,
 ): Promise<{ data: IFileUploadedResponse }> => {
   const { createReadStream, lstatSync } = eval(`require`)('fs-extra')
   const path = eval(`require`)('path')
@@ -34,14 +35,21 @@ export default async (
   const stats = lstatSync(sourcePath)
 
   try {
-    const endpoint =
-      lighthouseConfig.lighthouseNode +
-      `/api/v0/add?wrap-with-directory=false&cid-version=${cidVersion}`
-    const boundary =
-      '----WebKitFormBoundary' + Math.random().toString(16).substr(2)
+    const storageType = optionsHeaders?.storageType
 
-    const headers = {
+    // Build query string with allowed params only
+    const queryParams = new URLSearchParams({
+      'wrap-with-directory': 'false',
+      'cid-version': String(cidVersion),
+    })
+    const endpoint =
+      lighthouseConfig.lighthouseNode + `/api/v0/add?${queryParams.toString()}`
+    const boundary =
+      '----WebKitFormBoundary' + Math.random().toString(16).slice(2)
+
+    const requestHeaders = {
       Authorization: token,
+      ...(storageType ? { 'X-Storage-Type': storageType } : {}),
     }
 
     if (stats.isFile()) {
@@ -61,7 +69,7 @@ export default async (
         endpoint,
         {
           method: 'POST',
-          headers,
+          headers: requestHeaders,
           timeout: 7200000,
           onProgress: uploadProgressCallback
             ? (data: { progress: number }) => uploadProgressCallback(data)
@@ -93,7 +101,7 @@ export default async (
         endpoint,
         {
           method: 'POST',
-          headers,
+          headers: requestHeaders,
           timeout: 7200000,
           onProgress: uploadProgressCallback
             ? (data: { progress: number }) => uploadProgressCallback(data)

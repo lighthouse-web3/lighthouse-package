@@ -1,9 +1,16 @@
 import { lighthouseConfig } from '../../../lighthouse.config'
+import type { Headers } from '../../../types'
 
-export default async (buffer: any, apiKey: string, cidVersion: number) => {
+export default async (
+  buffer: any,
+  apiKey: string,
+  cidVersion: number,
+  headers?: Headers
+) => {
   try {
     const token = 'Bearer ' + apiKey
     const endpoint = lighthouseConfig.lighthouseNode + `/api/v0/add?cid-version=${cidVersion}`
+    const storageType = headers?.storageType
 
     // Upload file
     const blob = new Blob([buffer])
@@ -14,7 +21,8 @@ export default async (buffer: any, apiKey: string, cidVersion: number) => {
       method: 'POST',
       body: formData,
       headers: {
-        Authorization: token
+        Authorization: token,
+        ...(storageType ? { 'X-Storage-Type': storageType } : {}),
       },
     })
 

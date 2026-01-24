@@ -11,14 +11,31 @@ export default async (
   files: any,
   accessToken: string,
   cidVersion: number,
-  uploadProgressCallback?: (data: IUploadProgressCallback) => void
+  optionsHeaders?: { storageType?: string },
+  uploadProgressCallback?: (data: IUploadProgressCallback) => void,
 ): Promise<{ data: IFileUploadedResponse }>  => {
   try {
     const isDirectory = [...files].some(file => file.webkitRelativePath)
-    let endpoint = lighthouseConfig.lighthouseNode + `/api/v0/add?wrap-with-directory=false&cid-version=${cidVersion}`
+    
+    const storageType = optionsHeaders?.storageType
+
+    // Build query string with allowed params only
+    const baseParams = {
+      'cid-version': String(cidVersion),
+    }
+    
+    const queryParams = new URLSearchParams({
+      'wrap-with-directory': 'false',
+      ...baseParams,
+    })
+    let endpoint = lighthouseConfig.lighthouseNode + `/api/v0/add?${queryParams.toString()}`
 
     if(!isDirectory && files.length > 1) {
-      endpoint = lighthouseConfig.lighthouseNode + `/api/v0/add?wrap-with-directory=true&cid-version=${cidVersion}`
+      const wrapParams = new URLSearchParams({
+        'wrap-with-directory': 'true',
+        ...baseParams,
+      })
+      endpoint = lighthouseConfig.lighthouseNode + `/api/v0/add?${wrapParams.toString()}`
     }
 
     const formData = new FormData()
@@ -29,7 +46,8 @@ export default async (
     const token = 'Bearer ' + accessToken
 
     const headers = new Headers({
-      Authorization: token
+      Authorization: token,
+      ...(storageType ? { 'X-Storage-Type': storageType } : {}),
     })
 
     const response = uploadProgressCallback
