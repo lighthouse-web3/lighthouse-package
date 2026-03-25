@@ -6,10 +6,12 @@ import { fetchWithTimeout } from '../../utils/util'
 export default async (
   cid: string,
   fileEncryptionKey: string,
-  mimeType: string
+  mimeType: string,
+  gatewayUrl?: string
 ) => {
+  const gateway = gatewayUrl || lighthouseConfig.lighthouseGateway
   const response = await fetchWithTimeout(
-    lighthouseConfig.lighthouseGateway + '/api/v0/cat/' + cid,
+    gateway + '/api/v0/cat/' + cid,
     {
       method: 'POST',
       timeout: 7200000,

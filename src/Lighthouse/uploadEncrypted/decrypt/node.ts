@@ -3,10 +3,11 @@ import { decryptFile } from '../encryptionNode'
 import { lighthouseConfig } from '../../../lighthouse.config'
 import { fetchWithTimeout } from '../../utils/util'
 
-export default async (cid: string, fileEncryptionKey: any) => {
+export default async (cid: string, fileEncryptionKey: any, gatewayUrl?: string) => {
   try {
+    const gateway = gatewayUrl || lighthouseConfig.lighthouseGateway
     const response = await fetchWithTimeout(
-      lighthouseConfig.lighthouseGateway + '/api/v0/cat/' + cid,
+      gateway + '/api/v0/cat/' + cid,
       {
         method: 'POST',
         timeout: 7200000,
