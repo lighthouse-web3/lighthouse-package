@@ -11,8 +11,13 @@ export default async (
 ) => {
   try {
     const token = 'Bearer ' + apiKey
-    const endpoint = lighthouseConfig.lighthouseNode + `/api/v0/add?cid-version=${cidVersion}`
+    let endpoint = ''
     const storageType = headers?.storageType
+    if (storageType === 'walrus') {
+      endpoint = lighthouseConfig.lighthouseWalrusNode + `/api/v0/add?cid-version=${cidVersion}`
+    } else {
+      endpoint = lighthouseConfig.lighthouseNode + `/api/v0/add?cid-version=${cidVersion}`
+    }
 
     // Upload file
     const formData = new FormData()

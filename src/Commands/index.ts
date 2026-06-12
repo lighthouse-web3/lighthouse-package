@@ -72,7 +72,7 @@ Command.prototype.helpInformation = function (context: any) {
 }
 
 widgets.addHelpText('before', 'Welcome to lighthouse-web3')
-widgets.version('0.4.5')
+widgets.version('0.4.6')
 
 widgets
   .command('wallet')
@@ -120,7 +120,13 @@ widgets
   .command('upload')
   .description('Upload a file')
   .argument('<path>', 'Path to file')
-  .action(upload)
+  .option(
+    '-s, --storage-type <type>',
+    'Storage backend to use (e.g. ipfs, walrus)'
+  )
+  .action((path: string, options: { storageType?: string }) =>
+    upload(path, options?.storageType)
+  )
 
 widgets
   .command('upload-encrypted')

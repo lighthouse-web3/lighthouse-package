@@ -20,13 +20,18 @@ export default async (
       throw new Error('File must have a .car extension')
     }
 
-    const endpoint = lighthouseConfig.lighthouseNode + '/api/v0/dag/import'
+    let endpoint = ''
+    const storageType = headers?.storageType
+    if (storageType === 'walrus') {
+      endpoint = lighthouseConfig.lighthouseWalrusNode + '/api/v0/dag/import'
+    } else {
+      endpoint = lighthouseConfig.lighthouseNode + '/api/v0/dag/import'
+    }
 
     const formData = new FormData()
     formData.append('file', file)
 
     const token = 'Bearer ' + accessToken
-    const storageType = headers?.storageType
 
     const requestHeaders = {
       Authorization: token,

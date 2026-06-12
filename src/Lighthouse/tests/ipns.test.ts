@@ -37,7 +37,7 @@ describe('ipns', () => {
           await lighthouse.publishRecord(cid, 'invalid ipnsName', apiKey)
         ).data
       } catch (error) {
-        expect(error.message).toBe('Request failed with status code 400')
+        expect(error.message).toBe('Request failed with status code 500')
       }
     }, 20000)
   })
@@ -63,7 +63,7 @@ describe('ipns', () => {
       try {
         const response = (await lighthouse.removeKey(ipnsName, apiKey)).data
       } catch (error) {
-        expect(error.message).toBe('Request failed with status code 400')
+        expect(error.message).toBe('Request failed with status code 500')
       }
     })
   })

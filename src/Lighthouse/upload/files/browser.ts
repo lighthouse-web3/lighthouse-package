@@ -28,7 +28,12 @@ export default async (
       'wrap-with-directory': 'false',
       ...baseParams,
     })
-    let endpoint = lighthouseConfig.lighthouseNode + `/api/v0/add?${queryParams.toString()}`
+    let endpoint = ''
+    if (storageType === 'walrus') {
+      endpoint = lighthouseConfig.lighthouseWalrusNode + `/api/v0/add?${queryParams.toString()}`
+    } else {
+      endpoint = lighthouseConfig.lighthouseNode + `/api/v0/add?${queryParams.toString()}`
+    }
 
     if(!isDirectory && files.length > 1) {
       const wrapParams = new URLSearchParams({

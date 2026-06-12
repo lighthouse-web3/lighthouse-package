@@ -4,6 +4,10 @@ export type balanceResponse = {
   data: {
     dataLimit: number
     dataUsed: number
+    dataLimitPermanent: number
+    dataUsedPermanent: number
+    walrusDataLimit: number
+    walrusDataUsed: number
   }
 }
 

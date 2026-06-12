@@ -1,7 +1,9 @@
 const defaultConfig = {
   lighthouseAPI: 'https://api.lighthouse.storage',
   lighthouseNode: 'https://upload.lighthouse.storage',
+  lighthouseWalrusNode: 'https://upload-walrus.lighthouse.storage',
   lighthouseGateway: 'https://gateway.lighthouse.storage',
+  lighthouseWalrusGateway: 'https://gateway-walrus.lighthouse.storage',
   lighthouseBLSNode: 'https://encryption.lighthouse.storage',
   network: 'polygon',
   fantom: {

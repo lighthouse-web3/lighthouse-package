@@ -7,7 +7,12 @@ import lighthouse from '../Lighthouse'
 import bytesToSize from './utils/byteToSize'
 import { config } from './utils/getNetwork'
 
-const getQuote = async (path: string, apiKey: string, Spinner: any) => {
+const getQuote = async (
+  path: string,
+  apiKey: string,
+  Spinner: any,
+  storageType?: string
+) => {
   const spinner = new Spinner('Getting Quote...')
   spinner.start()
 
@@ -58,21 +63,25 @@ const getQuote = async (path: string, apiKey: string, Spinner: any) => {
       bytesToSize(quoteResponse.totalSize)
   )
 
+  const isWalrus = storageType === 'walrus'
+  const dataLimit = parseInt(
+    isWalrus ? quoteResponse.walrusDataLimit : quoteResponse.dataLimit
+  )
+  const dataUsed = parseInt(
+    isWalrus ? quoteResponse.walrusDataUsed : quoteResponse.dataUsed
+  )
+
   console.log(
     'Data Limit: ' +
-      bytesToSize(parseInt(quoteResponse.dataLimit)) +
+      bytesToSize(dataLimit) +
       '\r\nData Used : ' +
-      bytesToSize(parseInt(quoteResponse.dataUsed)) +
+      bytesToSize(dataUsed) +
       '\r\nAfter Upload: ' +
-      bytesToSize(
-        parseInt(quoteResponse.dataLimit) -
-          (parseInt(quoteResponse.dataUsed) + quoteResponse.totalSize)
-      )
+      bytesToSize(dataLimit - (dataUsed + quoteResponse.totalSize))
   )
 
   const remainingAfterUpload =
-    parseInt(quoteResponse.dataLimit) -
-    (parseInt(quoteResponse.dataUsed) + quoteResponse.totalSize)
+    dataLimit - (dataUsed + quoteResponse.totalSize)
 
   return {
     fileName: quoteResponse.metaData[0].fileName,
@@ -83,11 +92,20 @@ const getQuote = async (path: string, apiKey: string, Spinner: any) => {
   }
 }
 
-const uploadFile = async (path: string, apiKey: string) => {
+const uploadFile = async (
+  path: string,
+  apiKey: string,
+  storageType?: string
+) => {
   const spinner = new Spinner('Uploading...')
   spinner.start()
 
-  const uploadResponse = (await lighthouse.upload(path, apiKey)).data
+  const uploadResponse = (
+    await lighthouse.upload(path, apiKey, {
+      cidVersion: 1,
+      ...(storageType ? { headers: { storageType } } : {}),
+    })
+  ).data
 
   spinner.stop()
   process.stdout.clearLine(-1)
@@ -99,14 +117,14 @@ const uploadFile = async (path: string, apiKey: string) => {
     process.exit()
   }
 
+  const gatewayBase =
+    storageType === 'walrus'
+      ? 'https://gateway-walrus.lighthouse.storage/ipfs/'
+      : 'https://gateway.lighthouse.storage/ipfs/'
+
   console.log(
     green('File Uploaded, visit following url to view content!\r\n') +
-      cyan(
-        'Visit: ' +
-          'https://gateway.lighthouse.storage/ipfs/' +
-          uploadResponse.Hash +
-          '\r\n'
-      ) +
+      cyan('Visit: ' + gatewayBase + uploadResponse.Hash + '\r\n') +
       cyan(
         Array(7).fill('\xa0').join('') +
           'https://ipfs.io/ipfs/' +
@@ -118,18 +136,22 @@ const uploadFile = async (path: string, apiKey: string) => {
   return
 }
 
-export default async function (_path: string) {
+export default async function (_path: string, storageType?: string) {
   if (!_path) {
     console.log(
-      'lighthouse-web3 upload <path>\r\n\r\n' +
+      'lighthouse-web3 upload <path> [--storage-type <type>]\r\n\r\n' +
         green('Description: ') +
         'Upload a file\r\n\r\n' +
         cyan('Options:\r\n') +
         Array(3).fill('\xa0').join('') +
-        '--path: Required, path to file\r\n\r\n' +
+        '--path: Required, path to file\r\n' +
+        Array(3).fill('\xa0').join('') +
+        '-s, --storage-type: Optional, storage backend (e.g. ipfs, walrus)\r\n\r\n' +
         magenta('Example:') +
         Array(3).fill('\xa0').join('') +
-        'lighthouse-web3 upload /home/cosmos/Desktop/ILoveAnime.jpg\r\n'
+        'lighthouse-web3 upload /home/cosmos/Desktop/ILoveAnime.jpg\r\n' +
+        Array(3).fill('\xa0').join('') +
+        'lighthouse-web3 upload /home/cosmos/Desktop/ILoveAnime.jpg --storage-type walrus\r\n'
     )
   } else {
     try {
@@ -140,7 +162,8 @@ export default async function (_path: string) {
       const quoteResponse = await getQuote(
         path,
         config.get('LIGHTHOUSE_GLOBAL_API_KEY') as string,
-        Spinner
+        Spinner,
+        storageType
       )
 
       // Upload
@@ -192,7 +215,7 @@ export default async function (_path: string) {
       }
 
       const apiKey = config.get('LIGHTHOUSE_GLOBAL_API_KEY') as string
-      await uploadFile(path, apiKey)
+      await uploadFile(path, apiKey, storageType)
     } catch (error: any) {
       console.log(red(error.message))
       process.exit(0)

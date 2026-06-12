@@ -42,8 +42,12 @@ export default async (
       'wrap-with-directory': 'false',
       'cid-version': String(cidVersion),
     })
-    const endpoint =
-      lighthouseConfig.lighthouseNode + `/api/v0/add?${queryParams.toString()}`
+    let endpoint = ''
+    if (storageType === 'walrus') {
+      endpoint = lighthouseConfig.lighthouseWalrusNode + `/api/v0/add?${queryParams.toString()}`
+    } else {
+      endpoint = lighthouseConfig.lighthouseNode + `/api/v0/add?${queryParams.toString()}`
+    }
     const boundary =
       '----WebKitFormBoundary' + Math.random().toString(16).slice(2)
 
