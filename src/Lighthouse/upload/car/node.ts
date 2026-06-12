@@ -25,11 +25,16 @@ export default async (
   }
 
   try {
-    const endpoint = lighthouseConfig.lighthouseNode + '/api/v0/dag/import'
+    let endpoint = ''
+    const storageType = headers?.storageType
+    if (storageType === 'walrus') {
+      endpoint = lighthouseConfig.lighthouseWalrusNode + '/api/v0/dag/import'
+    } else {
+      endpoint = lighthouseConfig.lighthouseNode + '/api/v0/dag/import'
+    }
     const boundary =
       '----WebKitFormBoundary' + Math.random().toString(16).substr(2)
-
-    const storageType = headers?.storageType
+    
     const requestHeaders = {
       Authorization: token,
       ...(storageType ? { 'X-Storage-Type': storageType } : {}),
