@@ -35,6 +35,10 @@ const getCosting = async (path: string, apiKey: string) => {
         metaData: metaData,
         dataLimit: user_data_usage.dataLimit,
         dataUsed: user_data_usage.dataUsed,
+        dataLimitPermanent: user_data_usage.dataLimitPermanent,
+        dataUsedPermanent: user_data_usage.dataUsedPermanent,
+        walrusDataLimit: user_data_usage.walrusDataLimit,
+        walrusDataUsed: user_data_usage.walrusDataUsed,
         totalSize: totalSize,
       },
     }
@@ -57,6 +61,10 @@ const getCosting = async (path: string, apiKey: string) => {
         metaData: metaData,
         dataLimit: user_data_usage.dataLimit,
         dataUsed: user_data_usage.dataUsed,
+        dataLimitPermanent: user_data_usage.dataLimitPermanent,
+        dataUsedPermanent: user_data_usage.dataUsedPermanent,
+        walrusDataLimit: user_data_usage.walrusDataLimit,
+        walrusDataUsed: user_data_usage.walrusDataUsed,
         totalSize: fileSizeInBytes,
       },
     }
