@@ -6,7 +6,8 @@ import getUploads from './getUploads'
 import getFileInfo from './getFileInfo'
 import createWallet from './createWallet'
 import deleteFile from './deleteFile'
-
+import walrusBlobs from './walrusBlobs'
+import deleteFileWalrus from './deleteFileWalrus'
 import shareFile from './encryption/shareFile'
 import getAuthMessage from './encryption/getAuthMessage'
 import revokeFileAccess from './encryption/revokeFileAccess'
@@ -53,6 +54,8 @@ export {
   getAllKeys,
   removeKey,
   deleteFile,
+  walrusBlobs,
+  deleteFileWalrus,
 }
 
 export default {
@@ -81,4 +84,6 @@ export default {
   getAllKeys,
   removeKey,
   deleteFile,
+  walrusBlobs,
+  deleteFileWalrus,
 }

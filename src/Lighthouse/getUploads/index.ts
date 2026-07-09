@@ -23,12 +23,13 @@ export type uploadsResponseType = {
 
 export default async (
   authToken: string,
-  lastKey: string | null = null
+  lastKey: string | null = null,
+  fileType: string = 'all'
 ): Promise<uploadsResponseType> => {
   try {
     const response = await fetch(
       lighthouseConfig.lighthouseAPI +
-        `/api/user/files_uploaded?lastKey=${lastKey}`,
+        `/api/user/files_uploaded?lastKey=${lastKey}&fileType=${fileType}`,
       {
         headers: {
           Authorization: `Bearer ${authToken}`,
