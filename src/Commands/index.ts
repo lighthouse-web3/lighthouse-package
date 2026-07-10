@@ -11,6 +11,7 @@ import shareFile from './share-file'
 import getUploads from './get-uploads'
 import deleteFile from './delete-file'
 import dealStatus from './deal-status'
+import walrusBlobs from './walrus-blobs'
 import decryptFile from './decrypt-file'
 import createWallet from './create-wallet'
 import walletForget from './wallet-forget'
@@ -72,7 +73,7 @@ Command.prototype.helpInformation = function (context: any) {
 }
 
 widgets.addHelpText('before', 'Welcome to lighthouse-web3')
-widgets.version('0.4.6')
+widgets.version('0.4.7')
 
 widgets
   .command('wallet')
@@ -159,6 +160,12 @@ widgets
   .argument('<cid>', 'File Cid')
   .description('Get filecoin deal status of a CID')
   .action(dealStatus)
+
+widgets
+  .command('walrus-blobs')
+  .argument('<cid>', 'File Cid')
+  .description('Get walrus blob IDs for a CID')
+  .action(walrusBlobs)
 
 widgets
   .command('get-uploads')
